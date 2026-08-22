@@ -1,6 +1,6 @@
 {
-  "name": "TellerBud",
-  "description": "TellerBud Agent Mobile App prototype with operational workflow screens",
+  "name": "TellerBud Agent App",
+  "description": "TellerBud Agent App UI/UX Review",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

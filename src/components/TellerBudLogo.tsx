@@ -1,5 +1,4 @@
 import React from 'react';
-import tellerbudAgentLogo from '../../assets/tellerbud_agent_logo.png';
 
 interface TellerBudLogoProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | number;
@@ -7,6 +6,8 @@ interface TellerBudLogoProps {
   className?: string;
   alt?: string;
 }
+
+const TELLERBUD_LOGO_SRC = '/tellerbud_agent_logo.png';
 
 export const TellerBudLogo: React.FC<TellerBudLogoProps> = ({
   size = 'md',
@@ -61,7 +62,7 @@ export const TellerBudLogo: React.FC<TellerBudLogoProps> = ({
       aria-label={alt}
     >
       <img
-        src={tellerbudAgentLogo}
+        src={TELLERBUD_LOGO_SRC}
         alt={alt}
         referrerPolicy="no-referrer"
         className="w-full h-full object-contain pointer-events-none transition-all duration-150"
