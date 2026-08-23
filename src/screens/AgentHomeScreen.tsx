@@ -357,7 +357,7 @@ export const AgentHomeScreen: React.FC<AgentHomeScreenProps> = ({
     id: 'SRV-40182',
     serviceType: 'pickup',
     status: 'Service in progress',
-    amount: '₦12,500.00',
+    amount: 'ZMW 12,500.00',
     location: 'Booth 03 → Store #104',
   };
 

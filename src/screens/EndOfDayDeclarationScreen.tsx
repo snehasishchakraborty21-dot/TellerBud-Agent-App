@@ -44,7 +44,7 @@ const defaultAssignment: WorkAssignment = {
   business: 'Apex Retail Group',
   store: 'Central Mall Branch #104',
   booth: 'Booth 03 — Main Atrium',
-  location: 'Plot 42, Commercial Avenue, Ikeja, Lagos',
+  location: 'Plot 42, Cairo Road, Lusaka, Zambia',
   agentName: 'Marcus Vance',
   agentId: 'AG-88421',
 };

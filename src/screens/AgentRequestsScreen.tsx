@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { TellerBudLogo } from '../components/TellerBudLogo';
 import { isServiceEnabled } from '../utils/serviceConfig';
+import { normalizeZmwAmount } from '../config/currencyConfig';
 import {
   AgentRequestsPreviewState,
   IncomingCustomerRequest,
@@ -77,7 +78,7 @@ const defaultIncomingAgentLiquidity: IncomingAgentLiquidityRequestItem[] = [
   {
     id: 'AL-1004',
     requestType: 'cash',
-    amount: '₦50,000.00',
+    amount: 'ZMW 50,000.00',
     location: 'Zone B - Apex Supermarket Booth',
     requestingAgentName: 'Agent Samuel O.',
     status: 'available_to_respond',
@@ -86,7 +87,7 @@ const defaultIncomingAgentLiquidity: IncomingAgentLiquidityRequestItem[] = [
   {
     id: 'AL-1008',
     requestType: 'float',
-    amount: '₦100,000.00',
+    amount: 'ZMW 100,000.00',
     location: 'Central Mall Station',
     requestingAgentName: 'Agent David K.',
     status: 'available_to_respond',
@@ -97,14 +98,14 @@ const mockMyAgentRequests: MyAgentLiquidityRequestItem[] = [
   {
     id: 'MAL-501',
     requestType: 'float',
-    amount: '₦75,000.00',
+    amount: 'ZMW 75,000.00',
     createdAt: 'Today, 11:20 AM',
     status: 'searching',
   },
   {
     id: 'MAL-492',
     requestType: 'cash',
-    amount: '₦30,000.00',
+    amount: 'ZMW 30,000.00',
     createdAt: 'Yesterday, 04:15 PM',
     status: 'completed',
     matchedAgentName: 'Agent Michael A.',
@@ -115,7 +116,7 @@ const mockBusinessOwnerRequests: BusinessOwnerRequestItem[] = [
   {
     id: 'BO-201',
     requestType: 'cash',
-    amount: '₦200,000.00',
+    amount: 'ZMW 200,000.00',
     boothContext: 'Apex Supermarket #104 Booth',
     submittedAt: 'Today, 09:15 AM',
     status: 'pending_review',
@@ -123,7 +124,7 @@ const mockBusinessOwnerRequests: BusinessOwnerRequestItem[] = [
   {
     id: 'BO-198',
     requestType: 'float',
-    amount: '₦150,000.00',
+    amount: 'ZMW 150,000.00',
     boothContext: 'Ikeja Mall Booth #2',
     submittedAt: 'Today, 08:30 AM',
     status: 'pending_payment',
@@ -131,32 +132,32 @@ const mockBusinessOwnerRequests: BusinessOwnerRequestItem[] = [
   {
     id: 'BO-185',
     requestType: 'cash',
-    amount: '₦100,000.00',
+    amount: 'ZMW 100,000.00',
     boothContext: 'Apex Supermarket #104 Booth',
     submittedAt: 'Yesterday, 02:00 PM',
     status: 'paid',
-    amountSupplied: '₦100,000.00',
+    amountSupplied: 'ZMW 100,000.00',
     handoverRecordedAt: 'Yesterday, 02:45 PM',
   },
   {
     id: 'BO-172',
     requestType: 'cash',
-    amount: '₦120,000.00',
+    amount: 'ZMW 120,000.00',
     boothContext: 'Apex Supermarket #104 Booth',
     submittedAt: 'Aug 14, 09:00 AM',
     status: 'returned',
-    amountSupplied: '₦120,000.00',
+    amountSupplied: 'ZMW 120,000.00',
     handoverRecordedAt: 'Aug 14, 09:30 AM',
     returnedAt: 'Aug 14, 05:15 PM',
   },
   {
     id: 'BO-165',
     requestType: 'float',
-    amount: '₦80,000.00',
+    amount: 'ZMW 80,000.00',
     boothContext: 'Central Mall Branch #104',
     submittedAt: 'Aug 13, 08:00 AM',
     status: 'business_admin_confirmed',
-    amountSupplied: '₦80,000.00',
+    amountSupplied: 'ZMW 80,000.00',
     handoverRecordedAt: 'Aug 13, 08:30 AM',
     returnedAt: 'Aug 13, 05:00 PM',
     adminConfirmedAt: 'Aug 13, 05:30 PM',
@@ -645,7 +646,7 @@ export const AgentRequestsScreen: React.FC<AgentRequestsScreenProps> = ({
 
                       <div className="flex items-baseline justify-between pt-0.5">
                         <div className="text-sm font-black text-[#002244] font-mono">
-                          {req.amount}
+                          {normalizeZmwAmount(req.amount)}
                         </div>
                         <div className="text-xs font-bold text-slate-800">
                           {req.vendor}
@@ -706,7 +707,7 @@ export const AgentRequestsScreen: React.FC<AgentRequestsScreenProps> = ({
 
                         <div className="flex items-baseline justify-between pt-0.5">
                           <div className="text-sm font-black text-[#002244] font-mono">
-                            {req.amount}
+                            {normalizeZmwAmount(req.amount)}
                           </div>
                           <div className="text-xs font-bold text-slate-800">
                             {req.requestingAgentName}
@@ -816,7 +817,7 @@ export const AgentRequestsScreen: React.FC<AgentRequestsScreenProps> = ({
 
                         <div className="flex items-baseline justify-between pt-0.5">
                           <div className="text-sm font-black text-[#002244] font-mono">
-                            {req.amount}
+                            {normalizeZmwAmount(req.amount)}
                           </div>
                           <div className="text-[11px] text-slate-500 font-medium">
                             {req.createdAt}
@@ -909,7 +910,7 @@ export const AgentRequestsScreen: React.FC<AgentRequestsScreenProps> = ({
 
                         <div className="flex items-baseline justify-between pt-0.5">
                           <div className="text-sm font-black text-[#002244] font-mono">
-                            {req.amount}
+                            {normalizeZmwAmount(req.amount)}
                           </div>
                           <div className="text-[11px] text-slate-500 font-medium">
                             Submitted: {req.submittedAt}

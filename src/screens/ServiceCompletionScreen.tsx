@@ -19,6 +19,8 @@ import {
   RecordedTransaction,
 } from '../types';
 
+import { normalizeZmwAmount } from '../config/currencyConfig';
+
 interface ServiceCompletionScreenProps {
   initialService?: AssignedCustomerService;
   recordedTransaction?: RecordedTransaction;
@@ -34,7 +36,7 @@ const defaultPickupService: AssignedCustomerService = {
   serviceType: 'pickup',
   transactionType: 'Withdrawal',
   vendor: 'MTN',
-  amount: 'ZK 15,000.00',
+  amount: 'ZMW 15,000.00',
   location: 'Booth 03 — Main Atrium',
   customerLocation: 'Plot 42, Commercial Avenue, Ikeja, Lagos',
   agentLocation: 'Booth 03 — Main Atrium',
@@ -42,8 +44,8 @@ const defaultPickupService: AssignedCustomerService = {
   timing: 'Scheduled (Within 15 mins)',
   reservationActive: true,
   serviceStatus: 'in_progress',
-  reservationFee: 'ZK 30.00',
-  agentEarnings: 'ZK 30.00',
+  reservationFee: 'ZMW 30.00',
+  agentEarnings: 'ZMW 30.00',
 };
 
 export const ServiceCompletionScreen: React.FC<ServiceCompletionScreenProps> = ({
@@ -214,7 +216,7 @@ export const ServiceCompletionScreen: React.FC<ServiceCompletionScreenProps> = (
             <div className="py-2 flex items-center justify-between">
               <span className="text-slate-500 font-medium">Amount</span>
               <span className="font-extrabold text-[#002244] font-mono">
-                {recordedTransaction?.amount || service.amount}
+                {normalizeZmwAmount(recordedTransaction?.amount || service.amount)}
               </span>
             </div>
 
@@ -468,7 +470,7 @@ export const ServiceCompletionScreen: React.FC<ServiceCompletionScreenProps> = (
               <div className="flex justify-between">
                 <span className="text-slate-500 font-medium">Amount</span>
                 <span className="font-extrabold text-[#002244] font-mono">
-                  {recordedTransaction?.amount || service.amount}
+                  {normalizeZmwAmount(recordedTransaction?.amount || service.amount)}
                 </span>
               </div>
             </div>

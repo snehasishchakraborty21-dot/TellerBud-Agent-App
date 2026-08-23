@@ -45,7 +45,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'MNO',
     code: 'MTN',
     accentColor: '#eab308',
-    supportedCurrencies: ['NGN', 'ZMW', 'GHS', 'UGX', 'USD'],
+    supportedCurrencies: ['ZMW'],
   },
   {
     id: 'airtel',
@@ -53,7 +53,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'MNO',
     code: 'Airtel',
     accentColor: '#ef4444',
-    supportedCurrencies: ['NGN', 'ZMW', 'KES', 'UGX', 'USD'],
+    supportedCurrencies: ['ZMW'],
   },
   {
     id: 'zamtel',
@@ -61,7 +61,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'MNO',
     code: 'Zamtel',
     accentColor: '#22c55e',
-    supportedCurrencies: ['ZMW', 'USD'],
+    supportedCurrencies: ['ZMW'],
   },
   {
     id: 'zedmobile',
@@ -69,7 +69,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'MNO',
     code: 'ZedMobile',
     accentColor: '#8b5cf6',
-    supportedCurrencies: ['ZMW', 'USD'],
+    supportedCurrencies: ['ZMW'],
   },
   // Bank Vendors (5 Options)
   {
@@ -78,7 +78,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'Bank',
     code: 'Zanaco',
     accentColor: '#0284c7',
-    supportedCurrencies: ['ZMW', 'USD'],
+    supportedCurrencies: ['ZMW'],
   },
   {
     id: 'fnb',
@@ -86,7 +86,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'Bank',
     code: 'FNB',
     accentColor: '#0d9488',
-    supportedCurrencies: ['ZMW', 'USD'],
+    supportedCurrencies: ['ZMW'],
   },
   {
     id: 'indo',
@@ -94,7 +94,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'Bank',
     code: 'INDO',
     accentColor: '#4f46e5',
-    supportedCurrencies: ['ZMW', 'USD'],
+    supportedCurrencies: ['ZMW'],
   },
   {
     id: 'stanbic',
@@ -102,7 +102,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'Bank',
     code: 'Stanbic',
     accentColor: '#0284c7',
-    supportedCurrencies: ['ZMW', 'USD'],
+    supportedCurrencies: ['ZMW'],
   },
   {
     id: 'access',
@@ -110,7 +110,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'Bank',
     code: 'Access',
     accentColor: '#ea580c',
-    supportedCurrencies: ['NGN', 'ZMW', 'USD'],
+    supportedCurrencies: ['ZMW'],
   },
 ];
 

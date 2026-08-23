@@ -79,7 +79,7 @@ interface PerformedTxnSnapshot {
 export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = ({
   previewState = 'ready',
   assignment,
-  currencySymbol = 'ZK',
+  currencySymbol = 'ZMW',
   onBack,
   onTransactionRecorded,
 }) => {
@@ -98,10 +98,10 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
     );
   }, [assignment, previewState]);
 
-  // Walk-In transactions are strictly Zambia-only with fixed ZMW / ZK currency & +260 calling code
+  // Walk-In transactions are strictly Zambia-only with fixed ZMW currency & +260 calling code
   const countryConfig = OPERATING_COUNTRIES.ZM;
   const currencyCode = 'ZMW';
-  const currencySymbolDisplay = 'ZK';
+  const currencySymbolDisplay = 'ZMW';
   const currencyName = 'Zambian Kwacha';
 
   // Form State
@@ -282,7 +282,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
           agentId: currentAssignment?.agentId || 'AG-88421',
           vendorConfirmationCaptured: true,
           vendorReference: 'MTN-89421098',
-          serviceFee: 'ZK5.00',
+          serviceFee: 'ZMW 5.00',
         };
       }
       if (previewState === 'cash_out_performed') {
@@ -307,7 +307,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
           agentName: currentAssignment?.agentName || 'Marcus Vance',
           agentId: currentAssignment?.agentId || 'AG-88421',
           vendorConfirmationCaptured: false,
-          serviceFee: 'ZK5.00',
+          serviceFee: 'ZMW 5.00',
         };
       }
       return null;
@@ -341,7 +341,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
           status: 'recorded',
           vendorConfirmationCaptured: true,
           vendorReference: 'MTN-89421098',
-          serviceFee: 'ZK5.00',
+          serviceFee: 'ZMW 5.00',
         };
       }
       if (previewState === 'cash_out_recorded' || previewState === 'transaction_recorded') {
@@ -367,7 +367,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
           confirmedAt: 'Today, 11:42 AM',
           status: 'recorded',
           vendorConfirmationCaptured: false,
-          serviceFee: 'ZK5.00',
+          serviceFee: 'ZMW 5.00',
         };
       }
       return null;
@@ -480,7 +480,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
           agentId: currentAssignment?.agentId || 'AG-88421',
           vendorConfirmationCaptured: true,
           vendorReference: 'MTN-89421098',
-          serviceFee: 'ZK5.00',
+          serviceFee: 'ZMW 5.00',
         });
         setRecordedRecord(null);
         setErrors({});
@@ -516,7 +516,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
           status: 'recorded',
           vendorConfirmationCaptured: true,
           vendorReference: 'MTN-89421098',
-          serviceFee: 'ZK5.00',
+          serviceFee: 'ZMW 5.00',
         });
         break;
       }
@@ -559,7 +559,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
           agentName: currentAssignment?.agentName || 'Marcus Vance',
           agentId: currentAssignment?.agentId || 'AG-88421',
           vendorConfirmationCaptured: false,
-          serviceFee: 'ZK5.00',
+          serviceFee: 'ZMW 5.00',
         });
         setRecordedRecord(null);
         setErrors({});
@@ -595,7 +595,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
           confirmedAt: 'Today, 11:42 AM',
           status: 'recorded',
           vendorConfirmationCaptured: false,
-          serviceFee: 'ZK5.00',
+          serviceFee: 'ZMW 5.00',
         });
         break;
       }
@@ -629,7 +629,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
           agentId: currentAssignment?.agentId || 'AG-88421',
           vendorConfirmationCaptured: true,
           vendorReference: 'MTN-89421098',
-          serviceFee: 'ZK5.00',
+          serviceFee: 'ZMW 5.00',
         });
         break;
       }
@@ -1581,13 +1581,13 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
                   )}
                 </label>
                 <div className="flex items-center gap-1.5">
-                  {/* Fixed Zambia Kwacha (ZK) Currency Prefix */}
+                  {/* Fixed Zambia Kwacha (ZMW) Currency Prefix */}
                   <div
                     id="walkin-fixed-currency-badge"
                     className="h-[42px] px-3 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 text-slate-800 select-none"
                   >
                     <span className="text-xs font-bold font-mono text-slate-900">
-                      ZK
+                      ZMW
                     </span>
                   </div>
 
@@ -1914,7 +1914,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
               <div className="flex items-center justify-between">
                 <span className="text-slate-500 font-medium">Currency</span>
                 <span className="font-bold text-slate-800 font-mono">
-                  ZMW (ZK)
+                  ZMW
                 </span>
               </div>
 

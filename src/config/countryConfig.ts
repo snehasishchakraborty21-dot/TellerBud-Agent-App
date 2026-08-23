@@ -183,7 +183,7 @@ export const OPERATING_COUNTRIES: Record<string, OperatingCountryConfig> = {
 // Default configured operating country for current review deployment (Zambia)
 export const DEFAULT_OPERATING_COUNTRY_CODE = 'ZM';
 
-export const SUPPORTED_OPERATING_COUNTRIES: OperatingCountryConfig[] = Object.values(OPERATING_COUNTRIES);
+export const SUPPORTED_OPERATING_COUNTRIES: OperatingCountryConfig[] = [OPERATING_COUNTRIES.ZM];
 
 export const getOperatingCountryConfig = (
   countryCodeOrLocation?: string
@@ -195,20 +195,6 @@ export const getOperatingCountryConfig = (
   const upper = countryCodeOrLocation.toUpperCase().trim();
   if (OPERATING_COUNTRIES[upper]) {
     return OPERATING_COUNTRIES[upper];
-  }
-
-  // Check location string keywords
-  if (upper.includes('NIGERIA') || upper.includes('LAGOS') || upper.includes('ABUJA') || upper === 'NG') {
-    return OPERATING_COUNTRIES.NG;
-  }
-  if (upper.includes('ZAMBIA') || upper.includes('LUSAKA') || upper === 'ZM') {
-    return OPERATING_COUNTRIES.ZM;
-  }
-  if (upper.includes('GHANA') || upper.includes('ACCRA') || upper === 'GH') {
-    return OPERATING_COUNTRIES.GH;
-  }
-  if (upper.includes('KENYA') || upper.includes('NAIROBI') || upper === 'KE') {
-    return OPERATING_COUNTRIES.KE;
   }
 
   return OPERATING_COUNTRIES[DEFAULT_OPERATING_COUNTRY_CODE];

@@ -17,7 +17,7 @@ export const SEED_SMS_MESSAGES: SmsInboxMessage[] = [
     receivedAt: 'Today, 11:22 AM',
     dateGroup: 'Today',
     isUnread: true,
-    body: 'Txn ID: MP240816.1122.A9841. Cash In of ₦35,000.00 to 08031234567 completed successfully. Fee: ₦100.00. New MoMo balance: ₦185,450.00.',
+    body: 'Txn ID: MP240816.1122.A9841. Cash In of ZMW 35,000.00 to +260 971 234 567 completed successfully. Fee: ZMW 100.00. New MoMo balance: ZMW 185,450.00.',
   },
   {
     id: 'sms-002',
@@ -25,7 +25,7 @@ export const SEED_SMS_MESSAGES: SmsInboxMessage[] = [
     receivedAt: 'Today, 10:15 AM',
     dateGroup: 'Today',
     isUnread: false,
-    body: 'You have received ₦50,000.00 from 08029876543 (Babatunde O.). Ref: ATM-889312. Available Balance: ₦220,000.00.',
+    body: 'You have received ZMW 50,000.00 from +260 962 987 654 (Chanda M.). Ref: ATM-889312. Available Balance: ZMW 220,000.00.',
   },
   {
     id: 'sms-003',
@@ -33,7 +33,7 @@ export const SEED_SMS_MESSAGES: SmsInboxMessage[] = [
     receivedAt: 'Today, 09:05 AM',
     dateGroup: 'Today',
     isUnread: false,
-    body: 'Acct **8421: Credit alert of ₦150,000.00 from APEX RETAIL GROUP LIQUIDITY DISBURSEMENT. Desc: Agent Booth 03 Float Top-up. Bal: ₦420,000.00.',
+    body: 'Acct **8421: Credit alert of ZMW 150,000.00 from APEX RETAIL GROUP LIQUIDITY DISBURSEMENT. Desc: Agent Booth 03 Float Top-up. Bal: ZMW 420,000.00.',
   },
   {
     id: 'sms-004',
@@ -41,7 +41,7 @@ export const SEED_SMS_MESSAGES: SmsInboxMessage[] = [
     receivedAt: 'Yesterday, 04:30 PM',
     dateGroup: 'Yesterday',
     isUnread: false,
-    body: 'Notice to all Ikeja Mall Agents: Daily shift reconciliation and cash declaration must be submitted before 06:00 PM.',
+    body: 'Notice to all Lusaka Mall Agents: Daily shift reconciliation and cash declaration must be submitted before 06:00 PM.',
   },
   {
     id: 'sms-005',
@@ -49,7 +49,7 @@ export const SEED_SMS_MESSAGES: SmsInboxMessage[] = [
     receivedAt: 'Yesterday, 02:10 PM',
     dateGroup: 'Yesterday',
     isUnread: false,
-    body: 'Agent Float Top-Up of ₦100,000.00 approved by SuperAgent #044. Txn: MTN-FLT-7729. Commission earned: ₦350.00.',
+    body: 'Agent Float Top-Up of ZMW 100,000.00 approved by SuperAgent #044. Txn: MTN-FLT-7729. Commission earned: ZMW 350.00.',
   },
   {
     id: 'sms-006',
@@ -57,7 +57,7 @@ export const SEED_SMS_MESSAGES: SmsInboxMessage[] = [
     receivedAt: 'Aug 14, 11:00 AM',
     dateGroup: 'Earlier',
     isUnread: false,
-    body: 'Withdrawal of ₦20,000.00 processed for customer 0805551234. Auth code: ZMT-4401. Remaining Agent Float: ₦64,800.00.',
+    body: 'Withdrawal of ZMW 20,000.00 processed for customer +260 955 551 234. Auth code: ZMT-4401. Remaining Agent Float: ZMW 64,800.00.',
   },
   {
     id: 'sms-007',

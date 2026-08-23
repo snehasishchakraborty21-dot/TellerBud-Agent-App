@@ -15,6 +15,7 @@ import {
   AgentLiquidityCompletionPreviewState,
 } from '../types';
 import { formatNaturalSubmittedTime } from './AgentLiquidityRequestDetailScreen';
+import { normalizeZmwAmount } from '../config/currencyConfig';
 
 interface AgentLiquidityCompletionScreenProps {
   request?: AgentLiquidityRequestDetail;
@@ -26,9 +27,9 @@ const defaultMockCompletionRequest: AgentLiquidityRequestDetail = {
   id: 'AL-9042',
   requestReference: 'AL-9042',
   requestType: 'cash',
-  amount: '₦50,000.00',
+  amount: 'ZMW 50,000.00',
   reason: 'High morning customer cash withdrawal demand',
-  location: 'Plot 42, Commercial Avenue, Ikeja, Lagos',
+  location: 'Plot 42, Cairo Road, Lusaka, Zambia',
   booth: 'Booth 03 — Main Atrium, Central Mall Branch #104',
   submittedAt: formatNaturalSubmittedTime(),
   status: 'completed',
@@ -109,11 +110,11 @@ export const AgentLiquidityCompletionScreen: React.FC<
         id: 'AL-9055',
         requestReference: 'AL-9055',
         requestType: 'float',
-        amount: '₦100,000.00',
+        amount: 'ZMW 100,000.00',
         reason: 'Replenishing float for customer transfers',
         submittedAt: stableSubmittedAt,
         requesterName: base.requesterName || 'Marcus Vance (You)',
-        location: base.location || 'Plot 42, Commercial Avenue, Ikeja, Lagos',
+        location: base.location || 'Plot 42, Cairo Road, Lusaka, Zambia',
         booth: base.booth || 'Booth 03 — Main Atrium, Central Mall Branch #104',
         status: 'completed',
         recordedAt: base.recordedAt || nowTime,
@@ -137,11 +138,11 @@ export const AgentLiquidityCompletionScreen: React.FC<
       id: base.id || 'AL-9042',
       requestReference: base.requestReference || 'AL-9042',
       requestType: 'cash',
-      amount: base.amount || '₦50,000.00',
+      amount: base.amount ? normalizeZmwAmount(base.amount) : 'ZMW 50,000.00',
       reason: base.reason || 'High morning customer cash withdrawal demand',
       submittedAt: stableSubmittedAt,
       requesterName: base.requesterName || 'Marcus Vance (You)',
-      location: base.location || 'Plot 42, Commercial Avenue, Ikeja, Lagos',
+      location: base.location || 'Plot 42, Cairo Road, Lusaka, Zambia',
       booth: base.booth || 'Booth 03 — Main Atrium, Central Mall Branch #104',
       status: 'completed',
       recordedAt: base.recordedAt || nowTime,
@@ -238,7 +239,7 @@ export const AgentLiquidityCompletionScreen: React.FC<
           <div className="flex items-baseline justify-between">
             <span className="text-xs text-slate-500 font-medium">Exchange Amount</span>
             <span className="text-base font-black text-[#002244] font-mono">
-              {activeRequest.amount}
+              {normalizeZmwAmount(activeRequest.amount)}
             </span>
           </div>
 

@@ -19,6 +19,7 @@ import { AndroidPhoneDialler } from '../components/AndroidPhoneDialler';
 import { VendorUssdOverlay } from '../components/VendorUssdOverlay';
 import { isOutgoingVendorTransferRequired } from '../utils/transactionService';
 import { getVendorType } from '../config/walkInConfig';
+import { normalizeZmwAmount } from '../config/currencyConfig';
 
 interface AgentTransactionExecutionScreenProps {
   initialService?: AssignedCustomerService;
@@ -42,7 +43,7 @@ const defaultPickupWithdrawalService: AssignedCustomerService = {
   transactionType: 'Withdrawal',
   vendorType: 'MNO',
   vendor: 'MTN',
-  amount: 'ZK 15,000.00',
+  amount: 'ZMW 15,000.00',
   location: 'Booth 03 — Main Atrium',
   customerLocation: 'Plot 42, Commercial Avenue, Ikeja, Lagos',
   agentLocation: 'Booth 03 — Main Atrium',
@@ -50,8 +51,8 @@ const defaultPickupWithdrawalService: AssignedCustomerService = {
   timing: 'Scheduled (Within 15 mins)',
   reservationActive: true,
   serviceStatus: 'assigned',
-  reservationFee: 'ZK 30.00',
-  agentEarnings: 'ZK 30.00',
+  reservationFee: 'ZMW 30.00',
+  agentEarnings: 'ZMW 30.00',
 };
 
 const defaultPickupDepositService: AssignedCustomerService = {
@@ -62,7 +63,7 @@ const defaultPickupDepositService: AssignedCustomerService = {
   transactionType: 'Deposit',
   vendorType: 'MNO',
   vendor: 'Airtel',
-  amount: 'ZK 15,000.00',
+  amount: 'ZMW 15,000.00',
   location: 'Booth 03 — Main Atrium',
   customerLocation: 'Plot 42, Commercial Avenue, Ikeja, Lagos',
   agentLocation: 'Booth 03 — Main Atrium',
@@ -70,8 +71,8 @@ const defaultPickupDepositService: AssignedCustomerService = {
   timing: 'Scheduled (Within 15 mins)',
   reservationActive: true,
   serviceStatus: 'assigned',
-  reservationFee: 'ZK 30.00',
-  agentEarnings: 'ZK 30.00',
+  reservationFee: 'ZMW 30.00',
+  agentEarnings: 'ZMW 30.00',
 };
 
 const defaultDeliveryWithdrawalService: AssignedCustomerService = {
@@ -82,7 +83,7 @@ const defaultDeliveryWithdrawalService: AssignedCustomerService = {
   transactionType: 'Withdrawal',
   vendorType: 'MNO',
   vendor: 'MTN',
-  amount: 'ZK 15,000.00',
+  amount: 'ZMW 15,000.00',
   location: 'Plot 42, Commercial Avenue, Ikeja, Lagos',
   customerLocation: 'Plot 42, Commercial Avenue, Ikeja, Lagos',
   agentLocation: 'Booth 03 — Main Atrium',
@@ -97,7 +98,7 @@ const defaultDeliveryDepositService: AssignedCustomerService = {
   transactionType: 'Deposit',
   vendorType: 'MNO',
   vendor: 'MTN',
-  amount: 'ZK 15,000.00',
+  amount: 'ZMW 15,000.00',
   location: 'Plot 42, Commercial Avenue, Ikeja, Lagos',
   customerLocation: 'Plot 42, Commercial Avenue, Ikeja, Lagos',
   agentLocation: 'Booth 03 — Main Atrium',
@@ -331,13 +332,13 @@ export const AgentTransactionExecutionScreen: React.FC<
       transactionType: service.transactionType || 'Withdrawal',
       vendorType: service.vendorType || getVendorType(service.vendor) || 'MNO',
       vendor: service.vendor,
-      amount: service.amount,
+      amount: normalizeZmwAmount(service.amount),
       location: service.location,
       booth: service.booth || service.agentLocation,
       timestamp: recordedAtTimestamp,
       recordedAt: recordedAtTimestamp,
       vendorReference: capturedVendorRef || undefined,
-      serviceFee: service.reservationFee || 'ZK 30.00',
+      serviceFee: normalizeZmwAmount(service.reservationFee || '30.00'),
     };
 
     if (onContinueToServiceCompletion) {

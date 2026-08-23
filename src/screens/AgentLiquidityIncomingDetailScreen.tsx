@@ -26,6 +26,7 @@ import {
   formatNaturalSubmittedTime,
   formatMatchedProximity,
 } from './AgentLiquidityRequestDetailScreen';
+import { normalizeZmwAmount } from '../config/currencyConfig';
 
 interface AgentLiquidityIncomingDetailScreenProps {
   request?: AgentLiquidityRequestDetail | IncomingAgentLiquidityRequestItem;
@@ -43,9 +44,9 @@ const defaultIncomingCashRequest: AgentLiquidityRequestDetail = {
   id: 'AL-1004',
   requestReference: 'AL-1004',
   requestType: 'cash',
-  amount: '₦50,000.00',
+  amount: 'ZMW 50,000.00',
   reason: 'High customer cash withdrawal demand at booth register.',
-  location: 'Zone B — Apex Supermarket Booth, Ikeja, Lagos',
+  location: 'Zone B — Apex Supermarket Booth, Cairo Road, Lusaka, Zambia',
   booth: 'Zone B — Booth 02',
   submittedAt: formatNaturalSubmittedTime(),
   status: 'available_to_respond',
@@ -62,9 +63,9 @@ const defaultIncomingFloatRequest: AgentLiquidityRequestDetail = {
   id: 'AL-1008',
   requestReference: 'AL-1008',
   requestType: 'float',
-  amount: '₦100,000.00',
+  amount: 'ZMW 100,000.00',
   reason: 'Float replenishment for urgent customer utility and wallet transfers.',
-  location: 'Central Mall Station, Ikeja, Lagos',
+  location: 'Central Mall Station, Lusaka, Zambia',
   booth: 'Booth 01 — West Wing',
   submittedAt: formatNaturalSubmittedTime(),
   status: 'available_to_respond',
@@ -242,7 +243,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
           id: base.id || 'AL-1004',
           requestReference: base.requestReference || 'AL-1004',
           requestType: 'cash',
-          amount: base.amount || '₦50,000.00',
+          amount: base.amount ? normalizeZmwAmount(base.amount) : 'ZMW 50,000.00',
           reason:
             base.reason || 'High customer cash withdrawal demand at booth register.',
           submittedAt: stableSubmittedAt,
@@ -262,7 +263,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
           id: base.id || 'AL-1008',
           requestReference: base.requestReference || 'AL-1008',
           requestType: 'float',
-          amount: base.amount || '₦100,000.00',
+          amount: base.amount ? normalizeZmwAmount(base.amount) : 'ZMW 100,000.00',
           reason:
             base.reason ||
             'Float replenishment for urgent customer utility and wallet transfers.',
@@ -660,7 +661,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
               Requested Amount
             </span>
             <span className="text-xl font-black text-[#002244] font-mono tracking-tight">
-              {activeRequest.amount}
+              {normalizeZmwAmount(activeRequest.amount)}
             </span>
           </div>
 

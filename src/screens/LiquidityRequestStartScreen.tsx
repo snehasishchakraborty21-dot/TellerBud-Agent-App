@@ -23,6 +23,7 @@ import {
   VendorType,
 } from '../types';
 import { CONFIGURED_VENDOR_TYPES, getVendorsByType } from '../config/walkInConfig';
+import { normalizeZmwAmount } from '../config/currencyConfig';
 
 export interface LiquidityRequestConfig {
   requireReason?: boolean;
@@ -253,7 +254,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         requestType,
         vendorType: requestType === 'float' ? (vendorType as VendorType) : undefined,
         vendor: requestType === 'float' ? vendor : undefined,
-        amount: `₦${amount}`,
+        amount: normalizeZmwAmount(amount),
         locationOrBooth: assignment.booth || assignment.location,
         note: note.trim(),
       };
@@ -542,13 +543,13 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
               Amount Required
             </label>
             <span className="text-[10px] font-semibold text-slate-400">
-              Nigerian Naira (NGN)
+              Zambian Kwacha (ZMW)
             </span>
           </div>
 
           <div className="relative flex items-center mb-2.5">
-            <span className="absolute left-3 text-lg font-bold text-slate-400">
-              ₦
+            <span className="absolute left-3 text-xs font-extrabold text-slate-500 font-mono">
+              ZMW
             </span>
             <input
               type="text"
@@ -558,7 +559,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
               onBlur={() => setAmountTouched(true)}
               disabled={isSubmitting}
               placeholder="0.00"
-              className={`w-full pl-8 pr-3 py-2.5 bg-slate-50 border rounded-xl text-base font-bold text-[#002244] font-mono focus:bg-white focus:outline-none transition-all ${
+              className={`w-full pl-14 pr-3 py-2.5 bg-slate-50 border rounded-xl text-base font-bold text-[#002244] font-mono focus:bg-white focus:outline-none transition-all ${
                 showAmountError
                   ? 'border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500'
                   : 'border-slate-200 focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]'
@@ -589,7 +590,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/60'
                 }`}
               >
-                ₦{preset}
+                ZMW {preset}
               </button>
             ))}
           </div>
