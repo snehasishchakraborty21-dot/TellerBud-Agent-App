@@ -276,7 +276,7 @@ export const AssignedCustomerServiceScreen: React.FC<
       }
       if (journeyStep === 'arrived') {
         return (
-          <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-extrabold border border-emerald-200">
+          <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0052CC] text-[10px] font-extrabold border border-blue-200">
             Arrived
           </span>
         );
@@ -288,7 +288,7 @@ export const AssignedCustomerServiceScreen: React.FC<
       );
     }
     return (
-      <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-extrabold border border-emerald-200">
+      <span className="px-2.5 py-0.5 rounded-full bg-blue-50 text-[#0052CC] text-[10px] font-extrabold border border-blue-200">
         Waiting for Customer
       </span>
     );
@@ -368,7 +368,7 @@ export const AssignedCustomerServiceScreen: React.FC<
               className={`w-8 h-8 rounded-xl flex items-center justify-center ${
                 isDelivery
                   ? 'bg-blue-50 text-[#0052CC] border border-blue-100'
-                  : 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                  : 'bg-blue-50 text-[#0052CC] border border-blue-100'
               }`}
             >
               {isDelivery ? (
@@ -405,7 +405,7 @@ export const AssignedCustomerServiceScreen: React.FC<
                     journeyStep === 'en_route'
                       ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
                       : journeyStep === 'arrived'
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      ? 'bg-blue-50 text-[#0052CC] border-blue-200'
                       : 'bg-blue-50 text-[#0052CC] border-blue-200'
                   }`}
                 >
@@ -457,7 +457,7 @@ export const AssignedCustomerServiceScreen: React.FC<
                         : 45
                     }
                     r="8"
-                    fill="#10b981"
+                    fill="#0052CC"
                     className="transition-all duration-700 ease-in-out shadow-lg"
                   />
                   <circle
@@ -476,7 +476,7 @@ export const AssignedCustomerServiceScreen: React.FC<
                         : 45
                     }
                     r="14"
-                    stroke="#10b981"
+                    stroke="#0052CC"
                     strokeWidth="2"
                     opacity="0.5"
                     className="transition-all duration-700 ease-in-out animate-ping"
@@ -489,7 +489,7 @@ export const AssignedCustomerServiceScreen: React.FC<
                     <div
                       className={`w-2 h-2 rounded-full ${
                         journeyStep === 'ready'
-                          ? 'bg-emerald-400 animate-ping'
+                          ? 'bg-blue-400 animate-ping'
                           : 'bg-slate-400'
                       }`}
                     />
@@ -549,22 +549,22 @@ export const AssignedCustomerServiceScreen: React.FC<
             <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs space-y-3.5">
               <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                 <div className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-emerald-600" />
+                  <Clock className="w-4 h-4 text-[#0052CC]" />
                   <h3 className="text-xs font-extrabold text-[#002244] uppercase tracking-wider">
                     Customer ETA
                   </h3>
                 </div>
-                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                <span className="text-[10px] font-bold text-[#0052CC] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                   Waiting for Customer
                 </span>
               </div>
 
               {service.customerEstimatedArrival ? (
-                <div className="bg-emerald-50/70 border border-emerald-200/80 rounded-xl p-4 flex flex-col items-center justify-center text-center space-y-1">
-                  <span className="text-[10.5px] font-bold text-emerald-800 uppercase tracking-wider">
+                <div className="bg-blue-50/70 border border-blue-200/80 rounded-xl p-4 flex flex-col items-center justify-center text-center space-y-1">
+                  <span className="text-[10.5px] font-bold text-[#0052CC] uppercase tracking-wider">
                     Estimated Arrival Time
                   </span>
-                  <span className="text-3xl font-black text-emerald-950 font-mono tracking-tight">
+                  <span className="text-3xl font-black text-[#002244] font-mono tracking-tight">
                     {service.customerEstimatedArrival}
                   </span>
                   <span className="text-xs text-slate-600 font-medium pt-1">
@@ -600,7 +600,7 @@ export const AssignedCustomerServiceScreen: React.FC<
 
               {/* Helpful inline note */}
               <div className="flex items-start gap-2 text-[11.5px] text-slate-600 bg-slate-50 rounded-xl p-2.5 border border-slate-100">
-                <Info className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <Info className="w-4 h-4 text-[#0052CC] shrink-0 mt-0.5" />
                 <p className="leading-snug">
                   Customer will visit your booth to complete the cash pickup. Tap Proceed to Transaction when ready.
                 </p>
@@ -666,7 +666,7 @@ export const AssignedCustomerServiceScreen: React.FC<
               ) : (
                 <button
                   onClick={handleProceed}
-                  className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
+                  className="w-full py-3.5 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#003585] text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
                 >
                   <span>Proceed to Transaction</span>
                   <ChevronRight className="w-4 h-4 stroke-[2.5]" />
