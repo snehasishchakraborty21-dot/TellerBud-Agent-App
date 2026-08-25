@@ -23,6 +23,7 @@ import {
   X,
   ArrowLeft,
   Inbox,
+  Info,
 } from 'lucide-react';
 import {
   AgentMorePreviewState,
@@ -31,6 +32,7 @@ import {
   AgentWalletData,
   AgentEarningsSummary,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 interface AgentMoreScreenProps {
   previewState?: AgentMorePreviewState;
@@ -49,6 +51,7 @@ interface AgentMoreScreenProps {
   onViewSmsInbox?: () => void;
   onViewDailySummary?: () => void;
   onViewChangePasscode?: () => void;
+  onViewAbout?: () => void;
 }
 
 export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
@@ -69,8 +72,8 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
   },
   earnings = {
     today: 'ZMW 350.00',
-    yesterday: 'ZMW 420.00',
-    total: 'ZMW 4,850.00',
+    thisWeek: 'ZMW 1,420.00',
+    thisMonth: 'ZMW 4,850.00',
     currencySymbol: 'ZMW',
   },
   sessionStartTime,
@@ -83,6 +86,7 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
   onViewSmsInbox,
   onViewDailySummary,
   onViewChangePasscode,
+  onViewAbout,
 }) => {
   // Modal and Sheet States
   const [showAgentInfoSheet, setShowAgentInfoSheet] = useState(false);
@@ -322,6 +326,33 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
             </div>
             <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-amber-600 transition-colors shrink-0" />
           </button>
+
+          {/* Primary Action 5: About TellerBud */}
+          <button
+            type="button"
+            id="more-action-about-tellerbud"
+            onClick={() => {
+              if (onViewAbout) onViewAbout();
+            }}
+            className="w-full bg-white border border-slate-200/90 hover:border-[#0052CC]/50 rounded-2xl p-3.5 text-left transition-all hover:shadow-xs group flex items-center justify-between min-h-[64px] shadow-2xs"
+          >
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#0052CC] flex items-center justify-center shrink-0 border border-blue-100 group-hover:bg-[#0052CC] group-hover:text-white transition-colors">
+                <Info className="w-5 h-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-xs font-extrabold text-[#002244] leading-tight group-hover:text-[#0052CC] transition-colors">
+                  About TellerBud
+                </div>
+                <div className="text-[11px] text-slate-500 font-medium leading-tight mt-0.5">
+                  App information, features and version details
+                </div>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#0052CC] transition-colors shrink-0" />
+          </button>
+
+          <PoweredByCinitecFooter className="py-2" />
         </div>
       </div>
 
@@ -399,11 +430,11 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-bold text-slate-900 leading-tight">Earnings</span>
                       <span className="text-[11px] font-extrabold text-[#0052CC] font-mono">
-                        {earnings.total}
+                        {earnings.thisMonth || earnings.today}
                       </span>
                     </div>
                     <div className="text-[10.5px] text-slate-500 font-medium leading-tight mt-0.5">
-                      Commission: Today, Yesterday & Total
+                      Commission: Today, This Week & This Month
                     </div>
                   </div>
                 </div>
@@ -506,7 +537,7 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
             {/* Approved status badge */}
             <div className="flex items-center justify-between px-1">
               <span className="text-[11px] font-bold text-slate-600">
-                Commission Summary
+                TellerBud Commission Summary
               </span>
               <span className="text-[10px] font-semibold text-[#0052CC] bg-blue-50 border border-blue-200/70 px-2 py-0.5 rounded-full flex items-center gap-1">
                 <TrendingUp className="w-2.5 h-2.5 text-[#0052CC]" />
@@ -514,10 +545,10 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
               </span>
             </div>
 
-            {/* 3-Column Earnings Breakdown: Today | Yesterday | Total */}
+            {/* 3-Column Earnings Breakdown: Today | This Week | This Month */}
             <div className="grid grid-cols-3 gap-2">
-              <div className="bg-slate-50 border border-slate-200/70 rounded-2xl p-2.5 text-center">
-                <span className="text-[9.5px] font-bold uppercase text-slate-400 block mb-1">
+              <div className="bg-slate-50 border border-slate-200/70 rounded-2xl p-2 text-center flex flex-col justify-center min-w-0">
+                <span className="text-[9px] font-bold uppercase tracking-tight text-slate-400 block mb-1 whitespace-nowrap">
                   Today
                 </span>
                 <span className="text-xs font-extrabold font-mono text-slate-900 tracking-tight block truncate">
@@ -525,21 +556,21 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
                 </span>
               </div>
 
-              <div className="bg-slate-50 border border-slate-200/70 rounded-2xl p-2.5 text-center">
-                <span className="text-[9.5px] font-bold uppercase text-slate-400 block mb-1">
-                  Yesterday
+              <div className="bg-slate-50 border border-slate-200/70 rounded-2xl p-2 text-center flex flex-col justify-center min-w-0">
+                <span className="text-[9px] font-bold uppercase tracking-tight text-slate-400 block mb-1 whitespace-nowrap">
+                  This Week
                 </span>
                 <span className="text-xs font-extrabold font-mono text-slate-900 tracking-tight block truncate">
-                  {earnings.yesterday}
+                  {earnings.thisWeek || 'ZMW 1,420.00'}
                 </span>
               </div>
 
-              <div className="bg-blue-50/70 border border-blue-200/80 rounded-2xl p-2.5 text-center shadow-2xs">
-                <span className="text-[9.5px] font-bold uppercase text-[#0052CC] block mb-1">
-                  Total
+              <div className="bg-blue-50/70 border border-blue-200/80 rounded-2xl p-2 text-center shadow-2xs flex flex-col justify-center min-w-0">
+                <span className="text-[9px] font-bold uppercase tracking-tight text-[#0052CC] block mb-1 whitespace-nowrap">
+                  This Month
                 </span>
                 <span className="text-xs font-black font-mono text-[#002244] tracking-tight block truncate">
-                  {earnings.total}
+                  {earnings.thisMonth || 'ZMW 4,850.00'}
                 </span>
               </div>
             </div>
@@ -572,8 +603,6 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
               detected = 'Airtel';
             } else if (dialledCode.includes('303')) {
               detected = 'Zamtel';
-            } else if (dialledCode.includes('222')) {
-              detected = 'ZedMobile';
             } else if (dialledCode.includes('115')) {
               detected = 'MTN';
             }

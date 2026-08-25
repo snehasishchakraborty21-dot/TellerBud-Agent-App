@@ -4,6 +4,7 @@ import { TellerBudTextField } from '../components/ui/TellerBudTextField';
 import { TellerBudPasscodeField } from '../components/ui/TellerBudPasscodeField';
 import { TellerBudPrimaryButton } from '../components/ui/TellerBudPrimaryButton';
 import { TellerBudInlineMessage } from '../components/ui/TellerBudInlineMessage';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 import { AuthState, FieldErrors } from '../types';
 import { getActiveAgentPasscode, DEFAULT_AGENT_ID } from '../utils/authConfig';
 
@@ -186,6 +187,8 @@ export const AgentLoginScreen: React.FC<AgentLoginScreenProps> = ({
           </div>
         </form>
       </div>
+
+      <PoweredByCinitecFooter className="shrink-0 py-1" />
     </div>
   );
 };

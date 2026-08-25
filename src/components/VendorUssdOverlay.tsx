@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Loader2, XCircle } from 'lucide-react';
 import { getVendorConfig, UssdStep } from '../config/ussdConfig';
+import { getVendorLogo } from '../config/walkInConfig';
 
 interface VendorUssdOverlayProps {
   vendor?: string;
@@ -74,10 +75,21 @@ export const VendorUssdOverlay: React.FC<VendorUssdOverlayProps> = ({
         {/* Android System Title Header */}
         <div className="px-4 py-3 bg-slate-100 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span
-              className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs"
-              style={{ backgroundColor: vendorConfig.accentColor || '#eab308' }}
-            />
+            {getVendorLogo(vendorConfig.vendor) ? (
+              <div className="w-5 h-5 rounded-md bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                <img
+                  src={getVendorLogo(vendorConfig.vendor)}
+                  alt={vendorConfig.vendorDisplayName}
+                  className="w-full h-full object-contain pointer-events-none"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+            ) : (
+              <span
+                className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs"
+                style={{ backgroundColor: vendorConfig.accentColor || '#0052CC' }}
+              />
+            )}
             <span className="text-xs font-bold text-slate-900 tracking-tight">
               {vendorConfig.vendorDisplayName}
             </span>

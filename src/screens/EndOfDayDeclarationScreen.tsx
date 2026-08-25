@@ -18,6 +18,7 @@ import {
   EndOfDayDeclarationPreviewState,
   EndOfDayDeclarationRecord,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 import {
   useSharedClock,
   formatAppTime,
@@ -615,6 +616,8 @@ export const EndOfDayDeclarationScreen: React.FC<EndOfDayDeclarationScreenProps>
             </div>
           </div>
         )}
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* 3. Sticky Primary Action Bar */}

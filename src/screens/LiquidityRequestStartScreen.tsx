@@ -22,12 +22,12 @@ import {
   LiquidityRequestFormData,
   VendorType,
 } from '../types';
-import { CONFIGURED_VENDOR_TYPES, getVendorsByType } from '../config/walkInConfig';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
+import { CONFIGURED_VENDOR_TYPES, getVendorsByType, getVendorLogo } from '../config/walkInConfig';
 import { normalizeZmwAmount } from '../config/currencyConfig';
 
 export interface LiquidityRequestConfig {
   requireReason?: boolean;
-  presetAmounts?: string[];
 }
 
 interface LiquidityRequestStartScreenProps {
@@ -49,20 +49,16 @@ const defaultAssignment: WorkAssignment = {
   agentId: 'AG-88421',
 };
 
-// Centrally configurable preset amounts (optional UI convenience shortcuts)
-export const DEFAULT_PRESET_AMOUNTS = ['10,000', '25,000', '50,000', '100,000'];
-
 export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenProps> = ({
   assignment = defaultAssignment,
   previewState = 'another_agent_cash',
-  config = { requireReason: true, presetAmounts: DEFAULT_PRESET_AMOUNTS },
+  config = { requireReason: true },
   isOffline = false,
   onBack,
   onSubmitSuccess,
   onCheckStatus,
 }) => {
   const isReasonRequired = config.requireReason ?? true;
-  const presetAmounts = config.presetAmounts ?? DEFAULT_PRESET_AMOUNTS;
 
   const [requestFrom, setRequestFrom] = useState<LiquidityRequestFrom>(
     isOffline ? 'business_owner' : 'agent'
@@ -197,11 +193,6 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
     if (!isNaN(num)) {
       setAmount(num.toLocaleString('en-US'));
     }
-  };
-
-  const handleSelectPreset = (preset: string) => {
-    setAmountTouched(true);
-    setAmount(preset);
   };
 
   const parsedNumericAmount = parseInt(amount.replace(/[^0-9]/g, ''), 10) || 0;
@@ -509,29 +500,48 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
 
             {/* Vendor Selection (Filtered by Vendor Type) */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 mb-1">
+              <label className="block text-[11px] font-bold text-slate-700 mb-1.5">
                 Vendor <span className="text-red-500 font-bold">*</span>
               </label>
-              <select
-                id="liquidity-vendor-select"
-                value={vendor}
-                onChange={(e) => setVendor(e.target.value)}
-                disabled={!vendorType || isSubmitting}
-                className={`w-full px-3 py-2 text-xs font-bold rounded-xl border bg-slate-50 text-[#002244] transition-all ${
-                  !vendorType
-                    ? 'border-slate-200 bg-slate-100 text-slate-400 cursor-not-allowed'
-                    : 'border-slate-200 focus:bg-white focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]'
-                }`}
-              >
-                <option value="">
-                  {vendorType ? 'Select Vendor' : 'Select vendor type first'}
-                </option>
-                {availableVendors.map((v) => (
-                  <option key={v.id} value={v.name}>
-                    {v.name}
-                  </option>
-                ))}
-              </select>
+              <div className={`grid ${availableVendors.length <= 3 ? 'grid-cols-3' : 'grid-cols-3 sm:grid-cols-5'} gap-2`}>
+                {availableVendors.map((v) => {
+                  const isSelected = vendor === v.name;
+                  const logoSrc = v.logoUrl || getVendorLogo(v.name);
+                  return (
+                    <button
+                      key={v.id}
+                      type="button"
+                      id={`liquidity-vendor-btn-${v.id}`}
+                      onClick={() => setVendor(v.name)}
+                      disabled={!vendorType || isSubmitting}
+                      className={`p-2.5 rounded-xl border text-center flex flex-col items-center justify-center gap-1.5 transition-all ${
+                        isSelected
+                          ? 'bg-blue-50/80 border-[#0052CC] ring-1 ring-[#0052CC]/30 text-[#002244]'
+                          : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700'
+                      }`}
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-200/90 p-1.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                        {logoSrc ? (
+                          <img
+                            src={logoSrc}
+                            alt={v.name}
+                            className="w-full h-full object-contain pointer-events-none"
+                            referrerPolicy="no-referrer"
+                          />
+                        ) : (
+                          <span
+                            className="w-2.5 h-2.5 rounded-full"
+                            style={{ backgroundColor: v.accentColor || '#0052CC' }}
+                          />
+                        )}
+                      </div>
+                      <span className="text-[11px] font-bold truncate max-w-full">
+                        {v.name}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}
@@ -547,7 +557,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
             </span>
           </div>
 
-          <div className="relative flex items-center mb-2.5">
+          <div className="relative flex items-center">
             <span className="absolute left-3 text-xs font-extrabold text-slate-500 font-mono">
               ZMW
             </span>
@@ -568,32 +578,10 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
           </div>
 
           {showAmountError && (
-            <p className="text-[11px] text-red-600 font-medium mb-2">
+            <p className="text-[11px] text-red-600 font-medium mt-1.5">
               Please enter a valid amount.
             </p>
           )}
-
-          {/* Centrally configurable quick preset amount chips */}
-          <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] text-slate-400 font-medium mr-0.5">
-              Quick:
-            </span>
-            {presetAmounts.map((preset) => (
-              <button
-                key={preset}
-                type="button"
-                onClick={() => handleSelectPreset(preset)}
-                disabled={isSubmitting}
-                className={`px-2 py-1 rounded-lg text-[11px] font-mono font-bold transition-colors cursor-pointer ${
-                  amount === preset
-                    ? 'bg-[#0052CC] text-white'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200/60'
-                }`}
-              >
-                ZMW {preset}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Section 4: Current Work Location / Business Assignment (Read-Only) */}
@@ -705,6 +693,8 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
             No platform charge or ping fee is applied for requesting operational Cash or Float.
           </p>
         </div>
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* Primary Action Button (Fixed Bottom Footer) */}

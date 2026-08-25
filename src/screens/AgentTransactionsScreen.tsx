@@ -31,7 +31,8 @@ import {
   WalkInTransactionRecord,
   VendorType,
 } from '../types';
-import { getVendorType } from '../config/walkInConfig';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
+import { getVendorType, getVendorLogo } from '../config/walkInConfig';
 
 interface AgentTransactionsScreenProps {
   previewState?: AgentTransactionsPreviewState;
@@ -140,6 +141,36 @@ const defaultMockTransactions: AgentTransactionItem[] = [
     timestamp: '12 Aug, 04:10 PM',
     dateGroup: 'Earlier',
     serviceFee: 'ZMW 350.00',
+  },
+  {
+    id: 'TXN-907',
+    transactionReference: 'WI-20419',
+    category: 'walk_in',
+    walkInType: 'Deposit',
+    vendorType: 'Bank',
+    vendor: 'FNB',
+    amount: 'ZMW 18,500.00',
+    currencySymbol: 'ZMW',
+    status: 'recorded',
+    timestamp: '11 Aug, 02:15 PM',
+    dateGroup: 'Earlier',
+  },
+  {
+    id: 'TXN-908',
+    transactionReference: 'AL-8832',
+    requestReference: 'AL-8832',
+    category: 'agent_liquidity',
+    liquidityType: 'float',
+    vendorType: 'Bank',
+    vendor: 'Stanbic',
+    matchedAgentName: 'John Phiri',
+    matchedAgentId: 'AGT-4402',
+    exchangeLocation: 'Manda Hill Agent Booth',
+    amount: 'ZMW 40,000.00',
+    currencySymbol: 'ZMW',
+    status: 'completed',
+    timestamp: '10 Aug, 11:00 AM',
+    dateGroup: 'Earlier',
   },
 ];
 
@@ -580,8 +611,18 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
                                     {txn.vendorType || getVendorType(txn.vendor)}
                                   </span>
                                 )}
-                                <span className="font-semibold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-[10px]">
-                                  {txn.vendor}
+                                <span className="font-semibold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] flex items-center gap-1">
+                                  {getVendorLogo(txn.vendor) && (
+                                    <div className="w-3.5 h-3.5 rounded-xs bg-white border border-slate-200 p-[1px] flex items-center justify-center shrink-0 overflow-hidden">
+                                      <img
+                                        src={getVendorLogo(txn.vendor)}
+                                        alt={txn.vendor}
+                                        className="w-full h-full object-contain"
+                                        referrerPolicy="no-referrer"
+                                      />
+                                    </div>
+                                  )}
+                                  <span>{txn.vendor}</span>
                                 </span>
                               </div>
                             )}
@@ -604,8 +645,18 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
                                     {txn.vendorType || getVendorType(txn.vendor)}
                                   </span>
                                 )}
-                                <span className="font-semibold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-[10px]">
-                                  {txn.vendor}
+                                <span className="font-semibold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] flex items-center gap-1">
+                                  {getVendorLogo(txn.vendor) && (
+                                    <div className="w-3.5 h-3.5 rounded-xs bg-white border border-slate-200 p-[1px] flex items-center justify-center shrink-0 overflow-hidden">
+                                      <img
+                                        src={getVendorLogo(txn.vendor)}
+                                        alt={txn.vendor}
+                                        className="w-full h-full object-contain"
+                                        referrerPolicy="no-referrer"
+                                      />
+                                    </div>
+                                  )}
+                                  <span>{txn.vendor}</span>
                                 </span>
                               </div>
                             )}
@@ -629,8 +680,18 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
                                     {txn.vendorType || getVendorType(txn.vendor)}
                                   </span>
                                 )}
-                                <span className="font-semibold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-[10px]">
-                                  {txn.vendor}
+                                <span className="font-semibold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] flex items-center gap-1">
+                                  {getVendorLogo(txn.vendor) && (
+                                    <div className="w-3.5 h-3.5 rounded-xs bg-white border border-slate-200 p-[1px] flex items-center justify-center shrink-0 overflow-hidden">
+                                      <img
+                                        src={getVendorLogo(txn.vendor)}
+                                        alt={txn.vendor}
+                                        className="w-full h-full object-contain"
+                                        referrerPolicy="no-referrer"
+                                      />
+                                    </div>
+                                  )}
+                                  <span>{txn.vendor}</span>
                                 </span>
                               </div>
                             )}
@@ -660,6 +721,8 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
             ))}
           </div>
         )}
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* 4. Fixed Operational 4-Tab Bottom Navigation (Transactions Active) */}

@@ -18,6 +18,7 @@ import {
   ServiceCompletionPreviewState,
   RecordedTransaction,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 import { normalizeZmwAmount } from '../config/currencyConfig';
 
@@ -396,6 +397,8 @@ export const ServiceCompletionScreen: React.FC<ServiceCompletionScreenProps> = (
               </div>
             </div>
           )}
+
+          <PoweredByCinitecFooter className="py-2" />
         </div>
       </div>
 

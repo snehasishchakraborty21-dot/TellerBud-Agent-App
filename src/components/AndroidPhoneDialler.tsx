@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Phone, Delete, X, ArrowLeft } from 'lucide-react';
 import { getVendorConfig } from '../config/ussdConfig';
+import { getVendorLogo } from '../config/walkInConfig';
 
 interface AndroidPhoneDiallerProps {
   vendor?: string;
@@ -91,11 +92,22 @@ export const AndroidPhoneDialler: React.FC<AndroidPhoneDiallerProps> = ({
           <ArrowLeft className="w-4 h-4 stroke-[2.5]" />
         </button>
 
-        <div className="flex items-center gap-1.5">
-          <span
-            className="w-2 h-2 rounded-full shrink-0"
-            style={{ backgroundColor: isGeneric ? '#10b981' : (vendorConfig.accentColor || '#eab308') }}
-          />
+        <div className="flex items-center gap-2">
+          {!isGeneric && getVendorLogo(vendorConfig.vendor) ? (
+            <div className="w-5 h-5 rounded-md bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+              <img
+                src={getVendorLogo(vendorConfig.vendor)}
+                alt={vendorConfig.vendorDisplayName}
+                className="w-full h-full object-contain pointer-events-none"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+          ) : (
+            <span
+              className="w-2 h-2 rounded-full shrink-0"
+              style={{ backgroundColor: isGeneric ? '#10b981' : (vendorConfig.accentColor || '#0052CC') }}
+            />
+          )}
           <span className="text-xs font-bold text-slate-800 tracking-tight">
             {isGeneric ? 'Phone — System Dialler' : `Phone — ${vendorConfig.vendorDisplayName}`}
           </span>

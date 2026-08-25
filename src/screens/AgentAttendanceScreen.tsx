@@ -24,6 +24,7 @@ import {
   formatAttendanceRecordDate,
   createSeedAttendanceRecords,
 } from '../utils/timeUtils';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 interface AgentAttendanceScreenProps {
   assignment?: WorkAssignment;
@@ -530,6 +531,8 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
             )}
           </div>
         )}
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
     </div>
   );

@@ -6,7 +6,6 @@ import { AgentAvailabilitySetupScreen } from './screens/AgentAvailabilitySetupSc
 import { AgentHomeScreen } from './screens/AgentHomeScreen';
 import { IncomingCustomerRequestScreen } from './screens/IncomingCustomerRequestScreen';
 import { AssignedCustomerServiceScreen } from './screens/AssignedCustomerServiceScreen';
-import { AgentTransactionExecutionScreen } from './screens/AgentTransactionExecutionScreen';
 import { ServiceCompletionScreen } from './screens/ServiceCompletionScreen';
 import { AgentRequestsScreen } from './screens/AgentRequestsScreen';
 import { LiquidityRequestStartScreen } from './screens/LiquidityRequestStartScreen';
@@ -28,6 +27,7 @@ import { AgentDailySummaryReportScreen } from './screens/AgentDailySummaryReport
 import { AgentChangePasscodeScreen } from './screens/AgentChangePasscodeScreen';
 import { AgentChatsScreen } from './screens/AgentChatsScreen';
 import { AgentChatConversationScreen } from './screens/AgentChatConversationScreen';
+import { AboutTellerBudScreen } from './screens/AboutTellerBudScreen';
 import { resetPasscodeStore } from './utils/authConfig';
 import { MobileContainer } from './components/MobileContainer';
 import {
@@ -59,6 +59,7 @@ import {
   AgentChangePasscodePreviewState,
   AgentChatsPreviewState,
   AgentChatConversationPreviewState,
+  AboutTellerBudPreviewState,
   AttendanceRecord,
   WalletActivityItem,
   AgentLiquidityRequestDetail,
@@ -76,6 +77,7 @@ import {
   formatAttendanceRecordDate,
   calculateWorkingDuration,
 } from './utils/timeUtils';
+import { calculateAgentEarningsSummary } from './utils/earningsService';
 
 export default function App() {
   const [testScenario, setTestScenario] = useState<AuthState>('idle');
@@ -132,6 +134,8 @@ export default function App() {
     useState<AgentChatsPreviewState>('default');
   const [agentChatConversationPreview, setAgentChatConversationPreview] =
     useState<AgentChatConversationPreviewState>('customer_chat_active');
+  const [aboutTellerBudPreview, setAboutTellerBudPreview] =
+    useState<AboutTellerBudPreviewState>('default');
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [businessOwnerRequests, setBusinessOwnerRequests] = useState<BusinessOwnerRequestItem[]>([
     {
@@ -229,6 +233,7 @@ export default function App() {
     | 'agent_change_passcode'
     | 'agent_chats'
     | 'agent_chat_conversation'
+    | 'about_tellerbud'
   >('home_screen');
   const [authenticatedAgentId, setAuthenticatedAgentId] = useState<string>('');
   const [confirmedAssignment, setConfirmedAssignment] = useState<WorkAssignment | null>(null);
@@ -512,6 +517,13 @@ export default function App() {
           setCurrentRoute('agent_chat_conversation');
         }
       }}
+      aboutTellerBudPreviewState={aboutTellerBudPreview}
+      onSelectAboutTellerBudPreviewState={(state) => {
+        setAboutTellerBudPreview(state);
+        if (currentRoute !== 'about_tellerbud') {
+          setCurrentRoute('about_tellerbud');
+        }
+      }}
       onResetApp={handleResetApp}
       currentRoute={currentRoute}
       onSelectRoute={(route) => {
@@ -733,6 +745,36 @@ export default function App() {
         <AssignedCustomerServiceScreen
           key={assignedServicePreview}
           previewState={assignedServicePreview}
+          initialService={
+            focusedCustomerRequest
+              ? {
+                  id: focusedCustomerRequest.id,
+                  requestReference: focusedCustomerRequest.requestReference || focusedCustomerRequest.id,
+                  requestOrigin: 'Customer',
+                  customerName: focusedCustomerRequest.customerName,
+                  serviceType: focusedCustomerRequest.serviceType,
+                  transactionType: focusedCustomerRequest.transactionType || 'Withdrawal',
+                  vendorType: focusedCustomerRequest.vendorType || 'MNO',
+                  vendor: focusedCustomerRequest.vendor || 'MTN',
+                  amount: focusedCustomerRequest.amount,
+                  currencySymbol: focusedCustomerRequest.currencySymbol || 'ZMW',
+                  currencyCode: focusedCustomerRequest.currencyCode || 'ZMW',
+                  location: focusedCustomerRequest.customerLocation || 'Plot 42, Commercial Avenue, Lusaka',
+                  customerLocation: focusedCustomerRequest.customerLocation || 'Plot 42, Commercial Avenue, Lusaka',
+                  agentLocation: 'Booth 03 — Main Atrium',
+                  booth: 'Booth 03 — Main Atrium',
+                  distance: focusedCustomerRequest.distance || '4.8 km',
+                  estimatedTravelTime: focusedCustomerRequest.estimatedTravelTime || '12 min',
+                  customerEstimatedArrival: focusedCustomerRequest.customerEstimatedArrival || '8 min',
+                  timing: focusedCustomerRequest.timing || 'Immediate',
+                  reservationActive: true,
+                  serviceStatus: 'assigned',
+                  reservationFee: focusedCustomerRequest.reservationFee || 'ZMW 30.00',
+                  deliveryFee: focusedCustomerRequest.deliveryFee,
+                  agentEarnings: focusedCustomerRequest.agentEarnings || 'ZMW 30.00',
+                }
+              : undefined
+          }
           onBack={() => {
             setCurrentRoute('agent_home');
           }}
@@ -741,26 +783,14 @@ export default function App() {
             setAgentChatConversationPreview('customer_chat_active');
             setCurrentRoute('agent_chat_conversation');
           }}
-          onProceedToTransaction={(_serviceId) => {
-            setTransactionExecutionPreview('pickup_ready');
-            setCurrentRoute('transaction_execution');
-          }}
-        />
-      ) : currentRoute === 'transaction_execution' ? (
-        <AgentTransactionExecutionScreen
-          key={transactionExecutionPreview}
-          previewState={transactionExecutionPreview}
-          onBack={() => {
-            setCurrentRoute('assigned_customer_service');
-          }}
-          onContinueToServiceCompletion={(serviceId, transactionRecord) => {
+          onProceed={(_serviceId, transactionRecord) => {
             if (transactionRecord) {
               setActiveRecordedTxn(transactionRecord);
             }
             setServiceCompletionPreview('waiting_for_both');
             setCurrentRoute('service_completion');
           }}
-          onContinueToConfirmation={(serviceId, transactionRecord) => {
+          onProceedToTransaction={(_serviceId, transactionRecord) => {
             if (transactionRecord) {
               setActiveRecordedTxn(transactionRecord);
             }
@@ -1250,12 +1280,10 @@ export default function App() {
             currencySymbol: 'ZMW',
           }}
           sessionStartTime={sessionStartTime}
-          earnings={{
-            today: 'ZMW 350.00',
-            yesterday: 'ZMW 420.00',
-            total: 'ZMW 4,850.00',
-            currencySymbol: 'ZMW',
-          }}
+          earnings={calculateAgentEarningsSummary([
+            activeRecordedTxn,
+            activeWalkInTxn,
+          ])}
           onSelectTab={(tab) => {
             if (tab === 'home') {
               setCurrentRoute('agent_home');
@@ -1296,6 +1324,10 @@ export default function App() {
           onViewChangePasscode={() => {
             setCurrentRoute('agent_change_passcode');
             setAgentChangePasscodePreview('default');
+          }}
+          onViewAbout={() => {
+            setCurrentRoute('about_tellerbud');
+            setAboutTellerBudPreview('default');
           }}
         />
       ) : currentRoute === 'end_of_day_declaration' ? (
@@ -1606,6 +1638,14 @@ export default function App() {
           }}
           onRetry={() => {
             console.log('Retrying chat messages fetch');
+          }}
+        />
+      ) : currentRoute === 'about_tellerbud' ? (
+        <AboutTellerBudScreen
+          key={aboutTellerBudPreview}
+          previewState={aboutTellerBudPreview}
+          onBack={() => {
+            setCurrentRoute('agent_more');
           }}
         />
       ) : (

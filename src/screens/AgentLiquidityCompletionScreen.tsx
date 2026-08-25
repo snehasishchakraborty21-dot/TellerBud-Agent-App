@@ -14,6 +14,7 @@ import {
   AgentLiquidityRequestDetail,
   AgentLiquidityCompletionPreviewState,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 import { formatNaturalSubmittedTime } from './AgentLiquidityRequestDetailScreen';
 import { normalizeZmwAmount } from '../config/currencyConfig';
 
@@ -324,6 +325,8 @@ export const AgentLiquidityCompletionScreen: React.FC<
         <p className="text-xs text-center text-slate-500 font-medium leading-relaxed px-2">
           This exchange is now recorded in your request history.
         </p>
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* 3. STICKY BOTTOM ACTION */}

@@ -6,6 +6,7 @@ interface TellerBudPrimaryButtonProps
   children: React.ReactNode;
   isLoading?: boolean;
   isDisabled?: boolean;
+  loadingText?: string;
   className?: string;
 }
 
@@ -13,6 +14,7 @@ export const TellerBudPrimaryButton: React.FC<TellerBudPrimaryButtonProps> = ({
   children,
   isLoading = false,
   isDisabled = false,
+  loadingText = 'Signing in...',
   className = '',
   onClick,
   type = 'button',
@@ -41,7 +43,7 @@ export const TellerBudPrimaryButton: React.FC<TellerBudPrimaryButtonProps> = ({
       {isLoading ? (
         <span className="inline-flex items-center gap-2">
           <TellerBudLoadingIndicator size="md" color="white" />
-          <span>Signing in...</span>
+          <span>{loadingText}</span>
         </span>
       ) : (
         <span>{children}</span>

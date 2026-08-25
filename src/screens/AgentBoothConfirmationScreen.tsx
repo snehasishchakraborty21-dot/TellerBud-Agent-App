@@ -1,6 +1,7 @@
 import React from 'react';
 import { TellerBudLogo } from '../components/TellerBudLogo';
 import { Building2, ArrowLeft } from 'lucide-react';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 interface AgentBoothConfirmationScreenProps {
   agentId?: string;
@@ -45,10 +46,11 @@ export const AgentBoothConfirmationScreen: React.FC<
         </button>
       </div>
 
-      <div className="w-full max-w-sm mx-auto text-center pt-8 pb-2">
+      <div className="w-full max-w-sm mx-auto text-center pt-8 pb-2 space-y-2">
         <p className="text-[12px] font-medium text-slate-400">
           TellerBud Operations &bull; Secure Agent Portal
         </p>
+        <PoweredByCinitecFooter />
       </div>
     </div>
   );

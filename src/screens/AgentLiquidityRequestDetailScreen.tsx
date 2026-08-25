@@ -22,6 +22,7 @@ import {
   AgentLiquidityRequestDetail,
   LiquidityRequestType,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 interface AgentLiquidityRequestDetailScreenProps {
   request?: AgentLiquidityRequestDetail;
@@ -519,16 +520,6 @@ export const AgentLiquidityRequestDetailScreen: React.FC<
             </span>
           </div>
 
-          {/* Reason Section */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Reason / Note
-            </span>
-            <p className="text-xs text-slate-700 bg-slate-50 border border-slate-100 rounded-xl p-2.5 leading-relaxed">
-              {activeRequest.reason || 'Operational cash replenishment for booth register.'}
-            </p>
-          </div>
-
           {/* Location Context */}
           <div className="space-y-1 pt-1 border-t border-slate-100">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
@@ -623,6 +614,8 @@ export const AgentLiquidityRequestDetailScreen: React.FC<
             No service fee or ping charge applies for request matching.
           </p>
         </div>
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* 6. Sticky Bottom Action Controls */}

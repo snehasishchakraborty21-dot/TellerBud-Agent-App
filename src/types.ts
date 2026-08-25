@@ -46,6 +46,7 @@ export type AssignedServicePreviewState =
   | 'delivery_arrived'
   | 'pickup_assigned'
   | 'pickup_waiting'
+  | 'pickup_deposit_assigned'
   | 'pickup_eta_unavailable'
   | 'scheduled_pickup'
   | 'service_cancelled'
@@ -223,6 +224,7 @@ export type VendorType = 'MNO' | 'Bank';
 export interface RecordedTransaction {
   id: string;
   requestReference?: string;
+  customerName?: string;
   serviceType: 'pickup' | 'delivery';
   transactionType?: string;
   vendorType?: VendorType;
@@ -236,6 +238,8 @@ export interface RecordedTransaction {
   serviceFee?: string;
   agentName?: string;
   agentId?: string;
+  status?: string;
+  rawDate?: string | Date;
 }
 
 export interface ExtractedConfirmationDetails {
@@ -251,6 +255,7 @@ export interface AssignedCustomerService {
   id: string;
   requestReference?: string;
   requestOrigin?: 'Customer' | 'Agent';
+  customerName?: string;
   serviceType: 'pickup' | 'delivery';
   transactionType?: string;
   vendorType?: VendorType;
@@ -277,6 +282,7 @@ export interface IncomingCustomerRequest {
   id: string;
   requestReference?: string;
   requestOrigin?: 'Customer' | 'Agent';
+  customerName?: string;
   serviceType: 'pickup' | 'delivery';
   transactionType?: string;
   vendorType?: VendorType;
@@ -292,6 +298,14 @@ export interface IncomingCustomerRequest {
   customerEstimatedArrival?: string;
   timing?: string;
   expiresAtSeconds?: number;
+  offerCreatedAtTimestamp?: number;
+  offerExpiresAtTimestamp?: number;
+  assignedAgentId?: string;
+  assignedAgentName?: string;
+  offerStatus?: 'pending' | 'accepted' | 'declined' | 'expired';
+  underlyingStatus?: 'searching' | 'assigned' | 'accepted' | 'cancelled' | 'completed';
+  relayCount?: number;
+  attemptedAgentIds?: string[];
   deliveryFee?: string;
   reservationFee?: string;
   agentEarnings?: string;
@@ -461,7 +475,12 @@ export interface AgentLiquidityRequestDetail {
   status: 'searching' | 'matched' | 'timed_out' | 'match_unavailable' | 'transaction_recorded' | 'completed' | 'request_taken' | 'rejected' | 'available_to_respond';
   notificationsSent?: boolean;
   responseDeadlineSeconds?: number;
+  offerCreatedAtTimestamp?: number;
   expiresAtTimestamp?: number;
+  offerStatus?: 'pending' | 'accepted' | 'declined' | 'expired';
+  underlyingStatus?: 'searching' | 'assigned' | 'accepted' | 'cancelled' | 'completed';
+  relayCount?: number;
+  attemptedAgentIds?: string[];
   matchedAgent?: MatchedAgentInfo;
   requesterAgent?: MatchedAgentInfo;
   requesterName?: string;
@@ -660,6 +679,7 @@ export interface WalkInVendorOption {
   type: VendorType;
   code: string;
   accentColor?: string;
+  logoUrl?: string;
   supportedCurrencies?: string[];
 }
 
@@ -761,8 +781,10 @@ export interface WalletTopUpRequestRecord {
 
 export interface AgentEarningsSummary {
   today: string;
-  yesterday: string;
-  total: string;
+  thisWeek: string;
+  thisMonth: string;
+  yesterday?: string;
+  total?: string;
   currencySymbol?: string;
 }
 
@@ -807,5 +829,8 @@ export interface ChatConversation {
   lastMessageTimestamp?: string;
   locationOrBooth?: string;
 }
+
+export type AboutTellerBudPreviewState =
+  | 'default';
 
 

@@ -94,7 +94,11 @@ export const vendorUssdConfigs: Record<string, VendorUssdConfig> = {
           inputType: 'choice',
           inputLabel: 'Reply:',
           placeholder: '2',
-          defaultInputValue: type.toLowerCase().includes('deposit') ? '3' : '2',
+          defaultInputValue: type.toLowerCase().includes('deposit')
+            ? '3'
+            : type.toLowerCase().includes('purchase')
+            ? '1'
+            : '2',
           actionLabel: 'Send',
         },
         {
@@ -201,7 +205,11 @@ export const vendorUssdConfigs: Record<string, VendorUssdConfig> = {
           inputType: 'choice',
           inputLabel: 'Reply:',
           placeholder: '2',
-          defaultInputValue: type.toLowerCase().includes('deposit') ? '1' : '2',
+          defaultInputValue: type.toLowerCase().includes('deposit')
+            ? '1'
+            : type.toLowerCase().includes('purchase')
+            ? '3'
+            : '2',
           actionLabel: 'Send',
         },
         {
@@ -308,7 +316,11 @@ export const vendorUssdConfigs: Record<string, VendorUssdConfig> = {
           inputType: 'choice',
           inputLabel: 'Reply:',
           placeholder: '2',
-          defaultInputValue: type.toLowerCase().includes('deposit') ? '3' : '2',
+          defaultInputValue: type.toLowerCase().includes('deposit')
+            ? '3'
+            : type.toLowerCase().includes('purchase')
+            ? '1'
+            : '2',
           actionLabel: 'Send',
         },
         {
@@ -341,113 +353,6 @@ export const vendorUssdConfigs: Record<string, VendorUssdConfig> = {
           id: 4,
           title: 'Zamtel Kwacha',
           prompt: `Zamtel Kwacha\n\nTransaction successful.\n\nAmount: ${amount}\nVendor Ref: ZMT-44491029\nStatus: Approved`,
-          inputRequired: false,
-          isFinalStep: true,
-          isSuccess: true,
-          actionLabel: 'Done',
-        },
-      ];
-    },
-  },
-
-  ZedMobile: {
-    vendor: 'ZedMobile',
-    vendorDisplayName: 'ZedMobile Money',
-    serviceCodeName: 'ZedMobile Service',
-    accentColor: '#9333ea',
-    getInitialUssdCode: () => '*222#',
-    getSteps: (transactionType, amount, requestRef) => {
-      const type = transactionType || 'Withdrawal';
-      if (type === 'Check Balance' || type === 'balance_check') {
-        return [
-          {
-            id: 1,
-            title: 'ZedMobile Money',
-            prompt: `ZedMobile Money\n\n1. Send Money\n2. Cash Out\n3. Cash In\n4. Check Balance`,
-            options: [
-              { value: '1', label: '1. Send Money' },
-              { value: '2', label: '2. Cash Out' },
-              { value: '3', label: '3. Cash In' },
-              { value: '4', label: '4. Check Balance' },
-            ],
-            inputRequired: true,
-            inputType: 'choice',
-            inputLabel: 'Reply:',
-            placeholder: '4',
-            defaultInputValue: '4',
-            actionLabel: 'Send',
-          },
-          {
-            id: 2,
-            title: 'ZedMobile Money',
-            prompt: `ZedMobile — Check Balance\n\nEnter Agent Secret PIN:`,
-            inputRequired: true,
-            inputType: 'pin',
-            inputLabel: 'Reply (PIN):',
-            placeholder: '••••',
-            defaultInputValue: '7777',
-            actionLabel: 'Check Balance',
-          },
-          {
-            id: 3,
-            title: 'ZedMobile Money',
-            prompt: `ZedMobile Balance:\n\nAvailable Float: ZMW 11,500.00\nCommission: ZMW 320.00\nVendor Ref: ZED-BAL-222891\nStatus: Active Account`,
-            inputRequired: false,
-            isFinalStep: true,
-            isSuccess: true,
-            actionLabel: 'Done',
-          },
-        ];
-      }
-
-      return [
-        {
-          id: 1,
-          title: 'ZedMobile Money',
-          prompt: `ZedMobile Money\n\n1. Send Money\n2. Cash Out\n3. Cash In\n4. My Account`,
-          options: [
-            { value: '1', label: '1. Send Money' },
-            { value: '2', label: '2. Cash Out' },
-            { value: '3', label: '3. Cash In' },
-            { value: '4', label: '4. My Account' },
-          ],
-          inputRequired: true,
-          inputType: 'choice',
-          inputLabel: 'Reply:',
-          placeholder: '2',
-          defaultInputValue: type.toLowerCase().includes('deposit') ? '3' : '2',
-          actionLabel: 'Send',
-        },
-        {
-          id: 2,
-          title: 'ZedMobile Money',
-          prompt: `ZedMobile — ${type}\nAmount: ${amount}\nFee: ZMW 15.00\nRef: ${requestRef || 'REQ-9082'}\n\nEnter Agent PIN:`,
-          inputRequired: true,
-          inputType: 'pin',
-          inputLabel: 'Reply (PIN):',
-          placeholder: '••••',
-          defaultInputValue: '7777',
-          actionLabel: 'Continue',
-        },
-        {
-          id: 3,
-          title: 'ZedMobile Money',
-          prompt: `Confirm ZedMobile ${type} of ${amount}?\n\n1. Confirm\n2. Cancel`,
-          options: [
-            { value: '1', label: '1. Confirm' },
-            { value: '2', label: '2. Cancel' },
-          ],
-          inputRequired: true,
-          inputType: 'choice',
-          inputLabel: 'Reply:',
-          placeholder: '1',
-          defaultInputValue: '1',
-          actionLabel: 'Confirm',
-        },
-        {
-          id: 4,
-          title: 'ZedMobile Money',
-          prompt: `ZedMobile Money\n\nTransaction successful.\n\nAmount: ${amount}\nVendor Ref: ZED-22289102\nStatus: Approved`,
           inputRequired: false,
           isFinalStep: true,
           isSuccess: true,
@@ -555,6 +460,266 @@ export const vendorUssdConfigs: Record<string, VendorUssdConfig> = {
           id: 4,
           title: 'Zanaco Mobile Banking',
           prompt: `Zanaco Mobile Banking\n\nTransaction successful.\n\nAmount: ${amount}\nVendor Ref: ZNC-50183920\nStatus: Approved`,
+          inputRequired: false,
+          isFinalStep: true,
+          isSuccess: true,
+          actionLabel: 'Done',
+        },
+      ];
+    },
+  },
+
+  FNB: {
+    vendor: 'FNB',
+    vendorDisplayName: 'FNB Mobile Banking',
+    serviceCodeName: 'FNB Cellpay',
+    accentColor: '#0d9488',
+    getInitialUssdCode: () => '*247#',
+    getSteps: (transactionType, amount, requestRef) => {
+      const type = transactionType || 'Withdrawal';
+      return [
+        {
+          id: 1,
+          title: 'FNB Mobile Banking',
+          prompt: `FNB Banking (*247#)\n\n1. Transfer Funds\n2. Cash Out\n3. Deposit / eWallet\n4. Balance Check`,
+          options: [
+            { value: '1', label: '1. Transfer Funds' },
+            { value: '2', label: '2. Cash Out' },
+            { value: '3', label: '3. Deposit / eWallet' },
+            { value: '4', label: '4. Balance Check' },
+          ],
+          inputRequired: true,
+          inputType: 'choice',
+          inputLabel: 'Reply:',
+          placeholder: '2',
+          defaultInputValue: type.toLowerCase().includes('deposit') ? '3' : '2',
+          actionLabel: 'Send',
+        },
+        {
+          id: 2,
+          title: 'FNB Mobile Banking',
+          prompt: `FNB Banking — ${type}\nAmount: ${amount}\nRef: ${requestRef || 'REQ-9082'}\n\nEnter Secret PIN:`,
+          inputRequired: true,
+          inputType: 'pin',
+          inputLabel: 'Reply (PIN):',
+          placeholder: '••••',
+          defaultInputValue: '5555',
+          actionLabel: 'Authorize',
+        },
+        {
+          id: 3,
+          title: 'FNB Mobile Banking',
+          prompt: `Confirm FNB ${type} of ${amount}?\n\n1. Authorize\n2. Cancel`,
+          options: [
+            { value: '1', label: '1. Authorize' },
+            { value: '2', label: '2. Cancel' },
+          ],
+          inputRequired: true,
+          inputType: 'choice',
+          inputLabel: 'Reply:',
+          placeholder: '1',
+          defaultInputValue: '1',
+          actionLabel: 'Confirm',
+        },
+        {
+          id: 4,
+          title: 'FNB Mobile Banking',
+          prompt: `FNB Mobile Banking\n\nTransaction successful.\n\nAmount: ${amount}\nVendor Ref: FNB-${Math.floor(10000000 + Math.random() * 90000000)}\nStatus: Settled`,
+          inputRequired: false,
+          isFinalStep: true,
+          isSuccess: true,
+          actionLabel: 'Done',
+        },
+      ];
+    },
+  },
+
+  INDO: {
+    vendor: 'INDO',
+    vendorDisplayName: 'Indo Zambia Bank',
+    serviceCodeName: 'Indo Direct',
+    accentColor: '#4f46e5',
+    getInitialUssdCode: () => '*384#',
+    getSteps: (transactionType, amount, requestRef) => {
+      const type = transactionType || 'Withdrawal';
+      return [
+        {
+          id: 1,
+          title: 'Indo Zambia Bank',
+          prompt: `Indo Zambia Bank (*384#)\n\n1. Fund Transfer\n2. Agency Cash Out\n3. Agency Deposit\n4. Account Enquiry`,
+          options: [
+            { value: '1', label: '1. Fund Transfer' },
+            { value: '2', label: '2. Agency Cash Out' },
+            { value: '3', label: '3. Agency Deposit' },
+            { value: '4', label: '4. Account Enquiry' },
+          ],
+          inputRequired: true,
+          inputType: 'choice',
+          inputLabel: 'Reply:',
+          placeholder: '2',
+          defaultInputValue: type.toLowerCase().includes('deposit') ? '3' : '2',
+          actionLabel: 'Send',
+        },
+        {
+          id: 2,
+          title: 'Indo Zambia Bank',
+          prompt: `Indo Bank — ${type}\nAmount: ${amount}\nRef: ${requestRef || 'REQ-9082'}\n\nEnter Indo PIN:`,
+          inputRequired: true,
+          inputType: 'pin',
+          inputLabel: 'Reply (PIN):',
+          placeholder: '••••',
+          defaultInputValue: '1234',
+          actionLabel: 'Authorize',
+        },
+        {
+          id: 3,
+          title: 'Indo Zambia Bank',
+          prompt: `Confirm Indo Zambia ${type} of ${amount}?\n\n1. Confirm\n2. Cancel`,
+          options: [
+            { value: '1', label: '1. Confirm' },
+            { value: '2', label: '2. Cancel' },
+          ],
+          inputRequired: true,
+          inputType: 'choice',
+          inputLabel: 'Reply:',
+          placeholder: '1',
+          defaultInputValue: '1',
+          actionLabel: 'Confirm',
+        },
+        {
+          id: 4,
+          title: 'Indo Zambia Bank',
+          prompt: `Indo Zambia Bank\n\nTransaction successful.\n\nAmount: ${amount}\nVendor Ref: INDO-${Math.floor(10000000 + Math.random() * 90000000)}\nStatus: Completed`,
+          inputRequired: false,
+          isFinalStep: true,
+          isSuccess: true,
+          actionLabel: 'Done',
+        },
+      ];
+    },
+  },
+
+  Stanbic: {
+    vendor: 'Stanbic',
+    vendorDisplayName: 'Stanbic Bank Zambia',
+    serviceCodeName: 'Stanbic Banking',
+    accentColor: '#0284c7',
+    getInitialUssdCode: () => '*247#',
+    getSteps: (transactionType, amount, requestRef) => {
+      const type = transactionType || 'Withdrawal';
+      return [
+        {
+          id: 1,
+          title: 'Stanbic Bank Zambia',
+          prompt: `Stanbic Banking\n\n1. Send Money\n2. Cash Out\n3. Cash In\n4. Balance Check`,
+          options: [
+            { value: '1', label: '1. Send Money' },
+            { value: '2', label: '2. Cash Out' },
+            { value: '3', label: '3. Cash In' },
+            { value: '4', label: '4. Balance Check' },
+          ],
+          inputRequired: true,
+          inputType: 'choice',
+          inputLabel: 'Reply:',
+          placeholder: '2',
+          defaultInputValue: type.toLowerCase().includes('deposit') ? '3' : '2',
+          actionLabel: 'Send',
+        },
+        {
+          id: 2,
+          title: 'Stanbic Bank Zambia',
+          prompt: `Stanbic — ${type}\nAmount: ${amount}\nRef: ${requestRef || 'REQ-9082'}\n\nEnter Authorization PIN:`,
+          inputRequired: true,
+          inputType: 'pin',
+          inputLabel: 'Reply (PIN):',
+          placeholder: '••••',
+          defaultInputValue: '4321',
+          actionLabel: 'Authorize',
+        },
+        {
+          id: 3,
+          title: 'Stanbic Bank Zambia',
+          prompt: `Confirm Stanbic ${type} of ${amount}?\n\n1. Confirm\n2. Cancel`,
+          options: [
+            { value: '1', label: '1. Confirm' },
+            { value: '2', label: '2. Cancel' },
+          ],
+          inputRequired: true,
+          inputType: 'choice',
+          inputLabel: 'Reply:',
+          placeholder: '1',
+          defaultInputValue: '1',
+          actionLabel: 'Confirm',
+        },
+        {
+          id: 4,
+          title: 'Stanbic Bank Zambia',
+          prompt: `Stanbic Bank Zambia\n\nTransaction successful.\n\nAmount: ${amount}\nVendor Ref: STB-${Math.floor(10000000 + Math.random() * 90000000)}\nStatus: Settled`,
+          inputRequired: false,
+          isFinalStep: true,
+          isSuccess: true,
+          actionLabel: 'Done',
+        },
+      ];
+    },
+  },
+
+  Access: {
+    vendor: 'Access',
+    vendorDisplayName: 'Access Bank Zambia',
+    serviceCodeName: 'Access Closa',
+    accentColor: '#ea580c',
+    getInitialUssdCode: () => '*901#',
+    getSteps: (transactionType, amount, requestRef) => {
+      const type = transactionType || 'Withdrawal';
+      return [
+        {
+          id: 1,
+          title: 'Access Bank Zambia',
+          prompt: `Access Bank (*901#)\n\n1. Transfer\n2. Closa Cash Out\n3. Closa Deposit\n4. Check Balance`,
+          options: [
+            { value: '1', label: '1. Transfer' },
+            { value: '2', label: '2. Closa Cash Out' },
+            { value: '3', label: '3. Closa Deposit' },
+            { value: '4', label: '4. Check Balance' },
+          ],
+          inputRequired: true,
+          inputType: 'choice',
+          inputLabel: 'Reply:',
+          placeholder: '2',
+          defaultInputValue: type.toLowerCase().includes('deposit') ? '3' : '2',
+          actionLabel: 'Send',
+        },
+        {
+          id: 2,
+          title: 'Access Bank Zambia',
+          prompt: `Access Bank — ${type}\nAmount: ${amount}\nRef: ${requestRef || 'REQ-9082'}\n\nEnter Closa PIN:`,
+          inputRequired: true,
+          inputType: 'pin',
+          inputLabel: 'Reply (PIN):',
+          placeholder: '••••',
+          defaultInputValue: '9999',
+          actionLabel: 'Authorize',
+        },
+        {
+          id: 3,
+          title: 'Access Bank Zambia',
+          prompt: `Confirm Access Bank ${type} of ${amount}?\n\n1. Confirm\n2. Cancel`,
+          options: [
+            { value: '1', label: '1. Confirm' },
+            { value: '2', label: '2. Cancel' },
+          ],
+          inputRequired: true,
+          inputType: 'choice',
+          inputLabel: 'Reply:',
+          placeholder: '1',
+          defaultInputValue: '1',
+          actionLabel: 'Confirm',
+        },
+        {
+          id: 4,
+          title: 'Access Bank Zambia',
+          prompt: `Access Bank Zambia\n\nTransaction successful.\n\nAmount: ${amount}\nVendor Ref: ACC-${Math.floor(10000000 + Math.random() * 90000000)}\nStatus: Settled`,
           inputRequired: false,
           isFinalStep: true,
           isSuccess: true,

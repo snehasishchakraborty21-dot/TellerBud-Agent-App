@@ -20,6 +20,7 @@ import {
   RecordedTransaction,
   WalkInTransactionRecord,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 import {
   getDailySummaryReport,
   getSelectableReportDates,
@@ -270,7 +271,7 @@ export const AgentDailySummaryReportScreen: React.FC<AgentDailySummaryReportScre
             </button>
           </div>
 
-          {/* Quick Date Selector Dropdown Tray */}
+          {/* Date Selector Dropdown Tray */}
           {isDatePickerOpen && (
             <div className="pt-2 border-t border-slate-100 space-y-1.5 animate-fadeIn">
               <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider px-1">
@@ -459,6 +460,8 @@ export const AgentDailySummaryReportScreen: React.FC<AgentDailySummaryReportScre
             </span>
           </div>
         </section>
+
+        <PoweredByCinitecFooter className="py-2" />
       </main>
     </div>
   );

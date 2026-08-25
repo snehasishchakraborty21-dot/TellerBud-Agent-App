@@ -4,7 +4,7 @@ export const CONFIGURED_VENDOR_TYPES: { id: VendorType; label: string; descripti
   {
     id: 'MNO',
     label: 'MNO',
-    description: 'Mobile Network Operators (MTN, Airtel, Zamtel, ZedMobile)',
+    description: 'Mobile Network Operators (MTN, Airtel, Zamtel)',
   },
   {
     id: 'Bank',
@@ -32,19 +32,48 @@ export const CONFIGURED_TRANSACTION_TYPES: WalkInTransactionTypeOption[] = [
     id: 'purchase',
     label: 'Purchase',
     requiresVendor: true,
-    usesUssd: false,
+    usesUssd: true,
     defaultFee: 'ZMW 5.00',
   },
 ];
 
+export const MNO_LOGOS: Record<string, string> = {
+  MTN: 'assets/vendor-logos/mno/mtn.png',
+  Airtel: 'assets/vendor-logos/mno/airtel.jpg',
+  Zamtel: 'assets/vendor-logos/mno/zamtel.png',
+};
+
+export const BANK_LOGOS: Record<string, string> = {
+  Zanaco: 'assets/vendor-logos/banks/zanaco.png',
+  FNB: 'assets/vendor-logos/banks/fnb.png',
+  INDO: 'assets/vendor-logos/banks/indo.png',
+  Stanbic: 'assets/vendor-logos/banks/stanbic.png',
+  Access: 'assets/vendor-logos/banks/access.jpg',
+};
+
+export const getVendorLogo = (vendorNameOrId?: string): string | undefined => {
+  if (!vendorNameOrId) return undefined;
+  const lower = vendorNameOrId.toLowerCase().trim();
+  if (lower === 'mtn' || lower.includes('mtn')) return MNO_LOGOS.MTN;
+  if (lower === 'airtel' || lower.includes('airtel')) return MNO_LOGOS.Airtel;
+  if (lower === 'zamtel' || lower.includes('zamtel')) return MNO_LOGOS.Zamtel;
+  if (lower === 'zanaco' || lower.includes('zanaco')) return BANK_LOGOS.Zanaco;
+  if (lower === 'fnb' || lower.includes('fnb')) return BANK_LOGOS.FNB;
+  if (lower === 'indo' || lower.includes('indo')) return BANK_LOGOS.INDO;
+  if (lower === 'stanbic' || lower.includes('stanbic')) return BANK_LOGOS.Stanbic;
+  if (lower === 'access' || lower.includes('access')) return BANK_LOGOS.Access;
+  return undefined;
+};
+
 export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
-  // MNO Vendors (4 Options)
+  // MNO Vendors (3 Approved Options)
   {
     id: 'mtn',
     name: 'MTN',
     type: 'MNO',
     code: 'MTN',
     accentColor: '#eab308',
+    logoUrl: MNO_LOGOS.MTN,
     supportedCurrencies: ['ZMW'],
   },
   {
@@ -53,6 +82,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'MNO',
     code: 'Airtel',
     accentColor: '#ef4444',
+    logoUrl: MNO_LOGOS.Airtel,
     supportedCurrencies: ['ZMW'],
   },
   {
@@ -61,14 +91,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'MNO',
     code: 'Zamtel',
     accentColor: '#22c55e',
-    supportedCurrencies: ['ZMW'],
-  },
-  {
-    id: 'zedmobile',
-    name: 'ZedMobile',
-    type: 'MNO',
-    code: 'ZedMobile',
-    accentColor: '#8b5cf6',
+    logoUrl: MNO_LOGOS.Zamtel,
     supportedCurrencies: ['ZMW'],
   },
   // Bank Vendors (5 Options)
@@ -78,6 +101,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'Bank',
     code: 'Zanaco',
     accentColor: '#0284c7',
+    logoUrl: BANK_LOGOS.Zanaco,
     supportedCurrencies: ['ZMW'],
   },
   {
@@ -86,6 +110,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'Bank',
     code: 'FNB',
     accentColor: '#0d9488',
+    logoUrl: BANK_LOGOS.FNB,
     supportedCurrencies: ['ZMW'],
   },
   {
@@ -94,6 +119,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'Bank',
     code: 'INDO',
     accentColor: '#4f46e5',
+    logoUrl: BANK_LOGOS.INDO,
     supportedCurrencies: ['ZMW'],
   },
   {
@@ -102,6 +128,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'Bank',
     code: 'Stanbic',
     accentColor: '#0284c7',
+    logoUrl: BANK_LOGOS.Stanbic,
     supportedCurrencies: ['ZMW'],
   },
   {
@@ -110,6 +137,7 @@ export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
     type: 'Bank',
     code: 'Access',
     accentColor: '#ea580c',
+    logoUrl: BANK_LOGOS.Access,
     supportedCurrencies: ['ZMW'],
   },
 ];

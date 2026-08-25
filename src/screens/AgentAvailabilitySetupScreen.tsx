@@ -22,6 +22,7 @@ import {
   BandOption,
   AgentAvailabilitySetup,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 import { SERVICES_CONFIG, isServiceEnabled } from '../utils/serviceConfig';
 import {
   DEFAULT_CASH_BAND_OPTIONS,
@@ -562,6 +563,8 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                 <span>Save Availability</span>
               )}
             </button>
+
+            <PoweredByCinitecFooter className="py-2" />
           </>
         )}
       </main>

@@ -42,6 +42,14 @@ export const isOutgoingVendorTransferRequired = (transactionType?: string): bool
     return true;
   }
 
+  // Explicit Purchase / Buy -> Mobile Money MNO transaction -> USSD REQUIRED
+  if (
+    normalized.includes('purchase') ||
+    normalized.includes('buy')
+  ) {
+    return true;
+  }
+
   // Default fallback: Only if explicitly outgoing transfer
   return false;
 };

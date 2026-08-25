@@ -18,6 +18,7 @@ import {
   AgentLiquidityRequestDetail,
   AgentLiquidityExchangePreviewState,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 import { formatNaturalSubmittedTime, formatMatchedProximity } from './AgentLiquidityRequestDetailScreen';
 
 interface AgentLiquidityExchangeScreenProps {
@@ -467,6 +468,8 @@ export const AgentLiquidityExchangeScreen: React.FC<
             </div>
           </div>
         )}
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* 4. STICKY BOTTOM ACTION */}

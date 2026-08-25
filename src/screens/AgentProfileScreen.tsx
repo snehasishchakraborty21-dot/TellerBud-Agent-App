@@ -17,6 +17,7 @@ import {
   AgentAvailabilitySetup,
   AgentProfilePreviewState,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 export interface AgentProfileScreenProps {
   previewState?: AgentProfilePreviewState;
@@ -349,6 +350,8 @@ export const AgentProfileScreen: React.FC<AgentProfileScreenProps> = ({
             </div>
           </>
         )}
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
     </div>
   );

@@ -2,6 +2,8 @@ import React from 'react';
 import { TellerBudLogo } from '../components/TellerBudLogo';
 import { ArrowLeft, MessageSquare, AlertCircle, RotateCcw } from 'lucide-react';
 import { AgentSmsInboxPreviewState, SmsInboxMessage } from '../types';
+import { getVendorLogo } from '../config/walkInConfig';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 interface AgentSmsInboxScreenProps {
   previewState?: AgentSmsInboxPreviewState;
@@ -181,6 +183,16 @@ export const AgentSmsInboxScreen: React.FC<AgentSmsInboxScreenProps> = ({
                         {/* Header: Sender & Received Timestamp */}
                         <div className="flex items-center justify-between gap-2">
                           <div className="flex items-center gap-1.5 min-w-0">
+                            {getVendorLogo(msg.sender) && (
+                              <div className="w-4 h-4 rounded bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
+                                <img
+                                  src={getVendorLogo(msg.sender)}
+                                  alt={msg.sender}
+                                  className="w-full h-full object-contain"
+                                  referrerPolicy="no-referrer"
+                                />
+                              </div>
+                            )}
                             <span className="text-xs font-bold text-[#002244] truncate">
                               {msg.sender}
                             </span>
@@ -205,6 +217,8 @@ export const AgentSmsInboxScreen: React.FC<AgentSmsInboxScreenProps> = ({
             })}
           </div>
         )}
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
     </div>
   );

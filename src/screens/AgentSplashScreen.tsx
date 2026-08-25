@@ -50,9 +50,9 @@ export const AgentSplashScreen: React.FC<AgentSplashScreenProps> = ({
       </div>
 
       {/* Lower-Middle Section: Secondary "Powered by Cinitec" Branding (Elevated with ~80-90px bottom whitespace) */}
-      <div className="w-full flex flex-col items-center justify-center shrink-0 z-10 pb-20 sm:pb-22">
-        <span className="text-[10px] sm:text-[11px] font-semibold text-slate-400 uppercase tracking-widest mb-2">
-          Powered by
+      <div className="w-full flex flex-col items-center justify-center shrink-0 z-10 pb-16 sm:pb-20">
+        <span className="text-xs font-bold text-red-600 tracking-wide mb-2 select-none">
+          Powered by Cinitec
         </span>
         <CinitecLogo maxWidth={120} alt="Cinitec" />
       </div>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  ArrowLeft,
   Truck,
   ShoppingBag,
   Clock,
@@ -8,7 +7,6 @@ import {
   XCircle,
   AlertCircle,
   Loader2,
-  ShieldAlert,
   Info,
   X,
   AlertTriangle,
@@ -19,8 +17,16 @@ import {
 } from 'lucide-react';
 import { TellerBudLogo } from '../components/TellerBudLogo';
 import { IncomingCustomerRequest, RequestDetailPreviewState } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
+import {
+  RESPONSE_WINDOW_SECONDS,
+  getOrCreateOfferExpiresAt,
+  calculateRemainingSeconds,
+  formatCountdownDigits,
+  relayCustomerRequest,
+} from '../utils/requestDispatchService';
 
-import { getVendorType } from '../config/walkInConfig';
+import { getVendorType, getVendorLogo } from '../config/walkInConfig';
 
 interface IncomingCustomerRequestScreenProps {
   request?: IncomingCustomerRequest;
@@ -43,6 +49,7 @@ const defaultPickupRequest: IncomingCustomerRequest = {
   id: 'REQ-9088',
   requestReference: 'REQ-9088',
   requestOrigin: 'Customer',
+  customerName: 'John Banda',
   serviceType: 'pickup',
   transactionType: 'Withdrawal',
   vendorType: 'MNO',
@@ -51,7 +58,7 @@ const defaultPickupRequest: IncomingCustomerRequest = {
   location: 'Booth 03 — Main Atrium',
   agentLocation: 'Booth 03 — Main Atrium',
   timing: 'Scheduled (Within 15 mins)',
-  expiresAtSeconds: 120,
+  expiresAtSeconds: RESPONSE_WINDOW_SECONDS,
   reservationFee: 'ZMW 30.00',
   agentEarnings: 'ZMW 30.00',
 };
@@ -61,6 +68,7 @@ const defaultDeliveryRequest: IncomingCustomerRequest = {
   id: 'REQ-9082',
   requestReference: 'REQ-9082',
   requestOrigin: 'Customer',
+  customerName: 'John Banda',
   serviceType: 'pickup', // Phase 1 normal request is Pickup
   transactionType: 'Withdrawal',
   vendorType: 'MNO',
@@ -68,7 +76,7 @@ const defaultDeliveryRequest: IncomingCustomerRequest = {
   amount: 'ZMW 15,000.00',
   location: 'Booth 03 — Main Atrium',
   agentLocation: 'Booth 03 — Main Atrium',
-  expiresAtSeconds: 90,
+  expiresAtSeconds: RESPONSE_WINDOW_SECONDS,
   reservationFee: 'ZMW 30.00',
   agentEarnings: 'ZMW 30.00',
 };
@@ -93,16 +101,20 @@ export const IncomingCustomerRequestScreen: React.FC<
   onViewAssignedService,
   onRejectSuccess,
 }) => {
+  const currentAgentId = assignment?.agentId || 'AG-88421';
+
   // Phase 1 is strictly Pickup-only for incoming customer requests
   const baseRequest: IncomingCustomerRequest = initialRequest
     ? {
         ...initialRequest,
+        customerName: initialRequest.customerName || 'John Banda',
         serviceType: 'pickup' as const,
         requestOrigin: 'Customer' as const,
         transactionType: initialRequest.transactionType || 'Withdrawal',
         vendor: initialRequest.vendor || 'MTN',
         agentLocation: initialRequest.agentLocation || assignment?.booth || 'Booth 03 — Main Atrium',
         timing: initialRequest.timing || 'Scheduled (Within 15 mins)',
+        expiresAtSeconds: initialRequest.expiresAtSeconds || RESPONSE_WINDOW_SECONDS,
         reservationFee: initialRequest.reservationFee || initialRequest.agentEarnings || 'ZMW 30.00',
         agentEarnings: initialRequest.agentEarnings || initialRequest.reservationFee || 'ZMW 30.00',
       }
@@ -114,16 +126,33 @@ export const IncomingCustomerRequestScreen: React.FC<
     agentLocation: baseRequest.agentLocation || assignment?.booth || 'Booth 03 — Main Atrium',
   };
 
-  // Internal status management
-  const [status, setStatus] = useState<InternalStatus>('AVAILABLE');
-  const [showRejectModal, setShowRejectModal] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState<number | null>(
-    effectiveRequest.expiresAtSeconds ?? null
-  );
+  // Authoritative expiration timestamp (persisted across re-renders and navigation)
+  const [offerExpiresAt] = useState<number>(() => {
+    if (previewState === 'timed_out') return Date.now() - 1000;
+    return getOrCreateOfferExpiresAt(
+      effectiveRequest.id,
+      effectiveRequest.offerExpiresAtTimestamp,
+      RESPONSE_WINDOW_SECONDS
+    );
+  });
 
-  useEffect(() => {
-    setSecondsLeft(effectiveRequest.expiresAtSeconds ?? null);
-  }, [effectiveRequest.expiresAtSeconds, previewState]);
+  // Internal status management
+  const [status, setStatus] = useState<InternalStatus>(() => {
+    if (previewState === 'timed_out') return 'TIMED_OUT';
+    if (previewState === 'assigned_elsewhere' || previewState === 'unavailable') return 'ASSIGNED_ELSEWHERE';
+    if (previewState === 'responding' || previewState === 'accepting') return 'RESPONDING';
+    if (previewState === 'assigned_to_you') return 'ASSIGNED_TO_AGENT';
+    if (previewState === 'rejected') return 'REJECTED_BY_AGENT';
+    if (previewState === 'connection_issue') return 'CONNECTION_ISSUE';
+    return 'AVAILABLE';
+  });
+
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [secondsLeft, setSecondsLeft] = useState<number>(() => {
+    if (previewState === 'timed_out') return 0;
+    return calculateRemainingSeconds(offerExpiresAt);
+  });
+  const [relayedToAgentName, setRelayedToAgentName] = useState<string | null>(null);
 
   // Synchronize status with external previewState overrides
   useEffect(() => {
@@ -132,6 +161,7 @@ export const IncomingCustomerRequestScreen: React.FC<
       case 'delivery_request':
       case 'pickup_request':
         setStatus('AVAILABLE');
+        setSecondsLeft(calculateRemainingSeconds(offerExpiresAt));
         break;
       case 'responding':
       case 'accepting':
@@ -146,6 +176,7 @@ export const IncomingCustomerRequestScreen: React.FC<
         break;
       case 'timed_out':
         setStatus('TIMED_OUT');
+        setSecondsLeft(0);
         break;
       case 'connection_issue':
         setStatus('CONNECTION_ISSUE');
@@ -156,38 +187,29 @@ export const IncomingCustomerRequestScreen: React.FC<
       default:
         setStatus('AVAILABLE');
     }
-  }, [previewState]);
+  }, [previewState, offerExpiresAt]);
 
-  // Countdown timer effect
+  // Authoritative real-time countdown timer effect based on offerExpiresAt
   useEffect(() => {
-    if (status !== 'AVAILABLE' || secondsLeft === null) return;
-    if (secondsLeft <= 0) {
-      setStatus('TIMED_OUT');
-      return;
-    }
+    if (status !== 'AVAILABLE') return;
 
-    const timer = setInterval(() => {
-      setSecondsLeft((prev) => {
-        if (prev === null || prev <= 1) {
-          clearInterval(timer);
-          setStatus('TIMED_OUT');
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    const tick = () => {
+      const remaining = calculateRemainingSeconds(offerExpiresAt);
+      setSecondsLeft(remaining);
 
-    return () => clearInterval(timer);
-  }, [status, secondsLeft]);
+      if (remaining <= 0) {
+        setStatus('TIMED_OUT');
+        setShowRejectModal(false);
+        // Automatically relay the underlying customer request to next eligible agent
+        const relayResult = relayCustomerRequest(effectiveRequest, currentAgentId, 'timeout');
+        setRelayedToAgentName(relayResult.nextAgent.name);
+      }
+    };
 
-  // Format countdown mm:ss
-  const formatTime = (secs: number) => {
-    const mins = Math.floor(secs / 60);
-    const remainder = secs % 60;
-    return `${mins.toString().padStart(2, '0')}:${remainder
-      .toString()
-      .padStart(2, '0')}`;
-  };
+    tick();
+    const interval = setInterval(tick, 500);
+    return () => clearInterval(interval);
+  }, [status, offerExpiresAt, effectiveRequest, currentAgentId]);
 
   // Auto-dismiss reject modal if request status is no longer AVAILABLE
   useEffect(() => {
@@ -198,17 +220,22 @@ export const IncomingCustomerRequestScreen: React.FC<
 
   // Handle Accept Request action: automatic assignment
   const handleAcceptRequest = () => {
+    const remaining = calculateRemainingSeconds(offerExpiresAt);
     if (status !== 'AVAILABLE' && status !== 'CONNECTION_ISSUE') return;
+    if (remaining <= 0 || previewState === 'timed_out') {
+      setStatus('TIMED_OUT');
+      return;
+    }
 
     setStatus('RESPONDING');
 
-    // Simulate quick atomic check and automatic assignment
+    // Simulate atomic verification and assignment
     setTimeout(() => {
       if (previewState === 'assigned_elsewhere' || previewState === 'unavailable') {
         setStatus('ASSIGNED_ELSEWHERE');
         return;
       }
-      if (previewState === 'timed_out' || (secondsLeft !== null && secondsLeft <= 0)) {
+      if (previewState === 'timed_out' || calculateRemainingSeconds(offerExpiresAt) <= 0) {
         setStatus('TIMED_OUT');
         return;
       }
@@ -227,25 +254,30 @@ export const IncomingCustomerRequestScreen: React.FC<
     }, 600);
   };
 
-  // Confirm rejection in modal with live availability revalidation
+  // Confirm rejection in modal with live availability revalidation & immediate relay
   const handleConfirmReject = () => {
     setShowRejectModal(false);
+    const remaining = calculateRemainingSeconds(offerExpiresAt);
 
-    if (status !== 'AVAILABLE' || (secondsLeft !== null && secondsLeft <= 0)) {
-      if (secondsLeft !== null && secondsLeft <= 0) {
+    if (status !== 'AVAILABLE' || remaining <= 0) {
+      if (remaining <= 0) {
         setStatus('TIMED_OUT');
       }
       return;
     }
 
     setStatus('REJECTED_BY_AGENT');
+    // Relay immediately to next eligible agent
+    const relayResult = relayCustomerRequest(effectiveRequest, currentAgentId, 'declined');
+    setRelayedToAgentName(relayResult.nextAgent.name);
+
     setTimeout(() => {
       if (onRejectSuccess) {
         onRejectSuccess();
       } else if (onBack) {
         onBack();
       }
-    }, 800);
+    }, 900);
   };
 
   const earningAmount =
@@ -255,14 +287,6 @@ export const IncomingCustomerRequestScreen: React.FC<
     <div className="w-full h-full min-h-full bg-slate-50 flex flex-col justify-between text-slate-900 select-none overflow-hidden font-sans relative">
       {/* 1. Header (Compact Authenticated Detail Header) */}
       <header className="px-3.5 pt-3 pb-2.5 bg-slate-50 border-b border-slate-200/80 flex items-center justify-between shrink-0 z-10">
-        <button
-          onClick={onBack}
-          aria-label="Back"
-          className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-700 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 stroke-[2.5]" />
-        </button>
-
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-bold text-slate-900 tracking-tight">
             Incoming Request
@@ -278,7 +302,7 @@ export const IncomingCustomerRequestScreen: React.FC<
       </header>
 
       {/* 2. Vertically Scrollable Content Area */}
-      <div className="flex-1 overflow-y-auto no-scrollbar px-3.5 py-3 space-y-3 pb-24">
+      <div className="flex-1 overflow-y-auto no-scrollbar px-3.5 py-3 space-y-3 pb-3">
         {/* Status Banners for Transition / Terminal States */}
         {status === 'RESPONDING' && (
           <div className="bg-blue-50/90 border border-blue-200/80 rounded-xl p-3 flex items-center gap-2.5">
@@ -325,17 +349,12 @@ export const IncomingCustomerRequestScreen: React.FC<
         )}
 
         {status === 'TIMED_OUT' && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2.5">
-            <div className="w-6 h-6 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 mt-0.5">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-2.5 flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0">
               <AlertTriangle className="w-3.5 h-3.5 stroke-[2.5]" />
             </div>
-            <div>
-              <div className="text-xs font-bold text-amber-950">
-                Request Timed Out
-              </div>
-              <p className="text-[11px] text-amber-800 mt-0.5 leading-tight">
-                The response window for this request has ended.
-              </p>
+            <div className="text-xs font-bold text-amber-950">
+              Request Expired
             </div>
           </div>
         )}
@@ -348,7 +367,9 @@ export const IncomingCustomerRequestScreen: React.FC<
             <div>
               <div className="text-xs font-bold text-slate-900">Request Declined</div>
               <p className="text-[11px] text-slate-600 mt-0.5 leading-tight">
-                You declined to respond to this request.
+                {relayedToAgentName
+                  ? `You declined this request. It has been immediately relayed to ${relayedToAgentName}.`
+                  : 'You declined this request. It has been immediately relayed to another eligible agent.'}
               </p>
             </div>
           </div>
@@ -372,41 +393,41 @@ export const IncomingCustomerRequestScreen: React.FC<
 
         {/* Hero Service Summary Card */}
         <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <div className="flex items-center gap-2.5">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-50 text-emerald-700 border border-emerald-100">
+          <div className="flex items-center justify-between gap-2 pb-3 border-b border-slate-100">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-emerald-50 text-emerald-700 border border-emerald-100 shrink-0">
                 <ShoppingBag className="w-5 h-5 stroke-[2]" />
               </div>
-              <div>
+              <div className="min-w-0">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block text-[10px]">
                   Service Type
                 </span>
-                <span className="text-sm font-extrabold text-[#002244] tracking-tight">
+                <span className="text-sm font-extrabold text-[#002244] tracking-tight whitespace-nowrap block">
                   Pickup Request
                 </span>
               </div>
             </div>
 
             {status === 'AVAILABLE' && (
-              secondsLeft !== null ? (
-                <div className="flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200/80 px-2.5 py-1 rounded-lg text-xs font-mono font-bold">
-                  <Clock className="w-3 h-3 text-amber-600" />
-                  <span>{formatTime(secondsLeft)}</span>
-                </div>
-              ) : (
-                <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200/80">
-                  Respond before expiry
-                </span>
-              )
+              <div
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono font-bold transition-all shrink-0 ${
+                  secondsLeft <= 10
+                    ? 'bg-amber-100 text-amber-900 border border-amber-300 ring-2 ring-amber-200/60'
+                    : 'bg-blue-50 text-[#0052CC] border border-blue-200/80'
+                }`}
+              >
+                <Clock className={`w-3.5 h-3.5 ${secondsLeft <= 10 ? 'text-amber-700 animate-pulse' : 'text-[#0052CC]'}`} />
+                <span>{formatCountdownDigits(secondsLeft)}</span>
+              </div>
             )}
           </div>
 
-          {/* Requested Amount Display */}
-          <div className="pt-3.5 flex flex-col items-center justify-center bg-slate-50/80 border border-slate-100 rounded-xl py-3 mt-1">
-            <span className="text-[11px] font-medium text-slate-500 uppercase tracking-wider mb-0.5">
+          {/* Requested Amount Display (Compact Height) */}
+          <div className="flex flex-col items-center justify-center bg-slate-50/80 border border-slate-100 rounded-xl py-2 px-3 mt-2.5">
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider leading-none mb-1">
               Requested Service Amount
             </span>
-            <span className="text-2xl font-black text-[#002244] tracking-tight">
+            <span className="text-xl font-black text-[#002244] tracking-tight leading-tight">
               {effectiveRequest.amount}
             </span>
           </div>
@@ -427,16 +448,8 @@ export const IncomingCustomerRequestScreen: React.FC<
           <div className="divide-y divide-slate-100 text-xs">
             <div className="py-2 flex items-center justify-between">
               <span className="text-slate-500 font-medium">From</span>
-              <span className="font-bold text-slate-900 flex items-center gap-1">
-                <span>Customer</span>
-              </span>
-            </div>
-
-            <div className="py-2 flex items-center justify-between">
-              <span className="text-slate-500 font-medium">Service</span>
-              <span className="font-bold text-slate-900 flex items-center gap-1.5">
-                <ShoppingBag className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Pickup</span>
+              <span className="font-bold text-slate-900">
+                {effectiveRequest.customerName || 'John Banda'}
               </span>
             </div>
 
@@ -448,16 +461,19 @@ export const IncomingCustomerRequestScreen: React.FC<
             </div>
 
             <div className="py-2 flex items-center justify-between">
-              <span className="text-slate-500 font-medium">Vendor Type</span>
-              <span className="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded text-[11px]">
-                {effectiveRequest.vendorType || getVendorType(effectiveRequest.vendor) || 'MNO'}
-              </span>
-            </div>
-
-            <div className="py-2 flex items-center justify-between">
               <span className="text-slate-500 font-medium">Vendor</span>
-              <span className="font-bold text-slate-900 text-right">
-                {effectiveRequest.vendor || 'MTN'}
+              <span className="font-bold text-slate-900 text-right flex items-center gap-1.5">
+                {getVendorLogo(effectiveRequest.vendor || 'MTN') && (
+                  <div className="w-4 h-4 rounded bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden">
+                    <img
+                      src={getVendorLogo(effectiveRequest.vendor || 'MTN')}
+                      alt={effectiveRequest.vendor || 'MTN'}
+                      className="w-full h-full object-contain"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
+                )}
+                <span>{effectiveRequest.vendor || 'MTN'}</span>
               </span>
             </div>
 
@@ -465,13 +481,6 @@ export const IncomingCustomerRequestScreen: React.FC<
               <span className="text-slate-500 font-medium">Amount</span>
               <span className="font-extrabold text-[#002244] font-mono">
                 {effectiveRequest.amount}
-              </span>
-            </div>
-
-            <div className="py-2 flex items-start justify-between gap-3">
-              <span className="text-slate-500 font-medium shrink-0 pt-0.5">Pickup Location</span>
-              <span className="font-semibold text-slate-800 text-right text-[11.5px] leading-snug">
-                {effectiveRequest.agentLocation || assignment?.booth || 'Booth 03 — Main Atrium'}
               </span>
             </div>
           </div>
@@ -494,28 +503,17 @@ export const IncomingCustomerRequestScreen: React.FC<
             </span>
           </div>
 
-          <div className="bg-blue-50/60 border border-blue-200/80 rounded-xl p-3 flex items-center justify-between">
-            <div>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-[#0052CC] block mb-0.5">
-                Reservation Fee
-              </span>
-              <span className="text-[10.5px] text-slate-500 font-medium">
-                Agent earnings for service
-              </span>
-            </div>
+          <div className="bg-blue-50/60 border border-blue-200/80 rounded-xl px-3.5 py-2.5 flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-[#0052CC]">
+              Reservation Fee
+            </span>
             <span className="text-base font-black font-mono text-[#002244] tracking-tight">
               {earningAmount}
             </span>
           </div>
         </div>
 
-        {/* Response Helper Reminder */}
-        <div className="p-3 bg-slate-100/80 rounded-xl border border-slate-200/60 flex items-center gap-2">
-          <ShieldAlert className="w-4 h-4 text-slate-400 shrink-0" />
-          <p className="text-[11px] text-slate-600 leading-tight">
-            Accepting automatically assigns this request to you. No fee is charged for accepting or rejecting.
-          </p>
-        </div>
+        <PoweredByCinitecFooter className="py-1" />
       </div>
 
       {/* 3. Sticky Response Action Area at Bottom (NO Bottom Navigation Bar on Screen 05) */}
@@ -613,7 +611,7 @@ export const IncomingCustomerRequestScreen: React.FC<
             </div>
 
             <p className="text-xs text-slate-600 leading-relaxed">
-              You won&apos;t be considered for this request after rejecting it. Other available requests will continue to reach you.
+              Rejecting will immediately relay this request to another eligible agent. Other available customer requests will continue to reach you.
             </p>
 
             <div className="pt-2 flex items-center gap-2.5">

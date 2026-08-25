@@ -24,12 +24,16 @@ import { TellerBudLogo } from '../components/TellerBudLogo';
 import { isServiceEnabled } from '../utils/serviceConfig';
 import { normalizeZmwAmount } from '../config/currencyConfig';
 import {
+  RESPONSE_WINDOW_SECONDS,
+} from '../utils/requestDispatchService';
+import {
   AgentRequestsPreviewState,
   IncomingCustomerRequest,
   IncomingAgentLiquidityRequestItem,
   MyAgentLiquidityRequestItem,
   BusinessOwnerRequestItem,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 interface AgentRequestsScreenProps {
   previewState?: AgentRequestsPreviewState;
@@ -57,7 +61,7 @@ const defaultCustomerRequests: IncomingCustomerRequest[] = [
     amount: 'ZMW 25,000.00',
     location: 'Booth 03 — Main Atrium',
     timing: 'Express Cash Pickup',
-    expiresAtSeconds: 120,
+    expiresAtSeconds: RESPONSE_WINDOW_SECONDS,
     reservationFee: 'ZMW 30.00',
     agentEarnings: 'ZMW 30.00',
   },
@@ -68,7 +72,7 @@ const defaultCustomerRequests: IncomingCustomerRequest[] = [
     amount: 'ZMW 15,000.00',
     location: 'Booth 03 — Main Atrium',
     timing: 'Scheduled (Within 15 mins)',
-    expiresAtSeconds: 90,
+    expiresAtSeconds: RESPONSE_WINDOW_SECONDS,
     reservationFee: 'ZMW 25.00',
     agentEarnings: 'ZMW 25.00',
   },
@@ -82,7 +86,7 @@ const defaultIncomingAgentLiquidity: IncomingAgentLiquidityRequestItem[] = [
     location: 'Zone B - Apex Supermarket Booth',
     requestingAgentName: 'Agent Samuel O.',
     status: 'available_to_respond',
-    responseDeadlineSeconds: 120,
+    responseDeadlineSeconds: RESPONSE_WINDOW_SECONDS,
   },
   {
     id: 'AL-1008',
@@ -91,6 +95,7 @@ const defaultIncomingAgentLiquidity: IncomingAgentLiquidityRequestItem[] = [
     location: 'Central Mall Station',
     requestingAgentName: 'Agent David K.',
     status: 'available_to_respond',
+    responseDeadlineSeconds: RESPONSE_WINDOW_SECONDS,
   },
 ];
 
@@ -945,6 +950,8 @@ export const AgentRequestsScreen: React.FC<AgentRequestsScreenProps> = ({
             )}
           </>
         )}
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* 4. Fixed Operational 4-Tab Bottom Navigation */}

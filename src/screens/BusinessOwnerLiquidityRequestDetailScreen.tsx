@@ -22,6 +22,7 @@ import {
   BusinessOwnerLiquidityRequestPreviewState,
   WorkAssignment,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 interface BusinessOwnerLiquidityRequestDetailScreenProps {
   request?: BusinessOwnerLiquidityRequestDetail;
@@ -1094,6 +1095,8 @@ export const BusinessOwnerLiquidityRequestDetailScreen: React.FC<
             </button>
           </div>
         )}
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* Cancel Confirmation Sheet Modal */}

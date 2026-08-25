@@ -3,17 +3,13 @@ import {
   ArrowLeft,
   Coins,
   Clock,
-  MapPin,
-  Building2,
-  UserCheck,
   AlertCircle,
   CheckCircle2,
   Loader2,
   RefreshCw,
   X,
-  ShieldCheck,
   ChevronRight,
-  Info,
+  AlertTriangle,
 } from 'lucide-react';
 import { TellerBudLogo } from '../components/TellerBudLogo';
 import {
@@ -22,11 +18,16 @@ import {
   IncomingAgentLiquidityRequestItem,
   WorkAssignment,
 } from '../types';
-import {
-  formatNaturalSubmittedTime,
-  formatMatchedProximity,
-} from './AgentLiquidityRequestDetailScreen';
+import { formatNaturalSubmittedTime } from './AgentLiquidityRequestDetailScreen';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 import { normalizeZmwAmount } from '../config/currencyConfig';
+import {
+  RESPONSE_WINDOW_SECONDS,
+  getOrCreateOfferExpiresAt,
+  calculateRemainingSeconds,
+  formatCountdownDigits,
+  relayAgentLiquidityRequest,
+} from '../utils/requestDispatchService';
 
 interface AgentLiquidityIncomingDetailScreenProps {
   request?: AgentLiquidityRequestDetail | IncomingAgentLiquidityRequestItem;
@@ -51,7 +52,7 @@ const defaultIncomingCashRequest: AgentLiquidityRequestDetail = {
   submittedAt: formatNaturalSubmittedTime(),
   status: 'available_to_respond',
   notificationsSent: true,
-  responseDeadlineSeconds: 120,
+  responseDeadlineSeconds: RESPONSE_WINDOW_SECONDS,
   requesterName: 'Samuel Olawale',
   requesterReference: 'AG-70231',
   requesterBooth: 'Zone B — Apex Supermarket Booth #104',
@@ -70,7 +71,7 @@ const defaultIncomingFloatRequest: AgentLiquidityRequestDetail = {
   submittedAt: formatNaturalSubmittedTime(),
   status: 'available_to_respond',
   notificationsSent: true,
-  responseDeadlineSeconds: 90,
+  responseDeadlineSeconds: RESPONSE_WINDOW_SECONDS,
   requesterName: 'David Kalu',
   requesterReference: 'AG-66190',
   requesterBooth: 'Central Mall Station Booth #01',
@@ -84,7 +85,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
   request,
   previewState = 'incoming_cash',
   assignment,
-  currentAgentId,
+  currentAgentId = 'AG-88421',
   onBack,
   onBackToRequests,
   onAcceptSuccess,
@@ -130,9 +131,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
           ? 'request_taken'
           : 'available_to_respond',
       notificationsSent: true,
-      responseDeadlineSeconds:
-        ('responseDeadlineSeconds' in request && request.responseDeadlineSeconds) ||
-        fallback.responseDeadlineSeconds,
+      responseDeadlineSeconds: RESPONSE_WINDOW_SECONDS,
       expiresAtTimestamp:
         ('expiresAtTimestamp' in request && request.expiresAtTimestamp) ||
         fallback.expiresAtTimestamp,
@@ -160,6 +159,16 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
     () => applyPreviewState(getBaseRequest(), previewState)
   );
 
+  const [offerExpiresAt] = useState<number>(() => {
+    if (previewState === 'timed_out') return Date.now() - 1000;
+    const base = getBaseRequest();
+    return getOrCreateOfferExpiresAt(
+      base.id,
+      base.expiresAtTimestamp,
+      RESPONSE_WINDOW_SECONDS
+    );
+  });
+
   const [isAccepting, setIsAccepting] = useState<boolean>(
     previewState === 'accepting'
   );
@@ -169,12 +178,12 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
   const [statusConfirmed, setStatusConfirmed] = useState<boolean>(
     previewState !== 'status_not_confirmed'
   );
+  const [relayedToAgentName, setRelayedToAgentName] = useState<string | null>(null);
 
-  // Dynamic seconds counter for deadline
-  const [secondsRemaining, setSecondsRemaining] = useState<number | null>(() => {
+  // Dynamic seconds counter calculated from authoritative timestamp
+  const [secondsRemaining, setSecondsRemaining] = useState<number>(() => {
     if (previewState === 'timed_out') return 0;
-    const req = getBaseRequest();
-    return req.responseDeadlineSeconds || 120;
+    return calculateRemainingSeconds(offerExpiresAt);
   });
 
   useEffect(() => {
@@ -194,40 +203,41 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
       setStatusConfirmed(false);
     } else {
       setStatusConfirmed(true);
-      if (base.responseDeadlineSeconds) {
-        setSecondsRemaining(base.responseDeadlineSeconds);
-      }
+      setSecondsRemaining(calculateRemainingSeconds(offerExpiresAt));
     }
-  }, [request, previewState]);
+  }, [request, previewState, offerExpiresAt]);
 
-  // Live countdown timer
+  // Live countdown timer synced to real expiration timestamp
   useEffect(() => {
     if (
-      secondsRemaining === null ||
-      secondsRemaining <= 0 ||
       previewState === 'timed_out' ||
       previewState === 'request_taken' ||
       previewState === 'matched' ||
-      previewState === 'rejected'
+      previewState === 'rejected' ||
+      activeRequest.status === 'matched' ||
+      activeRequest.status === 'timed_out' ||
+      activeRequest.status === 'rejected'
     ) {
       return;
     }
 
-    const interval = setInterval(() => {
-      setSecondsRemaining((prev) => {
-        if (prev === null) return null;
-        if (prev <= 1) {
-          clearInterval(interval);
-          setShowRejectSheet(false);
-          setActiveRequest((current) => ({ ...current, status: 'timed_out' }));
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    const tick = () => {
+      const remaining = calculateRemainingSeconds(offerExpiresAt);
+      setSecondsRemaining(remaining);
 
+      if (remaining <= 0) {
+        setShowRejectSheet(false);
+        setActiveRequest((current) => ({ ...current, status: 'timed_out', offerStatus: 'expired' }));
+        // Automatically relay the liquidity request to next eligible agent
+        const relayResult = relayAgentLiquidityRequest(activeRequest, currentAgentId, 'timeout');
+        setRelayedToAgentName(relayResult.nextAgent.name);
+      }
+    };
+
+    tick();
+    const interval = setInterval(tick, 500);
     return () => clearInterval(interval);
-  }, [secondsRemaining, previewState]);
+  }, [offerExpiresAt, previewState, activeRequest, currentAgentId]);
 
   function applyPreviewState(
     base: AgentLiquidityRequestDetail,
@@ -248,7 +258,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
             base.reason || 'High customer cash withdrawal demand at booth register.',
           submittedAt: stableSubmittedAt,
           status: 'available_to_respond',
-          responseDeadlineSeconds: 120,
+          responseDeadlineSeconds: RESPONSE_WINDOW_SECONDS,
           requesterName: base.requesterName || 'Samuel Olawale',
           requesterReference: base.requesterReference || 'AG-70231',
           requesterBooth:
@@ -269,7 +279,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
             'Float replenishment for urgent customer utility and wallet transfers.',
           submittedAt: stableSubmittedAt,
           status: 'available_to_respond',
-          responseDeadlineSeconds: 90,
+          responseDeadlineSeconds: RESPONSE_WINDOW_SECONDS,
           requesterName: base.requesterName || 'David Kalu',
           requesterReference: base.requesterReference || 'AG-66190',
           requesterBooth:
@@ -343,25 +353,17 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
 
   // Format countdown string
   const formatDeadlineText = (): string => {
-    if (secondsRemaining === null) {
-      return 'Respond while this request is available.';
-    }
-    if (secondsRemaining <= 0) {
+    if (secondsRemaining <= 0 || isTimedOut) {
       return 'Response deadline expired';
     }
-    const mins = Math.floor(secondsRemaining / 60);
-    const secs = secondsRemaining % 60;
-    if (mins > 0) {
-      return `${mins} min${mins > 1 ? 's' : ''} ${secs > 0 ? `${secs} secs ` : ''}remaining`;
-    }
-    return `${secs} sec${secs === 1 ? '' : 's'} remaining`;
+    return `Respond within ${formatCountdownDigits(secondsRemaining)}`;
   };
 
   // State checks
   const isTimedOut =
     previewState === 'timed_out' ||
     activeRequest.status === 'timed_out' ||
-    (secondsRemaining !== null && secondsRemaining <= 0);
+    secondsRemaining <= 0;
 
   const isRequestTaken =
     previewState === 'request_taken' || activeRequest.status === 'request_taken';
@@ -376,9 +378,15 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
 
   const isUnavailable = isTimedOut || isRequestTaken || isRejected;
 
-  // Handle Accept Action
+  // Handle Accept Action with live expiry verification
   const handleAcceptRequest = () => {
-    if (isUnavailable || isAccepting) return;
+    const remaining = calculateRemainingSeconds(offerExpiresAt);
+    if (isUnavailable || isAccepting || remaining <= 0) {
+      if (remaining <= 0) {
+        setActiveRequest((prev) => ({ ...prev, status: 'timed_out' }));
+      }
+      return;
+    }
 
     // Atomic availability check
     setIsAccepting(true);
@@ -387,6 +395,11 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
     // Simulate atomic confirmation
     setTimeout(() => {
       setIsAccepting(false);
+
+      if (calculateRemainingSeconds(offerExpiresAt) <= 0) {
+        setActiveRequest((prev) => ({ ...prev, status: 'timed_out' }));
+        return;
+      }
 
       const acceptingAgentName = assignment?.agentName || 'Marcus Vance';
       const acceptingAgentRef =
@@ -397,6 +410,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
       const confirmedMatchedRequest: AgentLiquidityRequestDetail = {
         ...activeRequest,
         status: 'matched',
+        offerStatus: 'accepted',
         matchedAgent: {
           name: acceptingAgentName,
           agentReference: acceptingAgentRef,
@@ -415,13 +429,17 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
       if (onAcceptSuccess) {
         onAcceptSuccess(confirmedMatchedRequest);
       }
-    }, 850);
+    }, 750);
   };
 
-  // Handle Reject Confirmation
+  // Handle Reject Confirmation with automatic relay
   const handleConfirmReject = () => {
     setShowRejectSheet(false);
-    setActiveRequest((prev) => ({ ...prev, status: 'rejected' }));
+    setActiveRequest((prev) => ({ ...prev, status: 'rejected', offerStatus: 'declined' }));
+    // Relay immediately to next eligible agent
+    const relayResult = relayAgentLiquidityRequest(activeRequest, currentAgentId, 'declined');
+    setRelayedToAgentName(relayResult.nextAgent.name);
+
     if (onRejectSuccess) {
       onRejectSuccess(activeRequest.id);
     } else if (onBackToRequests) {
@@ -444,7 +462,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
   return (
     <div
       id="agent-liquidity-incoming-detail-screen"
-      className="flex flex-col h-full bg-slate-50 text-slate-900 select-none overflow-hidden relative"
+      className="flex flex-col h-full bg-slate-50 text-slate-900 select-none overflow-hidden relative font-sans"
     >
       {/* 1. Header (Compact Authenticated Detail Header) */}
       <header className="bg-white border-b border-slate-200/80 px-3.5 py-2.5 flex items-center justify-between shadow-2xs shrink-0 z-10">
@@ -535,24 +553,26 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
             </div>
           </div>
         ) : isTimedOut ? (
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-2 relative overflow-hidden">
+          <div className="bg-amber-50 border border-amber-200/90 rounded-2xl p-3.5 shadow-2xs space-y-2 relative overflow-hidden">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center shrink-0">
-                <Clock className="w-5 h-5 stroke-[2.5]" />
+              <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 stroke-[2.5]" />
               </div>
               <div className="flex-1">
-                <h2 className="text-sm font-black text-slate-800">
-                  Request timed out
+                <h2 className="text-sm font-black text-amber-950">
+                  Request Expired
                 </h2>
-                <p className="text-xs text-slate-600 leading-snug">
-                  The response period for this liquidity request has ended.
+                <p className="text-xs text-amber-800 leading-snug">
+                  {relayedToAgentName
+                    ? `This request has been automatically relayed to ${relayedToAgentName}.`
+                    : 'This request has been automatically relayed to another eligible agent.'}
                 </p>
               </div>
             </div>
-            <div className="pt-1 border-t border-slate-100">
+            <div className="pt-1 border-t border-amber-200/60">
               <button
                 onClick={onBackToRequests || onBack}
-                className="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold text-center transition-colors"
+                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold text-center transition-colors"
               >
                 Back to Requests
               </button>
@@ -576,31 +596,33 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
             <div className="pt-1 border-t border-amber-100">
               <button
                 onClick={onBackToRequests || onBack}
-                className="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold text-center transition-colors"
+                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold text-center transition-colors"
               >
                 Back to Requests
               </button>
             </div>
           </div>
         ) : isRejected ? (
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-2 relative overflow-hidden">
+          <div className="bg-slate-100 border border-slate-300 rounded-2xl p-3.5 shadow-2xs space-y-2 relative overflow-hidden">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center shrink-0">
                 <X className="w-5 h-5 stroke-[2.5]" />
               </div>
               <div className="flex-1">
-                <h2 className="text-sm font-black text-slate-800">
-                  Request rejected
+                <h2 className="text-sm font-black text-slate-900">
+                  Request Declined
                 </h2>
                 <p className="text-xs text-slate-600 leading-snug">
-                  You are no longer considered for this liquidity request.
+                  {relayedToAgentName
+                    ? `You declined this request. It has been immediately relayed to ${relayedToAgentName}.`
+                    : 'You declined this request. It has been immediately relayed to another eligible agent.'}
                 </p>
               </div>
             </div>
-            <div className="pt-1 border-t border-slate-100">
+            <div className="pt-1 border-t border-slate-200">
               <button
                 onClick={onBackToRequests || onBack}
-                className="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold text-center transition-colors"
+                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold text-center transition-colors"
               >
                 Back to Requests
               </button>
@@ -615,15 +637,21 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
                   Available to respond
                 </h2>
               </div>
-              {secondsRemaining !== null && secondsRemaining > 0 && (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-[#0052CC] border border-blue-100 flex items-center gap-1 font-mono">
-                  <Clock className="w-3 h-3" />
+              {secondsRemaining > 0 && (
+                <span
+                  className={`px-2.5 py-0.5 rounded-full text-xs font-bold flex items-center gap-1.5 font-mono transition-all ${
+                    secondsRemaining <= 10
+                      ? 'bg-amber-100 text-amber-900 border border-amber-300 ring-2 ring-amber-200/60'
+                      : 'bg-blue-50 text-[#0052CC] border border-blue-100'
+                  }`}
+                >
+                  <Clock className={`w-3 h-3 ${secondsRemaining <= 10 ? 'text-amber-700 animate-pulse' : 'text-[#0052CC]'}`} />
                   <span>{formatDeadlineText()}</span>
                 </span>
               )}
             </div>
             <p className="text-xs text-slate-600 leading-snug pt-0.5">
-              You have not accepted this liquidity request yet. Review the details below and respond.
+              Review the liquidity request details below and respond within the active window.
             </p>
           </div>
         )}
@@ -664,14 +692,6 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
               {normalizeZmwAmount(activeRequest.amount)}
             </span>
           </div>
-
-          {/* Time notice if available */}
-          <div className="flex items-center justify-between pt-1 border-t border-slate-100 text-[11px] text-slate-500">
-            <span>Response Window</span>
-            <span className="font-semibold text-slate-700">
-              {formatDeadlineText()}
-            </span>
-          </div>
         </div>
 
         {/* REQUEST INFORMATION CARD */}
@@ -690,7 +710,9 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
           <div className="space-y-2 text-xs">
             <div className="flex items-center justify-between">
               <span className="text-slate-500 font-medium">From</span>
-              <span className="font-bold text-[#002244]">Agent</span>
+              <span className="font-bold text-[#002244]">
+                {activeRequest.requesterName || 'Agent'}
+              </span>
             </div>
 
             <div className="flex items-center justify-between">
@@ -706,91 +728,10 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
                 {activeRequest.amount}
               </span>
             </div>
-
-            {/* Reason */}
-            <div className="space-y-1 pt-1.5 border-t border-slate-100">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                Reason
-              </span>
-              <p className="text-xs text-slate-700 bg-slate-50 border border-slate-100 rounded-xl p-2.5 leading-relaxed break-words">
-                {activeRequest.reason}
-              </p>
-            </div>
-
-            {/* Request Location */}
-            <div className="space-y-1 pt-1.5 border-t border-slate-100">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-                <MapPin className="w-3 h-3 text-[#0052CC]" />
-                <span>Request Location</span>
-              </span>
-              <p className="text-xs text-slate-800 font-semibold leading-snug">
-                {activeRequest.location}
-              </p>
-              {activeRequest.booth && (
-                <p className="text-[11px] text-slate-500">
-                  {activeRequest.booth}
-                </p>
-              )}
-            </div>
           </div>
         </div>
 
-        {/* REQUESTING AGENT CARD */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-2.5">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-              <UserCheck className="w-3.5 h-3.5 text-[#0052CC]" />
-              <span>Requesting Agent</span>
-            </span>
-            {(() => {
-              const proximityLabel = formatMatchedProximity(
-                activeRequest.distance,
-                activeRequest.estimatedTravelTime
-              );
-              if (!proximityLabel) return null;
-              return (
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
-                  {proximityLabel}
-                </span>
-              );
-            })()}
-          </div>
-
-          <div className="space-y-1.5 text-xs">
-            <div className="flex items-center justify-between">
-              <span className="font-bold text-[#002244]">
-                {activeRequest.requesterName || 'Samuel Olawale'}
-              </span>
-              {activeRequest.requesterReference && (
-                <span className="text-[10px] text-slate-400 font-mono">
-                  #{activeRequest.requesterReference}
-                </span>
-              )}
-            </div>
-
-            {activeRequest.requesterBooth && (
-              <div className="flex items-start gap-1.5 text-[11px] text-slate-600">
-                <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
-                <span>{activeRequest.requesterBooth}</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* OPERATIONAL GUIDANCE */}
-        {!isUnavailable && !isMatched && (
-          <div className="bg-blue-50/70 border border-blue-100 rounded-2xl p-3 shadow-2xs flex items-start gap-2.5">
-            <ShieldCheck className="w-4 h-4 text-[#0052CC] shrink-0 mt-0.5" />
-            <div className="space-y-0.5">
-              <span className="text-xs font-bold text-[#002244] block">
-                Agent-to-Agent Exchange
-              </span>
-              <p className="text-[11px] text-slate-600 leading-relaxed">
-                Accepting this request confirms an immediate match with the requesting Agent. You will both proceed to the Liquidity Exchange step.
-              </p>
-            </div>
-          </div>
-        )}
+        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* 5. STICKY BOTTOM RESPONSE AREA */}
@@ -854,7 +795,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
                 Reject this request?
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                You won&apos;t be considered for this liquidity request after rejecting it. Other eligible Agents may still respond.
+                Rejecting will immediately relay this liquidity request to another eligible Agent in the network.
               </p>
             </div>
 

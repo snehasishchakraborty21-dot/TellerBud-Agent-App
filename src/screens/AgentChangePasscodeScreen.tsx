@@ -11,6 +11,7 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { AgentChangePasscodePreviewState, FieldErrors } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 import {
   validatePasscodePolicy,
   setActiveAgentPasscode,
@@ -38,6 +39,14 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
   const [connectionError, setConnectionError] = useState(false);
   const [statusUnknown, setStatusUnknown] = useState(false);
 
+  // Form validity check: exactly 4 numeric digits and matching confirm passcode
+  const isFormValid =
+    newPasscode.length === 4 &&
+    /^\d{4}$/.test(newPasscode) &&
+    confirmPasscode.length === 4 &&
+    /^\d{4}$/.test(confirmPasscode) &&
+    newPasscode === confirmPasscode;
+
   // Sync with preview state
   useEffect(() => {
     if (previewState === 'validation_error') {
@@ -57,7 +66,7 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
       setConfirmPasscode('4321');
       setSubmitted(true);
       setErrors({
-        confirmPasscode: 'Passcodes do not match.',
+        confirmPasscode: 'Passcodes do not match',
       });
       setIsSuccess(false);
       setIsSaving(false);
@@ -106,7 +115,9 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
     }
   }, [previewState]);
 
-  const handleNewPasscodeChange = (val: string) => {
+  const handleNewPasscodeChange = (rawVal: string) => {
+    // Sanitize input: only digits, max 4 chars
+    const val = rawVal.replace(/\D/g, '').slice(0, 4);
     setNewPasscode(val);
     if (connectionError) setConnectionError(false);
     if (statusUnknown) setStatusUnknown(false);
@@ -114,25 +125,24 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
     if (submitted) {
       if (!val) {
         setErrors((prev) => ({ ...prev, newPasscode: 'Required' }));
+      } else if (val.length !== 4) {
+        setErrors((prev) => ({ ...prev, newPasscode: 'Passcode must contain 4 digits.' }));
       } else {
-        const policy = validatePasscodePolicy(val);
-        if (!policy.isValid) {
-          setErrors((prev) => ({ ...prev, newPasscode: policy.errorMessage }));
-        } else {
-          setErrors((prev) => ({ ...prev, newPasscode: undefined }));
-        }
+        setErrors((prev) => ({ ...prev, newPasscode: undefined }));
       }
 
       // Revalidate match if confirm is filled
       if (confirmPasscode && val !== confirmPasscode) {
-        setErrors((prev) => ({ ...prev, confirmPasscode: 'Passcodes do not match.' }));
+        setErrors((prev) => ({ ...prev, confirmPasscode: 'Passcodes do not match' }));
       } else if (confirmPasscode && val === confirmPasscode) {
         setErrors((prev) => ({ ...prev, confirmPasscode: undefined }));
       }
     }
   };
 
-  const handleConfirmPasscodeChange = (val: string) => {
+  const handleConfirmPasscodeChange = (rawVal: string) => {
+    // Sanitize input: only digits, max 4 chars
+    const val = rawVal.replace(/\D/g, '').slice(0, 4);
     setConfirmPasscode(val);
     if (connectionError) setConnectionError(false);
     if (statusUnknown) setStatusUnknown(false);
@@ -140,8 +150,10 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
     if (submitted) {
       if (!val) {
         setErrors((prev) => ({ ...prev, confirmPasscode: 'Required' }));
+      } else if (val.length !== 4) {
+        setErrors((prev) => ({ ...prev, confirmPasscode: 'Passcode must contain 4 digits.' }));
       } else if (val !== newPasscode) {
-        setErrors((prev) => ({ ...prev, confirmPasscode: 'Passcodes do not match.' }));
+        setErrors((prev) => ({ ...prev, confirmPasscode: 'Passcodes do not match' }));
       } else {
         setErrors((prev) => ({ ...prev, confirmPasscode: undefined }));
       }
@@ -154,23 +166,22 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
 
     const nextErrors: FieldErrors = {};
 
-    // 1. Mandatory checks
+    // 1. Mandatory 4-digit validation
     if (!newPasscode) {
       nextErrors.newPasscode = 'Required';
-    } else {
-      const policy = validatePasscodePolicy(newPasscode);
-      if (!policy.isValid) {
-        nextErrors.newPasscode = policy.errorMessage;
-      }
+    } else if (newPasscode.length !== 4 || !/^\d{4}$/.test(newPasscode)) {
+      nextErrors.newPasscode = 'Passcode must contain 4 digits.';
     }
 
     if (!confirmPasscode) {
       nextErrors.confirmPasscode = 'Required';
+    } else if (confirmPasscode.length !== 4 || !/^\d{4}$/.test(confirmPasscode)) {
+      nextErrors.confirmPasscode = 'Passcode must contain 4 digits.';
     } else if (newPasscode && confirmPasscode && newPasscode !== confirmPasscode) {
-      nextErrors.confirmPasscode = 'Passcodes do not match.';
+      nextErrors.confirmPasscode = 'Passcodes do not match';
     }
 
-    if (Object.keys(nextErrors).length > 0) {
+    if (Object.keys(nextErrors).length > 0 || !isFormValid) {
       setErrors(nextErrors);
       return;
     }
@@ -288,7 +299,9 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
                   error={errors.newPasscode}
                   isRequired={true}
                   showRequiredIndicator={submitted && !newPasscode}
-                  placeholder="Enter new passcode"
+                  placeholder="Enter 4-digit passcode"
+                  maxLength={4}
+                  inputMode="numeric"
                   disabled={isSaving}
                 />
 
@@ -301,7 +314,9 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
                   error={errors.confirmPasscode}
                   isRequired={true}
                   showRequiredIndicator={submitted && !confirmPasscode}
-                  placeholder="Re-enter new passcode"
+                  placeholder="Re-enter 4-digit passcode"
+                  maxLength={4}
+                  inputMode="numeric"
                   disabled={isSaving}
                 />
               </div>
@@ -311,9 +326,10 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
                 <TellerBudPrimaryButton
                   type="submit"
                   isLoading={isSaving}
-                  isDisabled={isSaving}
+                  isDisabled={isSaving || !isFormValid}
+                  loadingText="Updating Passcode"
                 >
-                  Save Passcode
+                  Update Passcode
                 </TellerBudPrimaryButton>
 
                 {connectionError && (
@@ -343,6 +359,8 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
             </form>
           </div>
         )}
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
     </div>
   );

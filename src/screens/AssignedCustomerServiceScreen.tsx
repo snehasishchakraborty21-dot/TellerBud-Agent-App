@@ -17,13 +17,21 @@ import { TellerBudLogo } from '../components/TellerBudLogo';
 import {
   AssignedCustomerService,
   AssignedServicePreviewState,
+  RecordedTransaction,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
+import { AndroidPhoneDialler } from '../components/AndroidPhoneDialler';
+import { VendorUssdOverlay } from '../components/VendorUssdOverlay';
+import { isOutgoingVendorTransferRequired } from '../utils/transactionService';
+import { normalizeZmwAmount } from '../config/currencyConfig';
+import { getVendorType } from '../config/walkInConfig';
 
 interface AssignedCustomerServiceScreenProps {
   initialService?: AssignedCustomerService;
   previewState?: AssignedServicePreviewState;
   onBack?: () => void;
-  onProceedToTransaction?: (serviceId: string) => void;
+  onProceed?: (serviceId: string, transactionRecord?: RecordedTransaction) => void;
+  onProceedToTransaction?: (serviceId: string, transactionRecord?: RecordedTransaction) => void;
   onChatWithCustomer?: () => void;
 }
 
@@ -31,6 +39,7 @@ const defaultDeliveryService: AssignedCustomerService = {
   id: 'REQ-9082',
   requestReference: 'REQ-9082',
   requestOrigin: 'Customer',
+  customerName: 'John Banda',
   serviceType: 'delivery',
   transactionType: 'Withdrawal',
   vendor: 'MTN',
@@ -51,6 +60,7 @@ const defaultPickupService: AssignedCustomerService = {
   id: 'REQ-9083',
   requestReference: 'REQ-9083',
   requestOrigin: 'Customer',
+  customerName: 'John Banda',
   serviceType: 'pickup',
   transactionType: 'Withdrawal',
   vendor: 'MTN',
@@ -73,6 +83,7 @@ const defaultScheduledPickupService: AssignedCustomerService = {
   id: 'REQ-9084',
   requestReference: 'REQ-9084',
   requestOrigin: 'Customer',
+  customerName: 'John Banda',
   serviceType: 'pickup',
   transactionType: 'Withdrawal',
   vendor: 'MTN',
@@ -99,11 +110,14 @@ export const AssignedCustomerServiceScreen: React.FC<
   initialService,
   previewState = 'pickup_assigned',
   onBack,
+  onProceed,
   onProceedToTransaction,
   onChatWithCustomer,
 }) => {
   const [retryLoading, setRetryLoading] = useState(false);
   const [journeyStep, setJourneyStep] = useState<DeliveryJourneyStep>('ready');
+  const [execState, setExecState] = useState<'idle' | 'dialler' | 'ussd_in_progress'>('idle');
+  const [capturedVendorRef, setCapturedVendorRef] = useState<string | undefined>(undefined);
 
   // Derive active service data based on previewState or initialService
   const getEffectiveService = (): {
@@ -117,6 +131,19 @@ export const AssignedCustomerServiceScreen: React.FC<
           service: {
             ...defaultPickupService,
             customerEstimatedArrival: undefined,
+          },
+          isCancelled: false,
+          hasConnectionIssue: false,
+        };
+      case 'pickup_deposit_assigned':
+        return {
+          service: {
+            ...defaultPickupService,
+            id: 'REQ-9085',
+            requestReference: 'REQ-9085',
+            transactionType: 'Deposit',
+            vendor: 'MTN',
+            amount: 'ZMW 15,000.00',
           },
           isCancelled: false,
           hasConnectionIssue: false,
@@ -224,6 +251,7 @@ export const AssignedCustomerServiceScreen: React.FC<
 
   const { service, isCancelled, hasConnectionIssue } = getEffectiveService();
   const isDelivery = service.serviceType === 'delivery';
+  const requiresOutgoingUssd = isOutgoingVendorTransferRequired(service.transactionType);
 
   // Sync internal journey step with external previewState
   useEffect(() => {
@@ -236,18 +264,83 @@ export const AssignedCustomerServiceScreen: React.FC<
     }
   }, [previewState]);
 
+  const createRecordedTransaction = (vRef?: string): RecordedTransaction => {
+    const vendorPrefix = (service.vendor || 'MTN').substring(0, 3).toUpperCase();
+    const randomNum = Math.floor(10000000 + Math.random() * 90000000);
+    const finalVendorRef = vRef || capturedVendorRef || `${vendorPrefix}-${randomNum}`;
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+    const currentTimestamp = `Today, ${timeStr}`;
+
+    return {
+      id: `TXN-${service.id}`,
+      requestReference: service.requestReference || service.id,
+      customerName: service.customerName || 'John Banda',
+      serviceType: service.serviceType,
+      transactionType: service.transactionType || 'Withdrawal',
+      vendorType: service.vendorType || getVendorType(service.vendor) || 'MNO',
+      vendor: service.vendor || 'MTN',
+      amount: normalizeZmwAmount(service.amount),
+      location: service.location,
+      booth: service.booth || service.agentLocation || 'Booth 03 — Main Atrium',
+      timestamp: currentTimestamp,
+      recordedAt: currentTimestamp,
+      vendorReference: finalVendorRef,
+      serviceFee: normalizeZmwAmount(service.reservationFee || service.deliveryFee || '30.00'),
+    };
+  };
+
   const handleProceed = () => {
     if (isCancelled) return;
     if (isDelivery && journeyStep !== 'arrived') return;
 
-    if (onProceedToTransaction) {
-      onProceedToTransaction(service.id);
+    if (requiresOutgoingUssd) {
+      // Deposit / Purchase: Launch Dialler / USSD
+      setExecState('dialler');
     } else {
-      console.log(
-        'Contract trigger: Target screen AgentTransactionExecutionScreen for service',
-        service.id
-      );
+      // Withdrawal: NO outgoing USSD, directly complete transaction execution and navigate to completion
+      const txnRecord = createRecordedTransaction();
+      if (onProceed) {
+        onProceed(service.id, txnRecord);
+      } else if (onProceedToTransaction) {
+        onProceedToTransaction(service.id, txnRecord);
+      } else {
+        console.log('Contract trigger: Target screen ServiceCompletionScreen for service', service.id);
+      }
     }
+  };
+
+  const handleDiallerCall = (_dialledCode: string) => {
+    setExecState('ussd_in_progress');
+  };
+
+  const handleDiallerCancel = () => {
+    setExecState('idle');
+  };
+
+  const handleUssdSuccess = (vendorRef: string) => {
+    setCapturedVendorRef(vendorRef || undefined);
+    setExecState('idle');
+    const txnRecord = createRecordedTransaction(vendorRef);
+    if (onProceed) {
+      onProceed(service.id, txnRecord);
+    } else if (onProceedToTransaction) {
+      onProceedToTransaction(service.id, txnRecord);
+    } else {
+      console.log('Contract trigger: Target screen ServiceCompletionScreen for service', service.id);
+    }
+  };
+
+  const handleUssdCancel = () => {
+    setExecState('idle');
+  };
+
+  const handleUssdFailure = (_errMsg?: string) => {
+    setExecState('idle');
   };
 
   const handleRetry = () => {
@@ -536,7 +629,7 @@ export const AssignedCustomerServiceScreen: React.FC<
                     ? 'Tap Start Delivery when you depart from your booth.'
                     : journeyStep === 'en_route'
                     ? 'Navigating to Customer. Tap Arrived once you reach the customer location.'
-                    : 'You have arrived. Tap Proceed to Transaction to execute the service.'}
+                    : 'You have arrived. Tap Proceed to execute the service.'}
                 </p>
               </div>
             </div>
@@ -602,25 +695,14 @@ export const AssignedCustomerServiceScreen: React.FC<
               <div className="flex items-start gap-2 text-[11.5px] text-slate-600 bg-slate-50 rounded-xl p-2.5 border border-slate-100">
                 <Info className="w-4 h-4 text-[#0052CC] shrink-0 mt-0.5" />
                 <p className="leading-snug">
-                  Customer will visit your booth to complete the cash pickup. Tap Proceed to Transaction when ready.
+                  Customer will visit your booth to complete the cash pickup. Tap Proceed when ready.
                 </p>
               </div>
-
-              {/* In-Card Quick Chat Button */}
-              <button
-                type="button"
-                onClick={() => {
-                  if (onChatWithCustomer) onChatWithCustomer();
-                  else console.log('Contract trigger: Target Screen AgentChatConversationScreen');
-                }}
-                className="w-full py-2.5 px-3 rounded-xl bg-blue-50/80 hover:bg-blue-100/80 active:bg-blue-200/80 border border-blue-200/80 text-[#0052CC] font-bold text-xs flex items-center justify-center gap-2 transition-colors active:scale-[0.99]"
-              >
-                <MessageSquare className="w-3.5 h-3.5 text-[#0052CC]" />
-                <span>Chat with Customer</span>
-              </button>
             </div>
           </div>
         )}
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* 3. Sticky Action Area at Bottom (NO Bottom Navigation Bar on Screen 06) */}
@@ -660,24 +742,26 @@ export const AssignedCustomerServiceScreen: React.FC<
                     <span>Arrived at Customer</span>
                   </button>
                   <p className="text-[10px] text-center text-slate-500 font-medium">
-                    Tap when you arrive to unlock Proceed to Transaction
+                    Tap when you arrive to unlock Proceed
                   </p>
                 </div>
               ) : (
                 <button
+                  id="assigned-service-proceed-btn"
                   onClick={handleProceed}
                   className="w-full py-3.5 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#003585] text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
                 >
-                  <span>Proceed to Transaction</span>
+                  <span>Proceed</span>
                   <ChevronRight className="w-4 h-4 stroke-[2.5]" />
                 </button>
               )
             ) : (
               <button
+                id="assigned-service-proceed-btn"
                 onClick={handleProceed}
                 className="w-full py-3.5 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#003585] text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
               >
-                <span>Proceed to Transaction</span>
+                <span>Proceed</span>
                 <ChevronRight className="w-4 h-4 stroke-[2.5]" />
               </button>
             )}
@@ -691,6 +775,31 @@ export const AssignedCustomerServiceScreen: React.FC<
           </button>
         )}
       </div>
+
+      {/* MNO Android Phone Dialler Overlay for Outgoing USSD (Deposit / Purchase) */}
+      {execState === 'dialler' && (
+        <AndroidPhoneDialler
+          vendor={service.vendor || 'MTN'}
+          transactionType={service.transactionType || 'Deposit'}
+          amount={normalizeZmwAmount(service.amount)}
+          requestRef={service.requestReference || service.id}
+          onCall={handleDiallerCall}
+          onCancel={handleDiallerCancel}
+        />
+      )}
+
+      {/* MNO USSD In-App Overlay for Outgoing USSD Execution */}
+      {execState === 'ussd_in_progress' && (
+        <VendorUssdOverlay
+          vendor={service.vendor || 'MTN'}
+          transactionType={service.transactionType || 'Deposit'}
+          amount={normalizeZmwAmount(service.amount)}
+          requestRef={service.requestReference || service.id}
+          onSuccess={handleUssdSuccess}
+          onCancel={handleUssdCancel}
+          onFailure={handleUssdFailure}
+        />
+      )}
     </div>
   );
 };

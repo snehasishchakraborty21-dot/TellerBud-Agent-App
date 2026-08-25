@@ -38,6 +38,7 @@ import {
   ActiveServiceItem,
   AgentWalletData,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 import { AndroidPhoneDialler } from '../components/AndroidPhoneDialler';
 import { VendorUssdOverlay } from '../components/VendorUssdOverlay';
 import {
@@ -50,6 +51,13 @@ import {
   getCashBandById,
   getFloatBandById,
 } from '../utils/availabilityBandsConfig';
+import {
+  RESPONSE_WINDOW_SECONDS,
+  getOrCreateOfferExpiresAt,
+  calculateRemainingSeconds,
+  formatCountdownDigits,
+  relayCustomerRequest,
+} from '../utils/requestDispatchService';
 
 export interface AgentHomeScreenProps {
   assignment?: WorkAssignment;
@@ -81,6 +89,7 @@ const defaultDeliveryRequest: IncomingCustomerRequest = {
   id: 'REQ-9082',
   requestReference: 'REQ-9082',
   requestOrigin: 'Customer',
+  customerName: 'John Banda',
   serviceType: 'delivery',
   transactionType: 'Withdrawal',
   vendor: 'MTN',
@@ -93,7 +102,7 @@ const defaultDeliveryRequest: IncomingCustomerRequest = {
   distance: '4.8 km',
   estimatedTravelTime: '12 min',
   timing: 'Standard Delivery (ASAP)',
-  expiresAtSeconds: 90,
+  expiresAtSeconds: RESPONSE_WINDOW_SECONDS,
   deliveryFee: 'ZMW 50.00',
   agentEarnings: 'ZMW 50.00',
 };
@@ -102,6 +111,7 @@ const defaultPickupRequest: IncomingCustomerRequest = {
   id: 'REQ-9088',
   requestReference: 'REQ-9088',
   requestOrigin: 'Customer',
+  customerName: 'John Banda',
   serviceType: 'pickup',
   transactionType: 'Withdrawal',
   vendor: 'MTN',
@@ -112,7 +122,7 @@ const defaultPickupRequest: IncomingCustomerRequest = {
   agentLocation: 'Booth 03 — Main Atrium',
   customerEstimatedArrival: '12 min',
   timing: 'Scheduled (Within 15 mins)',
-  expiresAtSeconds: 120,
+  expiresAtSeconds: RESPONSE_WINDOW_SECONDS,
   reservationFee: 'ZMW 30.00',
   agentEarnings: 'ZMW 30.00',
 };
@@ -605,12 +615,8 @@ export const AgentHomeScreen: React.FC<AgentHomeScreenProps> = ({
           </div>
         )}
 
-        {/* 7. Quick Actions Section */}
+        {/* 7. Primary Actions Section */}
         <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-            Quick Actions
-          </h3>
-
           <div className="grid grid-cols-2 gap-2.5 mb-2.5">
             <button
               onClick={onStartWalkIn}
@@ -676,7 +682,7 @@ export const AgentHomeScreen: React.FC<AgentHomeScreenProps> = ({
             <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600 transition-colors" />
           </button>
 
-          {/* Third Quick Action: End Workday */}
+          {/* End Workday */}
           <button
             type="button"
             id="home-end-workday-btn"
@@ -698,6 +704,8 @@ export const AgentHomeScreen: React.FC<AgentHomeScreenProps> = ({
             </div>
             <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-rose-600 transition-colors" />
           </button>
+
+          <PoweredByCinitecFooter className="py-2" />
         </div>
       </div>
 
@@ -964,8 +972,6 @@ export const AgentHomeScreen: React.FC<AgentHomeScreenProps> = ({
               detected = 'Airtel';
             } else if (dialledCode.includes('303')) {
               detected = 'Zamtel';
-            } else if (dialledCode.includes('222')) {
-              detected = 'ZedMobile';
             } else if (dialledCode.includes('115')) {
               detected = 'MTN';
             }

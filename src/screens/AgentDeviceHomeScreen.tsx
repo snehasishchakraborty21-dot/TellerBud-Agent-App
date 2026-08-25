@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TellerBudLogo } from '../components/TellerBudLogo';
 import { CinitecLogo } from '../components/CinitecLogo';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 interface AgentDeviceHomeScreenProps {
   onLaunchTellerBud: () => void;
@@ -20,7 +21,7 @@ export const AgentDeviceHomeScreen: React.FC<AgentDeviceHomeScreenProps> = ({
   };
 
   return (
-    <div className="relative w-full h-full bg-white text-slate-900 flex flex-col items-center justify-between px-6 pt-9 pb-8 select-none overflow-hidden font-sans">
+    <div className="relative w-full h-full bg-white text-slate-900 flex flex-col items-center justify-between px-6 pt-9 pb-4 select-none overflow-hidden font-sans">
       {/* Top Corporate Branding: Cinitec Logo Asset */}
       <div className="w-full flex justify-center shrink-0 pt-2">
         <CinitecLogo maxWidth={180} />
@@ -55,8 +56,8 @@ export const AgentDeviceHomeScreen: React.FC<AgentDeviceHomeScreenProps> = ({
         </button>
       </div>
 
-      {/* Bottom spacer to maintain optical balance above gesture bar */}
-      <div className="w-full h-2 shrink-0" />
+      {/* Footer Branding */}
+      <PoweredByCinitecFooter className="shrink-0 py-2" />
 
       {/* Opening App Overlay Transition Effect */}
       {isLaunching && (

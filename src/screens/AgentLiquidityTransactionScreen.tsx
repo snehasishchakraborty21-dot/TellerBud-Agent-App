@@ -18,8 +18,9 @@ import {
   AgentLiquidityRequestDetail,
   AgentLiquidityTransactionPreviewState,
 } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 import { formatNaturalSubmittedTime } from './AgentLiquidityRequestDetailScreen';
-import { getVendorType } from '../config/walkInConfig';
+import { getVendorType, getVendorLogo } from '../config/walkInConfig';
 import { normalizeZmwAmount } from '../config/currencyConfig';
 
 interface AgentLiquidityTransactionScreenProps {
@@ -542,8 +543,18 @@ export const AgentLiquidityTransactionScreen: React.FC<
                 </div>
                 <div className="flex items-start justify-between text-xs pt-1.5 border-t border-slate-100/70">
                   <span className="text-slate-400 font-medium">Vendor</span>
-                  <span className="font-bold text-slate-900">
-                    {activeRequest.vendor || 'MTN'}
+                  <span className="font-bold text-slate-900 flex items-center gap-1.5">
+                    {getVendorLogo(activeRequest.vendor || 'MTN') && (
+                      <div className="w-4 h-4 rounded bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden">
+                        <img
+                          src={getVendorLogo(activeRequest.vendor || 'MTN')}
+                          alt={activeRequest.vendor || 'MTN'}
+                          className="w-full h-full object-contain"
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>
+                    )}
+                    <span>{activeRequest.vendor || 'MTN'}</span>
                   </span>
                 </div>
               </>
@@ -592,6 +603,8 @@ export const AgentLiquidityTransactionScreen: React.FC<
             </p>
           </div>
         )}
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* 4. STICKY BOTTOM ACTIONS */}

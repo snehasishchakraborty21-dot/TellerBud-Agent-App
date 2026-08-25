@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { TellerBudLogo } from '../components/TellerBudLogo';
 import { AgentWalletPreviewState, WalletActivityItem, WalletTopUpRequestRecord } from '../types';
+import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 import {
   useSharedClock,
   formatAppTime,
@@ -512,6 +513,8 @@ export const AgentWalletScreen: React.FC<AgentWalletScreenProps> = ({
             </div>
           )}
         </div>
+
+        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* Top-Up Request Bottom Sheet Modal */}
