@@ -446,11 +446,8 @@ export const AgentDailySummaryReportScreen: React.FC<AgentDailySummaryReportScre
           className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-2xs flex items-center justify-between gap-3"
         >
           <div>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+            <span className="text-xs font-bold text-slate-700 uppercase tracking-wider block">
               Total Transactions
-            </span>
-            <span className="text-xs font-semibold text-slate-600 block mt-0.5">
-              All categories & partners
             </span>
           </div>
 

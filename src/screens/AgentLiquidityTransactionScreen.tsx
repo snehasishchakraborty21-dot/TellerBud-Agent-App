@@ -51,7 +51,7 @@ const defaultMockTransactionRequest: AgentLiquidityRequestDetail = {
     boothOrLocation: 'Booth 01 — West Wing, Central Mall',
     distance: '65 m away',
   },
-  exchangeLocation: 'Booth 03 — Main Atrium, Central Mall Branch #104',
+  exchangeLocation: 'Booth 01 — West Wing, Central Mall',
 };
 
 export const AgentLiquidityTransactionScreen: React.FC<
@@ -136,9 +136,9 @@ export const AgentLiquidityTransactionScreen: React.FC<
             distance: '65 m away',
           },
           exchangeLocation:
+            base.matchedAgent?.boothOrLocation ||
             base.exchangeLocation ||
-            base.booth ||
-            'Booth 03 — Main Atrium, Central Mall Branch #104',
+            'Booth 01 — West Wing, Central Mall',
         };
 
       case 'float_ready':
@@ -162,10 +162,7 @@ export const AgentLiquidityTransactionScreen: React.FC<
             boothOrLocation: 'Booth 04 — North Gate, Central Mall',
             distance: '110 m away',
           },
-          exchangeLocation:
-            base.exchangeLocation ||
-            base.booth ||
-            'Booth 03 — Main Atrium, Central Mall Branch #104',
+          exchangeLocation: 'Booth 04 — North Gate, Central Mall',
         };
 
       case 'confirm_exchange':
@@ -187,9 +184,9 @@ export const AgentLiquidityTransactionScreen: React.FC<
             distance: '65 m away',
           },
           exchangeLocation:
+            base.matchedAgent?.boothOrLocation ||
             base.exchangeLocation ||
-            base.booth ||
-            'Booth 03 — Main Atrium, Central Mall Branch #104',
+            'Booth 01 — West Wing, Central Mall',
         };
 
       case 'exchange_recorded':
@@ -217,9 +214,9 @@ export const AgentLiquidityTransactionScreen: React.FC<
             distance: '65 m away',
           },
           exchangeLocation:
+            base.matchedAgent?.boothOrLocation ||
             base.exchangeLocation ||
-            base.booth ||
-            'Booth 03 — Main Atrium, Central Mall Branch #104',
+            'Booth 01 — West Wing, Central Mall',
         };
 
       case 'status_not_confirmed':
@@ -241,9 +238,9 @@ export const AgentLiquidityTransactionScreen: React.FC<
             distance: '65 m away',
           },
           exchangeLocation:
+            base.matchedAgent?.boothOrLocation ||
             base.exchangeLocation ||
-            base.booth ||
-            'Booth 03 — Main Atrium, Central Mall Branch #104',
+            'Booth 01 — West Wing, Central Mall',
         };
 
       default:
@@ -422,9 +419,6 @@ export const AgentLiquidityTransactionScreen: React.FC<
                 <h2 className="text-sm font-black text-[#002244]">
                   Ready to record exchange
                 </h2>
-                <p className="text-xs text-slate-600 leading-snug">
-                  Review the matched liquidity details before recording the exchange.
-                </p>
               </div>
             </div>
           </div>
@@ -438,9 +432,6 @@ export const AgentLiquidityTransactionScreen: React.FC<
                 <h2 className="text-sm font-black text-[#002244]">
                   Exchange recorded
                 </h2>
-                <p className="text-xs text-slate-600 leading-snug">
-                  The Agent-to-Agent liquidity transaction has been recorded.
-                </p>
               </div>
             </div>
           </div>
@@ -560,30 +551,18 @@ export const AgentLiquidityTransactionScreen: React.FC<
               </>
             )}
 
-            {/* Exchange Location */}
+            {/* Exchange Location (Matched Agent's Location) */}
             <div className="pt-1.5 border-t border-slate-100/70">
               <span className="text-slate-400 text-xs font-medium flex items-center gap-1 mb-1">
                 <MapPin className="w-3.5 h-3.5 text-[#0052CC]" />
                 <span>Exchange Location</span>
               </span>
               <p className="text-xs text-slate-700 font-semibold pl-4.5 leading-snug">
-                {activeRequest.exchangeLocation ||
-                  activeRequest.booth ||
-                  activeRequest.location ||
-                  'Booth 03 — Main Atrium, Central Mall Branch #104'}
-              </p>
-            </div>
-
-            {/* Reason */}
-            <div className="pt-1.5 border-t border-slate-100/70">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">
-                Reason
-              </span>
-              <p className="text-xs text-slate-700 bg-slate-50 border border-slate-100 rounded-xl p-2 leading-relaxed">
-                {activeRequest.reason ||
-                  (activeRequest.requestType === 'cash'
-                    ? 'High morning customer cash withdrawal demand'
-                    : 'Replenishing float for customer transfers')}
+                {activeRequest.matchedAgent?.boothOrLocation ||
+                  activeRequest.matchedAgent?.booth ||
+                  activeRequest.matchedAgent?.location ||
+                  activeRequest.exchangeLocation ||
+                  'Booth 01 — West Wing, Central Mall'}
               </p>
             </div>
           </div>
@@ -598,9 +577,6 @@ export const AgentLiquidityTransactionScreen: React.FC<
                 {activeRequest.serviceFee || 'Standard Rules'}
               </span>
             </div>
-            <p className="text-[10px] text-slate-400 leading-tight">
-              Applicable service fee will be applied according to configured rules.
-            </p>
           </div>
         )}
 
@@ -610,50 +586,40 @@ export const AgentLiquidityTransactionScreen: React.FC<
       {/* 4. STICKY BOTTOM ACTIONS */}
       <div className="bg-white border-t border-slate-200/80 p-3 shadow-lg shrink-0 space-y-1.5 z-10">
         {!isRecorded ? (
-          <>
-            <button
-              id="record-exchange-btn"
-              onClick={handleOpenConfirm}
-              disabled={isRecording || isStatusNotConfirmed}
-              className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all disabled:opacity-50"
-            >
-              {isRecording ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Recording Exchange...</span>
-                </>
-              ) : (
-                <>
-                  <span>Record Exchange</span>
-                  <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-                </>
-              )}
-            </button>
-            <p className="text-[10px] text-center text-slate-400 font-medium leading-tight">
-              Records the operational exchange transaction in TellerBud.
-            </p>
-          </>
+          <button
+            id="record-exchange-btn"
+            onClick={handleOpenConfirm}
+            disabled={isRecording || isStatusNotConfirmed}
+            className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all disabled:opacity-50"
+          >
+            {isRecording ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Recording Exchange...</span>
+              </>
+            ) : (
+              <>
+                <span>Record Exchange</span>
+                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+              </>
+            )}
+          </button>
         ) : (
-          <>
-            <button
-              id="continue-to-completion-btn"
-              onClick={handleContinue}
-              className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all"
-            >
-              <span>Continue</span>
-              <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-            </button>
-            <p className="text-[10px] text-center text-slate-400 font-medium leading-tight">
-              Proceeds to liquidity service completion status.
-            </p>
-          </>
+          <button
+            id="continue-to-completion-btn"
+            onClick={handleContinue}
+            className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all"
+          >
+            <span>Continue</span>
+            <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+          </button>
         )}
       </div>
 
       {/* 5. CONFIRMATION BOTTOM SHEET */}
       {showConfirmSheet && (
         <div className="absolute inset-0 z-50 flex flex-col justify-end bg-black/50 backdrop-blur-2xs transition-opacity animate-in fade-in duration-200">
-          <div className="bg-white rounded-t-3xl border-t border-slate-200 p-4 shadow-2xl space-y-3.5 animate-in slide-in-from-bottom duration-250">
+          <div className="bg-white rounded-t-3xl border-t border-slate-200 p-4 space-y-3.5 shadow-2xl animate-in slide-in-from-bottom duration-250">
             {/* Sheet Handle */}
             <div className="w-10 h-1 bg-slate-200 rounded-full mx-auto" />
 
@@ -661,9 +627,6 @@ export const AgentLiquidityTransactionScreen: React.FC<
               <h3 className="text-base font-black text-[#002244]">
                 Record this exchange?
               </h3>
-              <p className="text-xs text-slate-500 leading-snug">
-                Confirm that the agreed Cash/Float exchange has been completed before recording it in TellerBud.
-              </p>
             </div>
 
             {/* Compact Summary in Sheet */}

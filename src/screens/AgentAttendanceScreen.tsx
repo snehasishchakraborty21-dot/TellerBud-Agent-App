@@ -342,20 +342,15 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
             {isSessionActive ? (
               <>
                 {/* Status Card: Session Active */}
-                <div className="bg-white border border-emerald-200/90 rounded-2xl p-3.5 shadow-2xs flex items-start gap-3">
+                <div className="bg-white border border-emerald-200/90 rounded-2xl p-3.5 shadow-2xs flex items-center gap-3">
                   <div className="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-600 flex items-center justify-center shrink-0">
                     <CheckCircle2 className="w-4 h-4" />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-xs font-extrabold text-emerald-800">
-                        Session Active
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-500 font-medium leading-tight mt-0.5">
-                      Your current work session is in progress.
-                    </p>
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-xs font-extrabold text-emerald-800">
+                      Session Active
+                    </span>
                   </div>
                 </div>
 
@@ -450,13 +445,6 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
                       </span>
                     </div>
                   </div>
-                </div>
-
-                {/* Neutral Note */}
-                <div className="p-3 rounded-xl bg-slate-100/80 border border-slate-200/60 text-center">
-                  <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
-                    Attendance is recorded automatically for your current session.
-                  </p>
                 </div>
               </>
             ) : (

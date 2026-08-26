@@ -287,15 +287,6 @@ export const AgentProfileScreen: React.FC<AgentProfileScreenProps> = ({
                   </span>
                 </div>
               </div>
-
-              {/* Management Controlled Notice */}
-              <div className="pt-2 border-t border-slate-100 flex items-start gap-2 text-[11px] text-slate-500 leading-snug">
-                <Info className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
-                <span>
-                  Your profile and work assignment are managed by your business
-                  administrator.
-                </span>
-              </div>
             </div>
 
             {/* 5. Access & Role Section */}

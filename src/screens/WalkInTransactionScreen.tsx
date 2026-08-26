@@ -1429,9 +1429,6 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
                 <h2 className="text-base font-bold text-slate-900">
                   Transaction recorded
                 </h2>
-                <p className="text-xs text-slate-500">
-                  The Walk-In transaction has been captured successfully.
-                </p>
               </div>
 
               {recordedRecord.vendorConfirmationCaptured && (
@@ -1901,10 +1898,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
         <div className="absolute inset-0 z-40 bg-slate-900/40 backdrop-blur-2xs flex flex-col justify-end animate-fadeIn">
           <div className="bg-white rounded-t-3xl border-t border-slate-200 p-4 pb-6 space-y-3 max-h-[80%] flex flex-col animate-slideUp">
             <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">Select Vendor Type</h3>
-                <p className="text-[11px] text-slate-500">Choose MNO or Bank</p>
-              </div>
+              <h3 className="text-sm font-bold text-slate-900">Select Vendor Type</h3>
               <button
                 onClick={() => setShowVendorTypeSheet(false)}
                 className="p-1 text-slate-400 hover:text-slate-700"
@@ -1945,9 +1939,6 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
                           </span>
                         )}
                       </div>
-                      <div className="text-[11px] text-slate-500 mt-0.5">
-                        {vType.description}
-                      </div>
                     </div>
                     {isSelected && !isBankDisabled && (
                       <Check className="w-4 h-4 text-[#0052CC] shrink-0" />
@@ -1965,16 +1956,9 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
         <div className="absolute inset-0 z-40 bg-slate-900/40 backdrop-blur-2xs flex flex-col justify-end animate-fadeIn">
           <div className="bg-white rounded-t-3xl border-t border-slate-200 p-4 pb-6 space-y-3 max-h-[85%] flex flex-col animate-slideUp">
             <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-              <div>
-                <h3 className="text-sm font-bold text-slate-900">
-                  Select {selectedVendorType ? `${selectedVendorType} ` : ''}Vendor
-                </h3>
-                {selectedVendorType && (
-                  <p className="text-[11px] text-slate-500">
-                    Showing {selectedVendorType === 'MNO' ? 'Mobile Network Operators' : 'Banking Institutions'}
-                  </p>
-                )}
-              </div>
+              <h3 className="text-sm font-bold text-slate-900">
+                Select {selectedVendorType ? `${selectedVendorType} ` : ''}Vendor
+              </h3>
               <button
                 onClick={() => setShowVendorSheet(false)}
                 className="p-1 text-slate-400 hover:text-slate-700"
@@ -2059,16 +2043,6 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
                 <X className="w-4 h-4" />
               </button>
             </div>
-
-            <p className="text-xs text-slate-500">
-              {(activeTypeConfig?.id === 'deposit' || activeTypeConfig?.id === 'cash_in')
-                ? 'Confirm the Walk-In transaction details before proceeding with the Vendor transaction.'
-                : (activeTypeConfig?.id === 'withdrawal' || activeTypeConfig?.id === 'cash_out')
-                ? 'Confirm the Walk-In transaction details before completing the cash-out transaction.'
-                : activeTypeConfig?.id === 'purchase'
-                ? 'Confirm the Walk-In transaction details before launching the MNO dialler.'
-                : 'Confirm the transaction details before proceeding.'}
-            </p>
 
             <div className="bg-slate-50 rounded-xl p-3 border border-slate-200/80 space-y-2 text-xs">
               <div className="flex items-center justify-between">

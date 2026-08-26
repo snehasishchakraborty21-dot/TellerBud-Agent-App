@@ -222,18 +222,8 @@ export const AgentChatConversationScreen: React.FC<AgentChatConversationScreenPr
         </div>
       )}
 
-      {/* 3. Operational Notice Pill */}
-      <div className="py-2 px-3.5 text-center shrink-0">
-        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-500 bg-slate-200/70 border border-slate-300/60 rounded-full px-2.5 py-0.5 shadow-2xs">
-          <Clock className="w-2.5 h-2.5 text-slate-400" />
-          {isClosed
-            ? 'Conversation completed • History preserved'
-            : 'Operational chat for current assigned request'}
-        </span>
-      </div>
-
       {/* 4. Message Bubble Feed */}
-      <div className="flex-1 overflow-y-auto no-scrollbar px-3.5 pb-3 space-y-3">
+      <div className="flex-1 overflow-y-auto no-scrollbar px-3.5 py-3 space-y-3">
         {localMessages.map((msg) => {
           const isAgent = msg.sender === 'agent';
           const isFailed = msg.status === 'failed';
@@ -292,13 +282,10 @@ export const AgentChatConversationScreen: React.FC<AgentChatConversationScreenPr
               <Lock className="w-3.5 h-3.5 text-slate-400" />
               <span>Conversation closed</span>
             </div>
-            <p className="text-[10.5px] text-slate-500 font-medium">
-              This service or liquidity exchange is complete. Further messaging is disabled.
-            </p>
           </div>
         ) : (
           /* Active Text Composer */
-          <div className="space-y-1.5">
+          <div>
             <div className="flex items-center gap-2">
               <div className="flex-1 relative">
                 <textarea
@@ -328,9 +315,6 @@ export const AgentChatConversationScreen: React.FC<AgentChatConversationScreenPr
                 <Send className="w-4 h-4" />
               </button>
             </div>
-            <p className="text-[9.5px] text-slate-400 text-center font-medium">
-              Press Enter or tap Send to coordinate with your counterparty.
-            </p>
           </div>
         )}
       </footer>

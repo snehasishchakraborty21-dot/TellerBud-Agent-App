@@ -3,14 +3,18 @@ import cinitecLogo from '../../assets/cinitec-logo.jpeg';
 
 interface CinitecLogoProps {
   className?: string;
+  imageClassName?: string;
   alt?: string;
   maxWidth?: number;
+  src?: string;
 }
 
 export const CinitecLogo: React.FC<CinitecLogoProps> = ({
   className = '',
+  imageClassName = '',
   alt = 'Cinitec',
   maxWidth = 190,
+  src,
 }) => {
   return (
     <div
@@ -19,10 +23,10 @@ export const CinitecLogo: React.FC<CinitecLogoProps> = ({
       aria-label="Cinitec Logo"
     >
       <img
-        src={cinitecLogo}
+        src={src || cinitecLogo}
         alt={alt}
         referrerPolicy="no-referrer"
-        className="w-full h-auto object-contain pointer-events-none"
+        className={`w-full h-auto object-contain pointer-events-none ${imageClassName}`}
         style={{ maxHeight: '110px' }}
       />
     </div>

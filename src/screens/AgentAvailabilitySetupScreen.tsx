@@ -245,14 +245,11 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
           </div>
         ) : (
           <>
-            {/* Heading & Subtitle */}
+            {/* Heading */}
             <div className="text-left">
               <h2 className="text-[16px] font-bold text-slate-900 tracking-tight leading-tight">
                 Set your availability
               </h2>
-              <p className="text-[12px] text-slate-500 mt-0.5 leading-tight">
-                Choose how you’re available for this work session.
-              </p>
             </div>
 
             {/* Connection Error Banner (if retry state) */}
@@ -320,22 +317,6 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                   Offline
                 </button>
               </div>
-
-              {/* Contextual Helper Line */}
-              {status === 'offline' ? (
-                <div className="space-y-0.5 text-left pl-0.5 mt-0.5">
-                  <p className="text-[11px] font-medium text-slate-600 leading-tight">
-                    You won&apos;t receive new Customer or Agent requests while Offline.
-                  </p>
-                  <p className="text-[10.5px] text-slate-400 leading-tight">
-                    Walk-In transactions and Business Owner liquidity requests remain available.
-                  </p>
-                </div>
-              ) : (
-                <p className="text-[11px] font-medium text-slate-600 leading-tight pl-0.5 mt-0.5">
-                  Available to receive eligible requests.
-                </p>
-              )}
             </div>
 
             {/* Section 2: Services (Pickup, Delivery - Coming Soon) */}
@@ -391,11 +372,6 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                   </span>
                 </button>
               </div>
-
-              {/* Delivery helper message */}
-              <p className="text-[10.5px] text-slate-500 font-medium pl-0.5 mt-0.5">
-                Delivery is coming soon.
-              </p>
             </div>
 
             {/* Section 3: Availability Bands */}
@@ -519,14 +495,6 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                   </span>
                 )}
               </div>
-            </div>
-
-            {/* Compact Information Note */}
-            <div className="flex items-start gap-1.5 px-0.5 text-[11px] text-slate-500 leading-snug">
-              <Info className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
-              <span>
-                Cash and float availability are shared as configured ranges rather than exact values.
-              </span>
             </div>
 
             {/* Primary Action CTA */}

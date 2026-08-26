@@ -33,6 +33,7 @@ interface AssignedCustomerServiceScreenProps {
   onProceed?: (serviceId: string, transactionRecord?: RecordedTransaction) => void;
   onProceedToTransaction?: (serviceId: string, transactionRecord?: RecordedTransaction) => void;
   onChatWithCustomer?: () => void;
+  onCancelService?: (serviceId: string) => void;
 }
 
 const defaultDeliveryService: AssignedCustomerService = {
@@ -113,11 +114,13 @@ export const AssignedCustomerServiceScreen: React.FC<
   onProceed,
   onProceedToTransaction,
   onChatWithCustomer,
+  onCancelService,
 }) => {
   const [retryLoading, setRetryLoading] = useState(false);
   const [journeyStep, setJourneyStep] = useState<DeliveryJourneyStep>('ready');
   const [execState, setExecState] = useState<'idle' | 'dialler' | 'ussd_in_progress'>('idle');
   const [capturedVendorRef, setCapturedVendorRef] = useState<string | undefined>(undefined);
+  const [showCancelModal, setShowCancelModal] = useState<boolean>(false);
 
   // Derive active service data based on previewState or initialService
   const getEffectiveService = (): {
@@ -350,6 +353,15 @@ export const AssignedCustomerServiceScreen: React.FC<
     }, 800);
   };
 
+  const handleConfirmCancel = () => {
+    setShowCancelModal(false);
+    if (onCancelService) {
+      onCancelService(service.id);
+    } else if (onBack) {
+      onBack();
+    }
+  };
+
   // Status label text & style for summary chip
   const getStatusChip = () => {
     if (isCancelled) {
@@ -447,9 +459,6 @@ export const AssignedCustomerServiceScreen: React.FC<
               <div className="text-xs font-extrabold text-red-950 tracking-tight">
                 Service Cancelled
               </div>
-              <p className="text-[11px] font-medium text-red-800 mt-0.5 leading-tight">
-                This service request has been cancelled and is no longer active.
-              </p>
             </div>
           </div>
         )}
@@ -620,18 +629,6 @@ export const AssignedCustomerServiceScreen: React.FC<
                   </span>
                 </div>
               </div>
-
-              {/* Delivery Instruction Step Guidance */}
-              <div className="flex items-start gap-2 text-[11.5px] text-slate-600 bg-slate-50 rounded-xl p-2.5 border border-slate-100">
-                <Info className="w-4 h-4 text-[#0052CC] shrink-0 mt-0.5" />
-                <p className="leading-snug">
-                  {journeyStep === 'ready'
-                    ? 'Tap Start Delivery when you depart from your booth.'
-                    : journeyStep === 'en_route'
-                    ? 'Navigating to Customer. Tap Arrived once you reach the customer location.'
-                    : 'You have arrived. Tap Proceed to execute the service.'}
-                </p>
-              </div>
             </div>
           </div>
         )}
@@ -690,14 +687,6 @@ export const AssignedCustomerServiceScreen: React.FC<
                   </span>
                 </div>
               )}
-
-              {/* Helpful inline note */}
-              <div className="flex items-start gap-2 text-[11.5px] text-slate-600 bg-slate-50 rounded-xl p-2.5 border border-slate-100">
-                <Info className="w-4 h-4 text-[#0052CC] shrink-0 mt-0.5" />
-                <p className="leading-snug">
-                  Customer will visit your booth to complete the cash pickup. Tap Proceed when ready.
-                </p>
-              </div>
             </div>
           </div>
         )}
@@ -724,46 +713,62 @@ export const AssignedCustomerServiceScreen: React.FC<
             </button>
 
             {isDelivery ? (
-              journeyStep === 'ready' ? (
+              <div className="flex items-center gap-2">
                 <button
-                  onClick={() => setJourneyStep('en_route')}
-                  className="w-full py-3.5 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#003585] text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
+                  type="button"
+                  id="assigned-service-cancel-btn"
+                  onClick={() => setShowCancelModal(true)}
+                  className="w-1/3 py-3.5 px-3 rounded-xl bg-white hover:bg-red-50 active:bg-red-100 text-red-600 border border-red-200 font-extrabold text-xs transition-colors shadow-2xs flex items-center justify-center gap-1 active:scale-[0.98]"
                 >
-                  <Navigation className="w-4 h-4" />
-                  <span>Start Delivery</span>
+                  <span>Cancel</span>
                 </button>
-              ) : journeyStep === 'en_route' ? (
-                <div className="space-y-1.5">
+                {journeyStep === 'ready' ? (
+                  <button
+                    onClick={() => setJourneyStep('en_route')}
+                    className="flex-1 py-3.5 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#003585] text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
+                  >
+                    <Navigation className="w-4 h-4" />
+                    <span>Start Delivery</span>
+                  </button>
+                ) : journeyStep === 'en_route' ? (
                   <button
                     onClick={() => setJourneyStep('arrived')}
-                    className="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
+                    className="flex-1 py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
                   >
                     <MapPin className="w-4 h-4" />
                     <span>Arrived at Customer</span>
                   </button>
-                  <p className="text-[10px] text-center text-slate-500 font-medium">
-                    Tap when you arrive to unlock Proceed
-                  </p>
-                </div>
-              ) : (
+                ) : (
+                  <button
+                    id="assigned-service-proceed-btn"
+                    onClick={handleProceed}
+                    className="flex-1 py-3.5 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#003585] text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
+                  >
+                    <span>Proceed</span>
+                    <ChevronRight className="w-4 h-4 stroke-[2.5]" />
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
                 <button
+                  type="button"
+                  id="assigned-service-cancel-btn"
+                  onClick={() => setShowCancelModal(true)}
+                  className="w-1/3 py-3.5 px-3 rounded-xl bg-white hover:bg-red-50 active:bg-red-100 text-red-600 border border-red-200 font-extrabold text-xs transition-colors shadow-2xs flex items-center justify-center gap-1 active:scale-[0.98]"
+                >
+                  <span>Cancel</span>
+                </button>
+                <button
+                  type="button"
                   id="assigned-service-proceed-btn"
                   onClick={handleProceed}
-                  className="w-full py-3.5 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#003585] text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
+                  className="flex-1 py-3.5 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#003585] text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
                 >
                   <span>Proceed</span>
                   <ChevronRight className="w-4 h-4 stroke-[2.5]" />
                 </button>
-              )
-            ) : (
-              <button
-                id="assigned-service-proceed-btn"
-                onClick={handleProceed}
-                className="w-full py-3.5 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#003585] text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-2 active:scale-[0.98]"
-              >
-                <span>Proceed</span>
-                <ChevronRight className="w-4 h-4 stroke-[2.5]" />
-              </button>
+              </div>
             )}
           </>
         ) : (
@@ -775,6 +780,41 @@ export const AssignedCustomerServiceScreen: React.FC<
           </button>
         )}
       </div>
+
+      {/* Cancel Confirmation Dialog */}
+      {showCancelModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+          <div className="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl border border-slate-100 flex flex-col items-center text-center space-y-4">
+            <div className="w-12 h-12 rounded-full bg-red-50 text-red-600 flex items-center justify-center border border-red-100">
+              <XCircle className="w-6 h-6 stroke-[2]" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-900">Cancel Request?</h3>
+              <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                Are you sure you want to cancel this assigned service?
+              </p>
+            </div>
+            <div className="w-full flex flex-col gap-2 pt-1">
+              <button
+                type="button"
+                id="confirm-cancel-request-btn"
+                onClick={handleConfirmCancel}
+                className="w-full py-3 px-4 rounded-xl bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-extrabold text-xs transition-colors shadow-xs cursor-pointer"
+              >
+                Cancel Request
+              </button>
+              <button
+                type="button"
+                id="keep-request-btn"
+                onClick={() => setShowCancelModal(false)}
+                className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+              >
+                Keep Request
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* MNO Android Phone Dialler Overlay for Outgoing USSD (Deposit / Purchase) */}
       {execState === 'dialler' && (

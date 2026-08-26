@@ -402,9 +402,6 @@ export const AgentLiquidityRequestDetailScreen: React.FC<
                   Searching for an Agent
                 </h2>
               </div>
-              <p className="text-xs text-slate-600 leading-relaxed pl-9">
-                TellerBud is checking eligible Agents for this request.
-              </p>
             </div>
 
             {/* Notification Confirmation Line */}
@@ -445,9 +442,6 @@ export const AgentLiquidityRequestDetailScreen: React.FC<
                 <h2 className="text-sm font-black text-[#002244]">
                   Agent accepted
                 </h2>
-                <p className="text-xs text-slate-600 leading-snug">
-                  An Agent has accepted your liquidity request.
-                </p>
               </div>
             </div>
           </div>
@@ -467,9 +461,6 @@ export const AgentLiquidityRequestDetailScreen: React.FC<
               <h2 className="text-sm font-extrabold text-slate-800">
                 Request timed out
               </h2>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                No Agent accepted this request within the available response period.
-              </p>
             </div>
           </div>
         )}
@@ -488,9 +479,6 @@ export const AgentLiquidityRequestDetailScreen: React.FC<
               <h2 className="text-sm font-extrabold text-slate-800">
                 Match unavailable
               </h2>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                This match is no longer active.
-              </p>
             </div>
           </div>
         )}
@@ -518,22 +506,6 @@ export const AgentLiquidityRequestDetailScreen: React.FC<
             <span className="text-base font-black text-[#002244] font-mono">
               {activeRequest.amount}
             </span>
-          </div>
-
-          {/* Location Context */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Request Location
-            </span>
-            <div className="flex items-start gap-1.5 text-xs text-slate-700">
-              <MapPin className="w-3.5 h-3.5 text-[#0052CC] shrink-0 mt-0.5" />
-              <div>
-                {activeRequest.booth && (
-                  <div className="font-bold text-[#002244]">{activeRequest.booth}</div>
-                )}
-                <div className="text-[11px] text-slate-500">{activeRequest.location}</div>
-              </div>
-            </div>
           </div>
 
           {/* Submitted Date/Time */}
@@ -602,18 +574,8 @@ export const AgentLiquidityRequestDetailScreen: React.FC<
                 activeRequest.location ||
                 'Exchange location will be shown when available.'}
             </p>
-            <p className="text-[10px] text-slate-500 leading-snug">
-              Physical cash/float handover will take place at this designated location.
-            </p>
           </div>
         )}
-
-        {/* Operational Notice: No Ping Charge / No Service Fee on Matching */}
-        <div className="px-2 py-1 text-center">
-          <p className="text-[10px] text-slate-400 leading-snug">
-            No service fee or ping charge applies for request matching.
-          </p>
-        </div>
 
         <PoweredByCinitecFooter className="py-2" />
       </div>

@@ -9,7 +9,6 @@ import {
   AlertCircle,
   Clock,
   CheckCircle2,
-  Info,
   Loader2,
   RefreshCw,
 } from 'lucide-react';
@@ -52,23 +51,18 @@ const defaultAssignment: WorkAssignment = {
 export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenProps> = ({
   assignment = defaultAssignment,
   previewState = 'another_agent_cash',
-  config = { requireReason: true },
   isOffline = false,
   onBack,
   onSubmitSuccess,
   onCheckStatus,
 }) => {
-  const isReasonRequired = config.requireReason ?? true;
-
   const [requestFrom, setRequestFrom] = useState<LiquidityRequestFrom>(
     isOffline ? 'business_owner' : 'agent'
   );
   const [requestType, setRequestType] = useState<LiquidityRequestType>('cash');
   const [vendorType, setVendorType] = useState<VendorType | ''>('MNO');
   const [vendor, setVendor] = useState<string>('MTN');
-  const [amount, setAmount] = useState<string>('50,000');
-  const [note, setNote] = useState<string>('High morning customer cash withdrawal demand');
-  const [noteTouched, setNoteTouched] = useState<boolean>(false);
+  const [amount, setAmount] = useState<string>('');
   const [amountTouched, setAmountTouched] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -91,9 +85,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         setRequestType('cash');
         setVendorType('MNO');
         setVendor('MTN');
-        setAmount('50,000');
-        setNote('High morning customer cash withdrawal demand');
-        setNoteTouched(false);
+        setAmount('');
         setAmountTouched(false);
         setIsSubmitting(false);
         setErrorMessage(null);
@@ -104,9 +96,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         setRequestType('float');
         setVendorType('MNO');
         setVendor('MTN');
-        setAmount('100,000');
-        setNote('Replenishing float for MTN & Airtel transfers');
-        setNoteTouched(false);
+        setAmount('');
         setAmountTouched(false);
         setIsSubmitting(false);
         setErrorMessage(null);
@@ -117,9 +107,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         setRequestType('cash');
         setVendorType('MNO');
         setVendor('MTN');
-        setAmount('75,000');
-        setNote('Mid-day cash replenishment for booth register');
-        setNoteTouched(false);
+        setAmount('');
         setAmountTouched(false);
         setIsSubmitting(false);
         setErrorMessage(null);
@@ -130,9 +118,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         setRequestType('float');
         setVendorType('MNO');
         setVendor('MTN');
-        setAmount('150,000');
-        setNote('Float top-up required for heavy weekend volume');
-        setNoteTouched(false);
+        setAmount('');
         setAmountTouched(false);
         setIsSubmitting(false);
         setErrorMessage(null);
@@ -144,8 +130,6 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         setVendorType('MNO');
         setVendor('MTN');
         setAmount('50,000');
-        setNote('High morning cash withdrawal demand');
-        setNoteTouched(false);
         setAmountTouched(false);
         setIsSubmitting(true);
         setErrorMessage(null);
@@ -156,9 +140,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         setRequestType('cash');
         setVendorType('MNO');
         setVendor('MTN');
-        setAmount('50,000');
-        setNote('High morning cash withdrawal demand');
-        setNoteTouched(false);
+        setAmount('');
         setAmountTouched(false);
         setIsSubmitting(false);
         setErrorMessage('Unable to submit request. Check your connection and try again.');
@@ -169,9 +151,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         setRequestType('float');
         setVendorType('MNO');
         setVendor('MTN');
-        setAmount('100,000');
-        setNote('Float top-up required for heavy weekend volume');
-        setNoteTouched(false);
+        setAmount('');
         setAmountTouched(false);
         setIsSubmitting(false);
         setErrorMessage(null);
@@ -197,7 +177,6 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
 
   const parsedNumericAmount = parseInt(amount.replace(/[^0-9]/g, ''), 10) || 0;
   const isAmountValid = parsedNumericAmount > 0;
-  const isReasonValid = !isReasonRequired || Boolean(note.trim());
   const isLocationAvailable = Boolean(assignment.booth || assignment.location);
   const isVendorValid = requestType !== 'float' || (Boolean(vendorType) && Boolean(vendor));
 
@@ -205,11 +184,9 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
     Boolean(requestFrom) &&
     Boolean(requestType) &&
     isAmountValid &&
-    isReasonValid &&
     isLocationAvailable &&
     isVendorValid;
 
-  const showReasonError = noteTouched && !isReasonValid;
   const showAmountError = amountTouched && !isAmountValid;
 
   const handleSubmit = (e?: React.FormEvent) => {
@@ -217,7 +194,6 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
     if (isSubmitting || hasSubmitted) return;
 
     setAmountTouched(true);
-    setNoteTouched(true);
 
     if (!isAmountValid) {
       setErrorMessage('Please enter a valid amount.');
@@ -226,10 +202,6 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
 
     if (requestType === 'float' && (!vendorType || !vendor)) {
       setErrorMessage('Please select both Vendor Type and Vendor for float requests.');
-      return;
-    }
-
-    if (isReasonRequired && !note.trim()) {
       return;
     }
 
@@ -247,7 +219,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         vendor: requestType === 'float' ? vendor : undefined,
         amount: normalizeZmwAmount(amount),
         locationOrBooth: assignment.booth || assignment.location,
-        note: note.trim(),
+        note: '',
       };
       onSubmitSuccess?.(payload);
     }, 900);
@@ -273,9 +245,6 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
             <h1 className="text-sm font-bold text-[#002244] leading-tight">
               Request Cash / Float
             </h1>
-            <p className="text-[10px] text-slate-500 font-medium">
-              Operational Liquidity
-            </p>
           </div>
         </div>
 
@@ -379,9 +348,6 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
               <span className="text-xs font-bold block leading-tight">
                 Another Agent
               </span>
-              <span className="text-[10px] text-slate-500 block mt-0.5 leading-snug">
-                {isOffline ? 'Unavailable Offline' : 'Eligible agents'}
-              </span>
             </button>
 
             {/* Business Owner Option */}
@@ -412,9 +378,6 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
               </div>
               <span className="text-xs font-bold block leading-tight">
                 Business Owner
-              </span>
-              <span className="text-[10px] text-slate-500 block mt-0.5 leading-snug">
-                Store / booth owner
               </span>
             </button>
           </div>
@@ -465,9 +428,6 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 Float Vendor Context
               </span>
-              <span className="text-[10px] font-bold text-[#0052CC] bg-blue-50 px-2 py-0.5 rounded border border-blue-200/50">
-                Required for Float
-              </span>
             </div>
 
             {/* Vendor Type Selection */}
@@ -490,9 +450,6 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
                     }`}
                   >
                     <div className="text-xs font-bold">{vt.id}</div>
-                    <div className="text-[9.5px] text-slate-500 leading-tight">
-                      {vt.id === 'MNO' ? 'Mobile Network' : 'Bank'}
-                    </div>
                   </button>
                 ))}
               </div>
@@ -568,7 +525,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
               onChange={handleAmountChange}
               onBlur={() => setAmountTouched(true)}
               disabled={isSubmitting}
-              placeholder="0.00"
+              placeholder="Enter amount"
               className={`w-full pl-14 pr-3 py-2.5 bg-slate-50 border rounded-xl text-base font-bold text-[#002244] font-mono focus:bg-white focus:outline-none transition-all ${
                 showAmountError
                   ? 'border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500'
@@ -606,13 +563,6 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
                   {assignment.location}
                 </p>
               </div>
-
-              <p className="text-[10px] text-slate-500 flex items-center gap-1 leading-snug">
-                <Info className="w-3 h-3 text-[#0052CC] shrink-0" />
-                <span>
-                  Eligible agents may view your work location when reviewing this request and coordinating the exchange.
-                </span>
-              </p>
             </div>
           ) : (
             <div>
@@ -640,58 +590,8 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
                   <span className="font-semibold text-slate-800">{assignment.booth}</span>
                 </div>
               </div>
-
-              <p className="text-[10px] text-slate-500 flex items-center gap-1 leading-snug">
-                <Info className="w-3 h-3 text-[#0052CC] shrink-0" />
-                <span>
-                  Request requires Business Owner review & approval before handover.
-                </span>
-              </p>
             </div>
           )}
-        </div>
-
-        {/* Section 5: Required Reason / Note (Free-text for Both Sources) */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-xs">
-          <div className="flex items-center justify-between mb-1.5">
-            <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
-              Reason / Note
-            </label>
-            {isReasonRequired && (
-              <span className="text-[10px] font-semibold text-[#0052CC]">
-                Required
-              </span>
-            )}
-          </div>
-          <textarea
-            id="liquidity-note-input"
-            rows={2}
-            value={note}
-            onChange={(e) => {
-              setNote(e.target.value);
-              if (noteTouched) setNoteTouched(true);
-            }}
-            onBlur={() => setNoteTouched(true)}
-            disabled={isSubmitting}
-            placeholder="Add a reason for this request"
-            className={`w-full px-3 py-2 bg-slate-50 border rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-none resize-none transition-all ${
-              showReasonError
-                ? 'border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500'
-                : 'border-slate-200 focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]'
-            }`}
-          />
-          {showReasonError && (
-            <p className="text-[11px] text-red-600 font-medium mt-1">
-              Add a reason for this request.
-            </p>
-          )}
-        </div>
-
-        {/* Operational Fee Notice */}
-        <div className="px-1 text-center">
-          <p className="text-[10px] text-slate-400 leading-snug">
-            No platform charge or ping fee is applied for requesting operational Cash or Float.
-          </p>
         </div>
 
         <PoweredByCinitecFooter className="py-2" />

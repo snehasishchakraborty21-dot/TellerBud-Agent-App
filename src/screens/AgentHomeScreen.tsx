@@ -620,36 +620,26 @@ export const AgentHomeScreen: React.FC<AgentHomeScreenProps> = ({
           <div className="grid grid-cols-2 gap-2.5 mb-2.5">
             <button
               onClick={onStartWalkIn}
-              className="bg-white border border-slate-200/90 hover:border-[#0052CC]/50 rounded-2xl p-3 text-left transition-all hover:shadow-xs group flex flex-col justify-between min-h-[90px]"
+              className="bg-white border border-slate-200/90 hover:border-[#0052CC]/50 rounded-2xl p-3 text-left transition-all hover:shadow-xs group flex flex-col justify-between min-h-[76px]"
             >
               <div className="w-8 h-8 rounded-xl bg-sky-50 text-[#0052CC] flex items-center justify-center mb-2 group-hover:bg-[#0052CC] group-hover:text-white transition-colors">
                 <QrCode className="w-4 h-4" />
               </div>
-              <div>
-                <span className="text-xs font-bold text-slate-900 block leading-snug">
-                  Walk-In Transaction
-                </span>
-                <span className="text-[10px] text-slate-400 block mt-0.5">
-                  Start booth capture
-                </span>
-              </div>
+              <span className="text-xs font-bold text-slate-900 block leading-snug">
+                Walk-In Transaction
+              </span>
             </button>
 
             <button
               onClick={onRequestLiquidity}
-              className="bg-white border border-slate-200/90 hover:border-[#0052CC]/50 rounded-2xl p-3 text-left transition-all hover:shadow-xs group flex flex-col justify-between min-h-[90px]"
+              className="bg-white border border-slate-200/90 hover:border-[#0052CC]/50 rounded-2xl p-3 text-left transition-all hover:shadow-xs group flex flex-col justify-between min-h-[76px]"
             >
               <div className="w-8 h-8 rounded-xl bg-sky-50 text-[#0052CC] flex items-center justify-center mb-2 group-hover:bg-[#0052CC] group-hover:text-white transition-colors">
                 <Coins className="w-4 h-4" />
               </div>
-              <div>
-                <span className="text-xs font-bold text-slate-900 block leading-snug">
-                  Request Cash / Float
-                </span>
-                <span className="text-[10px] text-slate-400 block mt-0.5">
-                  Operational liquidity
-                </span>
-              </div>
+              <span className="text-xs font-bold text-slate-900 block leading-snug">
+                Request Cash / Float
+              </span>
             </button>
           </div>
 
@@ -664,20 +654,15 @@ export const AgentHomeScreen: React.FC<AgentHomeScreenProps> = ({
                 onCheckMnoBalance();
               }
             }}
-            className="w-full bg-white border border-slate-200/90 hover:border-emerald-500/50 rounded-2xl p-3 mb-2.5 text-left transition-all hover:shadow-xs group flex items-center justify-between min-h-[58px] shadow-2xs"
+            className="w-full bg-white border border-slate-200/90 hover:border-emerald-500/50 rounded-2xl p-3 mb-2.5 text-left transition-all hover:shadow-xs group flex items-center justify-between min-h-[50px] shadow-2xs"
           >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                 <Smartphone className="w-4 h-4" />
               </div>
-              <div>
-                <span className="text-xs font-bold text-slate-900 block leading-snug">
-                  Balance Enquiry
-                </span>
-                <span className="text-[10px] text-slate-400 block mt-0.5 font-medium">
-                  Check your MNO mobile-money balance
-                </span>
-              </div>
+              <span className="text-xs font-bold text-slate-900 block leading-snug">
+                Balance Enquiry
+              </span>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600 transition-colors" />
           </button>
@@ -687,20 +672,15 @@ export const AgentHomeScreen: React.FC<AgentHomeScreenProps> = ({
             type="button"
             id="home-end-workday-btn"
             onClick={handleEndWorkdayClick}
-            className="w-full bg-white border border-slate-200/90 hover:border-rose-300 hover:bg-rose-50/20 rounded-2xl p-3 text-left transition-all hover:shadow-xs group flex items-center justify-between min-h-[58px]"
+            className="w-full bg-white border border-slate-200/90 hover:border-rose-300 hover:bg-rose-50/20 rounded-2xl p-3 text-left transition-all hover:shadow-xs group flex items-center justify-between min-h-[50px]"
           >
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:bg-rose-600 group-hover:text-white transition-colors">
                 <LogOut className="w-4 h-4" />
               </div>
-              <div>
-                <span className="text-xs font-bold text-slate-900 block leading-snug">
-                  End Workday
-                </span>
-                <span className="text-[10px] text-slate-400 block mt-0.5">
-                  Reconcile balances & finish shift
-                </span>
-              </div>
+              <span className="text-xs font-bold text-slate-900 block leading-snug">
+                End Workday
+              </span>
             </div>
             <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-rose-600 transition-colors" />
           </button>
@@ -714,14 +694,9 @@ export const AgentHomeScreen: React.FC<AgentHomeScreenProps> = ({
         <div className="absolute inset-0 z-30 bg-slate-900/40 backdrop-blur-2xs flex flex-col justify-end">
           <div className="bg-white rounded-t-3xl border-t border-slate-200 p-4 space-y-4 shadow-2xl animate-in slide-in-from-bottom duration-200">
             <div className="flex items-start justify-between gap-3">
-              <div>
-                <h3 className="text-sm font-extrabold text-[#002244] tracking-tight">
-                  End today&apos;s shift?
-                </h3>
-                <p className="text-xs text-slate-500 mt-1">
-                  You will proceed to end-of-day cash and float declaration before closing your shift.
-                </p>
-              </div>
+              <h3 className="text-sm font-extrabold text-[#002244] tracking-tight">
+                End today&apos;s shift?
+              </h3>
               <button
                 onClick={() => setShowConfirmSheet(false)}
                 className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center shrink-0"
@@ -936,10 +911,6 @@ export const AgentHomeScreen: React.FC<AgentHomeScreenProps> = ({
                 <X className="w-4 h-4" />
               </button>
             </div>
-
-            <p className="text-xs text-slate-600 leading-relaxed">
-              You won&apos;t be considered for this request after rejecting it. Other available requests will continue to reach you.
-            </p>
 
             <div className="pt-2 flex items-center gap-2.5">
               <button

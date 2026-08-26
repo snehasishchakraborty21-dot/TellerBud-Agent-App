@@ -1660,7 +1660,7 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
                   Preview State
                 </span>
                 <span className="text-[10px] text-slate-500 font-mono">
-                  Screen 08
+                  Screen 07
                 </span>
               </div>
               <div className="flex flex-col gap-1.5">

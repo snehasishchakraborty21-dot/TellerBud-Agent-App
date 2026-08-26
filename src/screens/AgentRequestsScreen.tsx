@@ -662,10 +662,7 @@ export const AgentRequestsScreen: React.FC<AgentRequestsScreenProps> = ({
                         📍 {req.location}
                       </p>
 
-                      <div className="pt-1 flex items-center justify-between border-t border-slate-100">
-                        <span className="text-[10px] text-slate-400 font-medium">
-                          Review and respond
-                        </span>
+                      <div className="pt-1 flex items-center justify-end border-t border-slate-100">
                         <button
                           onClick={() => {
                             if (onViewCustomerRequest) onViewCustomerRequest(req.id);
@@ -725,10 +722,7 @@ export const AgentRequestsScreen: React.FC<AgentRequestsScreenProps> = ({
                           </p>
                         )}
 
-                        <div className="pt-1 flex items-center justify-between border-t border-slate-100">
-                          <span className="text-[10px] text-slate-500 font-medium">
-                            {liquidityState.statusLabel}
-                          </span>
+                        <div className="pt-1 flex items-center justify-end border-t border-slate-100">
                           {liquidityState.isTimedOut ? (
                             <button
                               disabled
@@ -836,10 +830,7 @@ export const AgentRequestsScreen: React.FC<AgentRequestsScreenProps> = ({
                           </p>
                         )}
 
-                        <div className="pt-1 flex items-center justify-between border-t border-slate-100">
-                          <span className="text-[10px] text-slate-400 font-medium">
-                            Agent-to-Agent Liquidity
-                          </span>
+                        <div className="pt-1 flex items-center justify-end border-t border-slate-100">
                           <button
                             onClick={() => {
                               if (onViewMyAgentLiquidityRequest) onViewMyAgentLiquidityRequest(req.id);
@@ -928,10 +919,7 @@ export const AgentRequestsScreen: React.FC<AgentRequestsScreenProps> = ({
                           </p>
                         )}
 
-                        <div className="pt-2 flex items-center justify-between border-t border-slate-100 gap-2">
-                          <div className="text-[11px] text-slate-600 font-medium leading-tight">
-                            {getBusinessOwnerStatusExplanation(req.status)}
-                          </div>
+                        <div className="pt-2 flex items-center justify-end border-t border-slate-100">
                           <button
                             onClick={() => {
                               if (onViewBusinessOwnerRequest) onViewBusinessOwnerRequest(req.id);

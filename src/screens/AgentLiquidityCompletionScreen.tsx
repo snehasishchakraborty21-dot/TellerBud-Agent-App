@@ -42,7 +42,7 @@ const defaultMockCompletionRequest: AgentLiquidityRequestDetail = {
     boothOrLocation: 'Booth 01 — West Wing, Central Mall',
     distance: '65 m away',
   },
-  exchangeLocation: 'Booth 03 — Main Atrium, Central Mall Branch #104',
+  exchangeLocation: 'Booth 01 — West Wing, Central Mall',
   recordedAt: `Today, ${new Date().toLocaleTimeString([], {
     hour: 'numeric',
     minute: '2-digit',
@@ -126,10 +126,7 @@ export const AgentLiquidityCompletionScreen: React.FC<
           boothOrLocation: 'Booth 04 — North Gate, Central Mall',
           distance: '110 m away',
         },
-        exchangeLocation:
-          base.exchangeLocation ||
-          base.booth ||
-          'Booth 03 — Main Atrium, Central Mall Branch #104',
+        exchangeLocation: 'Booth 04 — North Gate, Central Mall',
       };
     }
 
@@ -155,9 +152,9 @@ export const AgentLiquidityCompletionScreen: React.FC<
         distance: '65 m away',
       },
       exchangeLocation:
+        base.matchedAgent?.boothOrLocation ||
         base.exchangeLocation ||
-        base.booth ||
-        'Booth 03 — Main Atrium, Central Mall Branch #104',
+        'Booth 01 — West Wing, Central Mall',
     };
   }
 
@@ -210,9 +207,6 @@ export const AgentLiquidityCompletionScreen: React.FC<
               <h2 className="text-sm font-black text-[#002244]">
                 Exchange completed
               </h2>
-              <p className="text-xs text-slate-600 leading-snug">
-                The Agent-to-Agent liquidity exchange has been recorded successfully.
-              </p>
             </div>
           </div>
         </div>
@@ -274,17 +268,18 @@ export const AgentLiquidityCompletionScreen: React.FC<
               </div>
             </div>
 
-            {/* Exchange Location */}
+            {/* Exchange Location (Matched Agent's Location) */}
             <div className="pt-1.5 border-t border-slate-100/70">
               <span className="text-slate-400 text-xs font-medium flex items-center gap-1 mb-1">
                 <MapPin className="w-3.5 h-3.5 text-[#0052CC]" />
                 <span>Exchange Location</span>
               </span>
               <p className="text-xs text-slate-700 font-semibold pl-4.5 leading-snug">
-                {activeRequest.exchangeLocation ||
-                  activeRequest.booth ||
-                  activeRequest.location ||
-                  'Booth 03 — Main Atrium, Central Mall Branch #104'}
+                {activeRequest.matchedAgent?.boothOrLocation ||
+                  activeRequest.matchedAgent?.booth ||
+                  activeRequest.matchedAgent?.location ||
+                  activeRequest.exchangeLocation ||
+                  'Booth 01 — West Wing, Central Mall'}
               </p>
             </div>
 
@@ -320,11 +315,6 @@ export const AgentLiquidityCompletionScreen: React.FC<
             )}
           </div>
         </div>
-
-        {/* Small Neutral Statement */}
-        <p className="text-xs text-center text-slate-500 font-medium leading-relaxed px-2">
-          This exchange is now recorded in your request history.
-        </p>
 
         <PoweredByCinitecFooter className="py-2" />
       </div>

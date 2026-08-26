@@ -372,9 +372,6 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
                   <h3 className="text-xs font-extrabold text-[#002244] tracking-tight">
                     Agent Info
                   </h3>
-                  <span className="text-[10px] text-slate-400 block font-medium">
-                    Profile, earnings and security settings
-                  </span>
                 </div>
               </div>
               <button
@@ -520,9 +517,6 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
                   <h3 className="text-xs font-extrabold text-[#002244] tracking-tight">
                     Agent Earnings
                   </h3>
-                  <span className="text-[10px] text-slate-400 block font-medium">
-                    Commission from approved service transactions
-                  </span>
                 </div>
               </div>
               <button
@@ -574,10 +568,6 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
                 </span>
               </div>
             </div>
-
-            <p className="text-[10.5px] text-slate-500 font-medium leading-relaxed bg-slate-50 border border-slate-100 rounded-xl p-2.5">
-              Agent commission is calculated based on completed customer deliveries, pickups, and liquidity assists.
-            </p>
 
             <button
               type="button"
@@ -649,9 +639,6 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
                   <h3 className="text-xs font-extrabold text-[#002244] tracking-tight">
                     Reports
                   </h3>
-                  <span className="text-[10px] text-slate-400 block font-medium">
-                    Chats, SMS and daily summary report
-                  </span>
                 </div>
               </div>
               <button

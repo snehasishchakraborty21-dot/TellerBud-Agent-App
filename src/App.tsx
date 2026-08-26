@@ -778,6 +778,13 @@ export default function App() {
           onBack={() => {
             setCurrentRoute('agent_home');
           }}
+          onCancelService={(serviceId) => {
+            console.log('Assigned customer service cancelled:', serviceId);
+            setFocusedCustomerRequest(null);
+            setActiveRecordedTxn(null);
+            setHomePreview('default');
+            setCurrentRoute('agent_home');
+          }}
           onChatWithCustomer={() => {
             setSelectedConversationId('chat-cust-01');
             setAgentChatConversationPreview('customer_chat_active');
@@ -801,6 +808,40 @@ export default function App() {
       ) : currentRoute === 'service_completion' ? (
         <ServiceCompletionScreen
           key={serviceCompletionPreview}
+          initialService={
+            focusedCustomerRequest
+              ? {
+                  id: focusedCustomerRequest.id,
+                  requestReference:
+                    focusedCustomerRequest.requestReference || focusedCustomerRequest.id,
+                  requestOrigin: 'Customer',
+                  customerName: focusedCustomerRequest.customerName,
+                  serviceType: focusedCustomerRequest.serviceType,
+                  transactionType: focusedCustomerRequest.transactionType || 'Withdrawal',
+                  vendorType: focusedCustomerRequest.vendorType || 'MNO',
+                  vendor: focusedCustomerRequest.vendor || 'MTN',
+                  amount: focusedCustomerRequest.amount,
+                  currencySymbol: focusedCustomerRequest.currencySymbol || 'ZMW',
+                  currencyCode: focusedCustomerRequest.currencyCode || 'ZMW',
+                  location:
+                    focusedCustomerRequest.customerLocation || 'Plot 42, Commercial Avenue, Lusaka',
+                  customerLocation:
+                    focusedCustomerRequest.customerLocation || 'Plot 42, Commercial Avenue, Lusaka',
+                  agentLocation: 'Booth 03 — Main Atrium',
+                  booth: 'Booth 03 — Main Atrium',
+                  distance: focusedCustomerRequest.distance || '4.8 km',
+                  estimatedTravelTime: focusedCustomerRequest.estimatedTravelTime || '12 min',
+                  customerEstimatedArrival:
+                    focusedCustomerRequest.customerEstimatedArrival || '8 min',
+                  timing: focusedCustomerRequest.timing || 'Immediate',
+                  reservationActive: true,
+                  serviceStatus: 'in_progress',
+                  reservationFee: focusedCustomerRequest.reservationFee || 'ZMW 30.00',
+                  deliveryFee: focusedCustomerRequest.deliveryFee,
+                  agentEarnings: focusedCustomerRequest.agentEarnings || 'ZMW 30.00',
+                }
+              : undefined
+          }
           recordedTransaction={activeRecordedTxn || undefined}
           previewState={serviceCompletionPreview}
           onBack={() => {
@@ -809,6 +850,8 @@ export default function App() {
           }}
           onBackToHome={() => {
             // Complete service workflow: return to Agent Home
+            setFocusedCustomerRequest(null);
+            setActiveRecordedTxn(null);
             setHomePreview('default');
             setCurrentRoute('agent_home');
           }}

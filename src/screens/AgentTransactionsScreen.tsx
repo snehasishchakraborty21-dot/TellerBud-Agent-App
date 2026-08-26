@@ -695,7 +695,6 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
                                 </span>
                               </div>
                             )}
-                            <span className="text-[10px] text-slate-400">Walk-In Record</span>
                           </div>
                         )}
                       </div>

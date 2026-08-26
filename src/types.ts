@@ -770,9 +770,10 @@ export interface WalletTopUpRequestRecord {
   booth?: string;
   store?: string;
   business?: string;
-  amount: string;
-  numericAmount: number;
-  currencySymbol: string;
+  message?: string;
+  amount?: string;
+  numericAmount?: number;
+  currencySymbol?: string;
   note?: string;
   timestamp: string;
   rawDate?: string | Date;

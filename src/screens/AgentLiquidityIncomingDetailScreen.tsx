@@ -546,9 +546,6 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
                 <h2 className="text-sm font-black text-[#002244]">
                   Match confirmed
                 </h2>
-                <p className="text-xs text-slate-600 leading-snug">
-                  You have accepted this request. Preparing liquidity exchange...
-                </p>
               </div>
             </div>
           </div>
@@ -588,9 +585,6 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
                 <h2 className="text-sm font-black text-slate-800">
                   Request no longer available
                 </h2>
-                <p className="text-xs text-slate-600 leading-snug">
-                  Another Agent has already accepted this liquidity request.
-                </p>
               </div>
             </div>
             <div className="pt-1 border-t border-amber-100">
@@ -650,9 +644,6 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-600 leading-snug pt-0.5">
-              Review the liquidity request details below and respond within the active window.
-            </p>
           </div>
         )}
 
@@ -768,10 +759,6 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
               )}
             </button>
           </div>
-
-          <p className="text-[10px] text-center text-slate-400 font-medium leading-tight">
-            Manual acceptance is required. No admin or owner approval needed.
-          </p>
         </div>
       )}
 
@@ -794,9 +781,6 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
               <h3 className="text-sm font-black text-slate-900">
                 Reject this request?
               </h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Rejecting will immediately relay this liquidity request to another eligible Agent in the network.
-              </p>
             </div>
 
             <div className="space-y-2 pt-1">

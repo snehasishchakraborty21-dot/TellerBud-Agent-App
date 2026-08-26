@@ -60,11 +60,8 @@ export const AgentWalletScreen: React.FC<AgentWalletScreenProps> = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isConnectionError, setIsConnectionError] = useState(false);
 
-  // Top-Up Request Bottom Sheet State
-  const [showTopUpSheet, setShowTopUpSheet] = useState(false);
-  const [topUpAmount, setTopUpAmount] = useState('');
-  const [topUpNote, setTopUpNote] = useState('');
-  const [topUpError, setTopUpError] = useState<string | null>(null);
+  // Top-Up Request Modal State
+  const [showTopUpModal, setShowTopUpModal] = useState(false);
   const [isSubmittingTopUp, setIsSubmittingTopUp] = useState(false);
   const [topUpSuccessBanner, setTopUpSuccessBanner] = useState<string | null>(null);
 
@@ -103,17 +100,7 @@ export const AgentWalletScreen: React.FC<AgentWalletScreenProps> = ({
   const isBalanceUnavailable = previewState === 'balance_unavailable';
   const showConnectionBanner = previewState === 'connection_issue' || isConnectionError;
 
-  const handleSendTopUpRequest = (e: React.FormEvent) => {
-    e.preventDefault();
-    const cleanAmountStr = topUpAmount.replace(/[^0-9.]/g, '');
-    const numAmount = parseFloat(cleanAmountStr);
-
-    if (!cleanAmountStr || isNaN(numAmount) || numAmount <= 0) {
-      setTopUpError('Please enter a valid funding amount greater than 0.');
-      return;
-    }
-
-    setTopUpError(null);
+  const handleSendTopUpRequest = () => {
     setIsSubmittingTopUp(true);
 
     setTimeout(() => {
@@ -125,29 +112,21 @@ export const AgentWalletScreen: React.FC<AgentWalletScreenProps> = ({
         booth: agentInfo?.booth || 'Booth 03 — Main Atrium',
         store: agentInfo?.store || 'Central Mall Branch #104',
         business: agentInfo?.business || 'Apex Retail Group',
-        amount: `${currencySymbol} ${numAmount.toLocaleString('en-US', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}`,
-        numericAmount: numAmount,
-        currencySymbol,
-        note: topUpNote.trim() || undefined,
+        message: 'Please top up the wallet to allow for transactions.',
         timestamp: formatAppTime(new Date()),
         rawDate: new Date().toISOString(),
         status: 'pending_admin_funding',
       };
 
       onRequestTopUp?.(record);
-      setShowTopUpSheet(false);
-      setTopUpAmount('');
-      setTopUpNote('');
+      setShowTopUpModal(false);
 
       // Show transient confirmation banner without altering wallet balance
-      setTopUpSuccessBanner('Top-up request sent to Business Admin');
+      setTopUpSuccessBanner('Top-Up request sent');
       setTimeout(() => {
         setTopUpSuccessBanner(null);
-      }, 4000);
-    }, 450);
+      }, 3500);
+    }, 350);
   };
 
   // Filter activities
@@ -402,21 +381,12 @@ export const AgentWalletScreen: React.FC<AgentWalletScreenProps> = ({
             <button
               type="button"
               id="wallet-topup-btn"
-              onClick={() => {
-                setTopUpError(null);
-                setShowTopUpSheet(true);
-              }}
+              onClick={() => setShowTopUpModal(true)}
               className="h-10 px-3.5 py-2 rounded-xl bg-white/12 hover:bg-white/20 active:bg-white/25 border border-white/25 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all active:scale-[0.98] shadow-xs shrink-0 whitespace-nowrap"
             >
               <ArrowUpCircle className="w-4 h-4 text-[#38BDF8] shrink-0" />
               <span>Top-Up</span>
             </button>
-          </div>
-
-          {/* Informational Line: Managed by Business Owner or Admin */}
-          <div className="pt-2.5 mt-2 border-t border-white/10 flex items-center gap-1.5 text-[11px] text-slate-300 font-medium leading-tight relative z-10">
-            <ShieldCheck className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />
-            <span>Wallet funding is managed by your Business Owner or Business Admin.</span>
           </div>
 
           {/* Decorative background glow */}
@@ -517,116 +487,52 @@ export const AgentWalletScreen: React.FC<AgentWalletScreenProps> = ({
         <PoweredByCinitecFooter className="py-2" />
       </div>
 
-      {/* Top-Up Request Bottom Sheet Modal */}
-      {showTopUpSheet && (
+      {/* Top-Up Request Confirmation Modal */}
+      {showTopUpModal && (
         <div
-          id="wallet-topup-bottomsheet"
-          className="absolute inset-0 z-40 bg-slate-900/50 backdrop-blur-2xs flex flex-col justify-end animate-in fade-in duration-150"
+          id="wallet-topup-modal"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs"
         >
-          <div className="bg-white rounded-t-3xl border-t border-slate-200 p-4 space-y-4 shadow-2xl animate-in slide-in-from-bottom duration-200">
-            {/* Header */}
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h3 className="text-sm font-extrabold text-[#002244] tracking-tight">
-                  Request Wallet Top-Up
-                </h3>
-                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  Send a funding request to your Business Admin for the shared TellerBud Wallet.
-                </p>
-              </div>
+          <div className="bg-white w-full max-w-xs rounded-2xl p-5 shadow-2xl border border-slate-100 flex flex-col items-center text-center space-y-4">
+            <div className="w-12 h-12 rounded-full bg-blue-50 text-[#0052CC] flex items-center justify-center border border-blue-100">
+              <ArrowUpCircle className="w-6 h-6 stroke-[2]" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-slate-900">Top-Up Request</h3>
+              <p className="text-xs text-slate-600 mt-2 font-medium leading-relaxed">
+                Please top up the wallet to allow for transactions.
+              </p>
+            </div>
+            <div className="w-full flex flex-col gap-2 pt-1">
               <button
                 type="button"
-                onClick={() => {
-                  setShowTopUpSheet(false);
-                  setTopUpError(null);
-                }}
-                className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center shrink-0"
+                id="confirm-send-topup-btn"
+                onClick={handleSendTopUpRequest}
+                disabled={isSubmittingTopUp}
+                className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#003585] text-white font-extrabold text-xs transition-colors shadow-xs flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-70"
               >
-                <X className="w-4 h-4" />
+                {isSubmittingTopUp ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-3.5 h-3.5" />
+                    <span>Send</span>
+                  </>
+                )}
+              </button>
+              <button
+                type="button"
+                id="cancel-topup-btn"
+                onClick={() => setShowTopUpModal(false)}
+                disabled={isSubmittingTopUp}
+                className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+              >
+                Cancel
               </button>
             </div>
-
-            {/* Error banner if invalid amount */}
-            {topUpError && (
-              <div className="bg-red-50 border border-red-200 text-red-700 text-xs p-2.5 rounded-xl flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-                <span>{topUpError}</span>
-              </div>
-            )}
-
-            {/* Form */}
-            <form onSubmit={handleSendTopUpRequest} className="space-y-3">
-              {/* Requested Amount Field */}
-              <div>
-                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
-                  Requested Amount *
-                </label>
-                <div className="relative flex items-center">
-                  <span className="absolute left-3 font-mono font-bold text-slate-500 text-sm">
-                    {currencySymbol}
-                  </span>
-                  <input
-                    type="number"
-                    step="any"
-                    min="1"
-                    required
-                    autoFocus
-                    placeholder="50,000.00"
-                    value={topUpAmount}
-                    onChange={(e) => {
-                      setTopUpAmount(e.target.value);
-                      if (topUpError) setTopUpError(null);
-                    }}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pl-16 pr-3 text-sm font-bold font-mono text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-[#0052CC]/30 focus:border-[#0052CC]"
-                  />
-                </div>
-              </div>
-
-              {/* Note Field (Optional) */}
-              <div>
-                <label className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block mb-1">
-                  Note <span className="text-slate-400 font-normal lowercase">(optional)</span>
-                </label>
-                <textarea
-                  rows={2}
-                  placeholder="Add a note for the Business Admin"
-                  value={topUpNote}
-                  onChange={(e) => setTopUpNote(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-[#0052CC]/30 focus:border-[#0052CC] resize-none"
-                />
-              </div>
-
-              {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-2 pt-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowTopUpSheet(false);
-                    setTopUpError(null);
-                  }}
-                  className="py-2.5 px-3 rounded-xl border border-slate-300 text-slate-700 font-bold text-xs hover:bg-slate-50 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmittingTopUp}
-                  className="py-2.5 px-3 rounded-xl bg-[#0052CC] hover:bg-[#003E99] text-white font-extrabold text-xs transition-colors shadow-2xs flex items-center justify-center gap-1.5 disabled:opacity-70"
-                >
-                  {isSubmittingTopUp ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>Sending...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-3.5 h-3.5" />
-                      <span>Send Request</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}

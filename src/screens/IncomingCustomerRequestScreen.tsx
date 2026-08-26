@@ -307,43 +307,28 @@ export const IncomingCustomerRequestScreen: React.FC<
         {status === 'RESPONDING' && (
           <div className="bg-blue-50/90 border border-blue-200/80 rounded-xl p-3 flex items-center gap-2.5">
             <Loader2 className="w-4 h-4 text-[#0052CC] animate-spin shrink-0" />
-            <div>
-              <div className="text-xs font-bold text-[#002244]">Accepting request...</div>
-              <p className="text-[11px] text-slate-600">
-                Confirming automatic assignment with TellerBud.
-              </p>
-            </div>
+            <div className="text-xs font-bold text-[#002244]">Accepting request...</div>
           </div>
         )}
 
         {status === 'ASSIGNED_TO_AGENT' && (
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-start gap-2.5">
-            <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3 flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0">
               <CheckCircle2 className="w-3.5 h-3.5 stroke-[2.5]" />
             </div>
-            <div>
-              <div className="text-xs font-bold text-emerald-950">
-                Assigned to You
-              </div>
-              <p className="text-[11px] text-emerald-700 mt-0.5 leading-tight">
-                You are confirmed as the assigned Agent for this service.
-              </p>
+            <div className="text-xs font-bold text-emerald-950">
+              Assigned to You
             </div>
           </div>
         )}
 
         {status === 'ASSIGNED_ELSEWHERE' && (
-          <div className="bg-slate-100 border border-slate-300 rounded-xl p-3 flex items-start gap-2.5">
-            <div className="w-6 h-6 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center shrink-0 mt-0.5">
+          <div className="bg-slate-100 border border-slate-300 rounded-xl p-3 flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center shrink-0">
               <Info className="w-3.5 h-3.5 stroke-[2.5]" />
             </div>
-            <div>
-              <div className="text-xs font-bold text-slate-900">
-                Request no longer available
-              </div>
-              <p className="text-[11px] text-slate-600 mt-0.5 leading-tight">
-                This request has already been taken or is no longer active.
-              </p>
+            <div className="text-xs font-bold text-slate-900">
+              Request no longer available
             </div>
           </div>
         )}
@@ -360,33 +345,21 @@ export const IncomingCustomerRequestScreen: React.FC<
         )}
 
         {status === 'REJECTED_BY_AGENT' && (
-          <div className="bg-slate-100 border border-slate-300 rounded-xl p-3 flex items-start gap-2.5">
-            <div className="w-6 h-6 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center shrink-0 mt-0.5">
+          <div className="bg-slate-100 border border-slate-300 rounded-xl p-3 flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center shrink-0">
               <XCircle className="w-3.5 h-3.5 stroke-[2.5]" />
             </div>
-            <div>
-              <div className="text-xs font-bold text-slate-900">Request Declined</div>
-              <p className="text-[11px] text-slate-600 mt-0.5 leading-tight">
-                {relayedToAgentName
-                  ? `You declined this request. It has been immediately relayed to ${relayedToAgentName}.`
-                  : 'You declined this request. It has been immediately relayed to another eligible agent.'}
-              </p>
-            </div>
+            <div className="text-xs font-bold text-slate-900">Request Declined</div>
           </div>
         )}
 
         {status === 'CONNECTION_ISSUE' && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-start gap-2.5">
-            <div className="w-6 h-6 rounded-lg bg-red-500/10 text-red-600 flex items-center justify-center shrink-0 mt-0.5">
+          <div className="bg-red-50 border border-red-200 rounded-xl p-3 flex items-center gap-2.5">
+            <div className="w-6 h-6 rounded-lg bg-red-500/10 text-red-600 flex items-center justify-center shrink-0">
               <AlertCircle className="w-3.5 h-3.5 stroke-[2.5]" />
             </div>
-            <div>
-              <div className="text-xs font-bold text-red-950">
-                Unable to accept request
-              </div>
-              <p className="text-[11px] text-red-700 mt-0.5 leading-tight">
-                Check your connection and try again.
-              </p>
+            <div className="text-xs font-bold text-red-950">
+              Unable to accept request
             </div>
           </div>
         )}
@@ -609,10 +582,6 @@ export const IncomingCustomerRequestScreen: React.FC<
                 <X className="w-4 h-4" />
               </button>
             </div>
-
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Rejecting will immediately relay this request to another eligible agent. Other available customer requests will continue to reach you.
-            </p>
 
             <div className="pt-2 flex items-center gap-2.5">
               <button

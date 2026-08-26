@@ -238,10 +238,7 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
               <CheckCircle2 className="w-8 h-8" />
             </div>
 
-            <h2 className="text-lg font-bold text-slate-900 mb-1">Passcode updated</h2>
-            <p className="text-xs text-slate-600 max-w-[250px] mb-6 leading-relaxed">
-              Your new passcode has been saved. Use it the next time you sign in to TellerBud.
-            </p>
+            <h2 className="text-lg font-bold text-slate-900 mb-6">Passcode updated</h2>
 
             <div className="w-full max-w-xs">
               <TellerBudPrimaryButton onClick={handleBack}>
@@ -251,16 +248,6 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
           </div>
         ) : (
           <div className="flex flex-col gap-4">
-            {/* Header / Instructions */}
-            <div className="bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm">
-              <h2 className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-1">
-                Passcode Security
-              </h2>
-              <p className="text-xs text-slate-600 leading-relaxed">
-                Create a new passcode for your TellerBud sign-in.
-              </p>
-            </div>
-
             {/* Connection Issue Inline Banner */}
             {connectionError && (
               <div className="bg-rose-50 border border-rose-200 rounded-xl p-3 text-rose-900 flex items-start gap-2.5 shadow-sm animate-fadeIn">

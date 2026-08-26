@@ -74,7 +74,6 @@ export const AgentChatsScreen: React.FC<AgentChatsScreenProps> = ({
 
         <div className="flex flex-col items-center">
           <h1 className="text-sm font-extrabold text-[#002244] tracking-tight">Chats</h1>
-          <span className="text-[10px] text-slate-400 font-medium">Operational Messaging</span>
         </div>
 
         <div className="flex items-center justify-center shrink-0">
@@ -245,13 +244,6 @@ export const AgentChatsScreen: React.FC<AgentChatsScreenProps> = ({
 
         <PoweredByCinitecFooter className="py-2" />
       </div>
-
-      {/* 4. Footer Note: Privacy & Scope */}
-      <footer className="p-2.5 bg-slate-100/90 border-t border-slate-200 text-center shrink-0">
-        <p className="text-[10px] text-slate-500 font-medium">
-          In-app messaging for active TellerBud assignments & liquidity matches.
-        </p>
-      </footer>
     </div>
   );
 };

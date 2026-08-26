@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { TellerBudLogo } from '../components/TellerBudLogo';
-import { CinitecLogo } from '../components/CinitecLogo';
 
 interface AgentSplashScreenProps {
   onSplashComplete?: () => void;
@@ -28,10 +27,13 @@ export const AgentSplashScreen: React.FC<AgentSplashScreenProps> = ({
       role="button"
       tabIndex={0}
       title="Tap to continue"
-      className="relative w-full h-full bg-white text-slate-900 flex flex-col items-center justify-between px-6 pt-8 pb-0 select-none overflow-hidden font-sans cursor-pointer"
+      className="relative w-full h-full bg-white text-slate-900 flex flex-col items-center justify-between px-6 pt-8 pb-10 select-none overflow-hidden font-sans cursor-pointer"
     >
-      {/* Top Branding Section: Prominent TellerBud Agent Logo */}
-      <div className="relative z-10 flex flex-col items-center justify-center text-center pt-6 sm:pt-8">
+      {/* Top spacing */}
+      <div className="w-full h-6 shrink-0" />
+
+      {/* Center Branding Section: Prominent TellerBud Agent Logo */}
+      <div className="relative z-10 flex flex-col items-center justify-center text-center my-auto">
         <div className="relative flex items-center justify-center w-[120px] h-[120px] mb-3.5">
           <TellerBudLogo
             size="xl"
@@ -49,12 +51,11 @@ export const AgentSplashScreen: React.FC<AgentSplashScreenProps> = ({
         </p>
       </div>
 
-      {/* Lower-Middle Section: Secondary "Powered by Cinitec" Branding (Elevated with ~80-90px bottom whitespace) */}
-      <div className="w-full flex flex-col items-center justify-center shrink-0 z-10 pb-16 sm:pb-20">
-        <span className="text-xs font-bold text-red-600 tracking-wide mb-2 select-none">
+      {/* Lower Section: Secondary "Powered by Cinitec" Branding (RED, BOLD, centered) */}
+      <div className="w-full flex flex-col items-center justify-center shrink-0 z-10 pb-6 sm:pb-8">
+        <span className="text-xs font-bold text-red-600 tracking-wide select-none">
           Powered by Cinitec
         </span>
-        <CinitecLogo maxWidth={120} alt="Cinitec" />
       </div>
     </div>
   );

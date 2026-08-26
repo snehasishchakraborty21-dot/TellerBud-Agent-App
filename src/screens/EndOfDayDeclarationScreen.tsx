@@ -339,9 +339,6 @@ export const EndOfDayDeclarationScreen: React.FC<EndOfDayDeclarationScreenProps>
                 <h2 className="text-base font-extrabold text-[#002244] tracking-tight">
                   Workday ended
                 </h2>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed mt-1">
-                  Your closing declaration has been recorded and this work session is now closed.
-                </p>
               </div>
             </div>
 
@@ -403,25 +400,15 @@ export const EndOfDayDeclarationScreen: React.FC<EndOfDayDeclarationScreenProps>
                 </div>
               </div>
             </div>
-
-            {/* Note */}
-            <div className="p-3 rounded-xl bg-slate-100/80 border border-slate-200/60 text-center">
-              <p className="text-[11px] text-slate-500 font-medium">
-                Your closing declaration has been recorded.
-              </p>
-            </div>
           </div>
         ) : (
           /* ACTIVE DECLARATION FORM VIEW */
           <div className="space-y-3">
             {/* Page Introduction */}
-            <div className="space-y-1">
+            <div>
               <h2 className="text-sm font-extrabold text-[#002244] tracking-tight">
                 Declare closing balances
               </h2>
-              <p className="text-xs text-slate-500 leading-relaxed font-medium">
-                Enter your physical Cash on hand before ending this work session.
-              </p>
             </div>
 
             {/* Connection Error Banner */}
@@ -524,9 +511,6 @@ export const EndOfDayDeclarationScreen: React.FC<EndOfDayDeclarationScreenProps>
               <div className="pb-1 border-b border-slate-100 flex items-center justify-between">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                   Closing Declaration
-                </span>
-                <span className="text-[10px] text-slate-400 font-medium">
-                  Exact physical balance
                 </span>
               </div>
 
@@ -661,14 +645,9 @@ export const EndOfDayDeclarationScreen: React.FC<EndOfDayDeclarationScreenProps>
           <div className="bg-white rounded-t-3xl border-t border-slate-200 p-4 space-y-4 shadow-2xl animate-in slide-in-from-bottom duration-200">
             {/* Sheet Header */}
             <div className="flex items-start justify-between gap-3">
-              <div className="space-y-1">
-                <h3 className="text-sm font-extrabold text-[#002244] tracking-tight">
-                  Submit closing declaration?
-                </h3>
-                <p className="text-xs text-slate-500 leading-relaxed font-medium">
-                  Confirm your physical Cash on Hand before ending this work session.
-                </p>
-              </div>
+              <h3 className="text-sm font-extrabold text-[#002244] tracking-tight">
+                Submit closing declaration?
+              </h3>
               <button
                 onClick={() => setShowConfirmSheet(false)}
                 className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center shrink-0"

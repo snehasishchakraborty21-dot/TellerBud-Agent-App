@@ -134,8 +134,7 @@ export const AgentLoginScreen: React.FC<AgentLoginScreenProps> = ({
 
         {/* Section Heading */}
         <div className="w-full text-left mb-3">
-          <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-0.5">Agent Sign In</h2>
-          <p className="text-slate-500 text-xs sm:text-sm">Sign in to start your work session.</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-900">Agent Sign In</h2>
         </div>
 
         {/* Authentication Form */}

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
   ArrowLeft,
   Coins,
-  MapPin,
   CheckCircle2,
   AlertCircle,
   UserCheck,
@@ -259,9 +258,6 @@ export const AgentLiquidityExchangeScreen: React.FC<
                 <h2 className="text-sm font-black text-[#002244]">
                   Match confirmed
                 </h2>
-                <p className="text-xs text-slate-600 leading-snug">
-                  You and the matched Agent can now complete the liquidity exchange.
-                </p>
               </div>
             </div>
           </div>
@@ -275,9 +271,6 @@ export const AgentLiquidityExchangeScreen: React.FC<
                 <h2 className="text-sm font-black text-slate-800">
                   Match no longer available
                 </h2>
-                <p className="text-xs text-slate-600 leading-snug">
-                  This exchange can no longer continue with the matched Agent.
-                </p>
               </div>
             </div>
 
@@ -317,19 +310,6 @@ export const AgentLiquidityExchangeScreen: React.FC<
             <span className="text-base font-black text-[#002244] font-mono">
               {activeRequest.amount}
             </span>
-          </div>
-
-          {/* Reason Section */}
-          <div className="space-y-1 pt-1 border-t border-slate-100">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-              Reason / Note
-            </span>
-            <p className="text-xs text-slate-700 bg-slate-50 border border-slate-100 rounded-xl p-2.5 leading-relaxed">
-              {activeRequest.reason ||
-                (activeRequest.requestType === 'cash'
-                  ? 'Operational cash replenishment for booth register.'
-                  : 'Replenishing float for customer transfers.')}
-            </p>
           </div>
 
           {/* Submitted Date/Time */}
@@ -440,35 +420,6 @@ export const AgentLiquidityExchangeScreen: React.FC<
           </div>
         )}
 
-        {/* EXCHANGE LOCATION CARD */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-2">
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
-            <MapPin className="w-3.5 h-3.5 text-[#0052CC]" />
-            <span>Exchange Location</span>
-          </span>
-          <p className="text-xs text-slate-800 font-semibold leading-snug">
-            {activeRequest.exchangeLocation ||
-              activeRequest.booth ||
-              activeRequest.location ||
-              'Booth 03 — Main Atrium, Central Mall Branch #104'}
-          </p>
-        </div>
-
-        {/* GUIDANCE CARD: Complete the exchange */}
-        {!isMatchUnavailable && (
-          <div className="bg-blue-50/70 border border-blue-100 rounded-2xl p-3 shadow-2xs flex items-start gap-2.5">
-            <ShieldCheck className="w-4 h-4 text-[#0052CC] shrink-0 mt-0.5" />
-            <div className="space-y-0.5">
-              <span className="text-xs font-bold text-[#002244] block">
-                Complete the exchange
-              </span>
-              <p className="text-[11px] text-slate-600 leading-relaxed">
-                Meet the matched Agent at the exchange location and verify the Cash/Float exchange before proceeding.
-              </p>
-            </div>
-          </div>
-        )}
-
         <PoweredByCinitecFooter className="py-2" />
       </div>
 
@@ -496,9 +447,6 @@ export const AgentLiquidityExchangeScreen: React.FC<
             <span>Proceed to Transaction</span>
             <ArrowRight className="w-4 h-4 stroke-[2.5]" />
           </button>
-          <p className="text-[10px] text-center text-slate-400 font-medium leading-tight">
-            Tap when both Agents are present and ready to record the transaction.
-          </p>
         </div>
       )}
     </div>
