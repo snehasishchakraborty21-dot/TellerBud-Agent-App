@@ -12,7 +12,6 @@ import {
   Lock,
 } from 'lucide-react';
 import { ChatConversation, AgentChatsPreviewState } from '../types';
-import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 import { getPreviewConversations, createSeedChatConversations } from '../data/chatData';
 
 interface AgentChatsScreenProps {
@@ -241,8 +240,6 @@ export const AgentChatsScreen: React.FC<AgentChatsScreenProps> = ({
             })}
           </div>
         )}
-
-        <PoweredByCinitecFooter className="py-2" />
       </div>
     </div>
   );

@@ -426,7 +426,7 @@ export const AssignedCustomerServiceScreen: React.FC<
       </header>
 
       {/* 2. Vertically Scrollable Content Area */}
-      <div className="flex-1 overflow-y-auto no-scrollbar px-3.5 py-3 space-y-3 pb-24">
+      <div className="flex-1 overflow-y-auto no-scrollbar px-4 py-3.5 flex flex-col justify-start space-y-3.5">
         {/* Connection Issue Warning if active */}
         {hasConnectionIssue && (
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-2.5 flex items-center justify-between gap-2">
@@ -464,23 +464,23 @@ export const AssignedCustomerServiceScreen: React.FC<
         )}
 
         {/* Compact Service Header Card */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-xs flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <div
-              className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+              className={`w-9 h-9 rounded-xl flex items-center justify-center ${
                 isDelivery
                   ? 'bg-blue-50 text-[#0052CC] border border-blue-100'
                   : 'bg-blue-50 text-[#0052CC] border border-blue-100'
               }`}
             >
               {isDelivery ? (
-                <Truck className="w-4 h-4 stroke-[2]" />
+                <Truck className="w-4.5 h-4.5 stroke-[2]" />
               ) : (
-                <ShoppingBag className="w-4 h-4 stroke-[2]" />
+                <ShoppingBag className="w-4.5 h-4.5 stroke-[2]" />
               )}
             </div>
             <div>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-0.5">
                 Service Type
               </span>
               <span className="text-xs font-extrabold text-[#002244]">
@@ -493,8 +493,8 @@ export const AssignedCustomerServiceScreen: React.FC<
 
         {/* Delivery Mode: Prominent Journey Map */}
         {isDelivery && !isCancelled && (
-          <div className="space-y-2.5">
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-xs space-y-3">
+          <div className="flex-1 flex flex-col space-y-3">
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs space-y-3 flex-1 flex flex-col justify-between">
               <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                 <div className="flex items-center gap-1.5">
                   <Navigation className="w-4 h-4 text-[#0052CC]" />
@@ -520,7 +520,7 @@ export const AssignedCustomerServiceScreen: React.FC<
               </div>
 
               {/* Large Vector Map Canvas */}
-              <div className="relative w-full h-56 bg-slate-900 rounded-xl overflow-hidden border border-slate-200/60 flex flex-col justify-between p-3.5">
+              <div className="relative w-full flex-1 min-h-[220px] bg-slate-900 rounded-xl overflow-hidden border border-slate-200/60 flex flex-col justify-between p-3.5">
                 <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:14px_14px]" />
 
                 <svg
@@ -635,26 +635,26 @@ export const AssignedCustomerServiceScreen: React.FC<
 
         {/* Pickup Mode: Prominent Customer ETA Card (NO MAP) */}
         {!isDelivery && !isCancelled && (
-          <div className="space-y-3">
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs space-y-3.5">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                <div className="flex items-center gap-1.5">
+          <div className="flex-1 flex flex-col">
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-4.5 shadow-xs flex-1 flex flex-col justify-between space-y-3.5">
+              <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-[#0052CC]" />
                   <h3 className="text-xs font-extrabold text-[#002244] uppercase tracking-wider">
                     Customer ETA
                   </h3>
                 </div>
-                <span className="text-[10px] font-bold text-[#0052CC] bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                <span className="text-[10.5px] font-bold text-[#0052CC] bg-blue-50 px-2.5 py-0.5 rounded border border-blue-200">
                   Waiting for Customer
                 </span>
               </div>
 
               {service.customerEstimatedArrival ? (
-                <div className="bg-blue-50/70 border border-blue-200/80 rounded-xl p-4 flex flex-col items-center justify-center text-center space-y-1">
-                  <span className="text-[10.5px] font-bold text-[#0052CC] uppercase tracking-wider">
+                <div className="bg-blue-50/70 border border-blue-200/80 rounded-2xl py-6 px-4 flex flex-col items-center justify-center text-center space-y-2 my-auto">
+                  <span className="text-[11px] font-bold text-[#0052CC] uppercase tracking-wider">
                     Estimated Arrival Time
                   </span>
-                  <span className="text-3xl font-black text-[#002244] font-mono tracking-tight">
+                  <span className="text-4xl font-black text-[#002244] font-mono tracking-tight my-1">
                     {service.customerEstimatedArrival}
                   </span>
                   <span className="text-xs text-slate-600 font-medium pt-1">
@@ -665,7 +665,7 @@ export const AssignedCustomerServiceScreen: React.FC<
                   </span>
                 </div>
               ) : (
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center text-center space-y-1">
+                <div className="bg-slate-50 border border-slate-200 rounded-2xl py-6 px-4 flex flex-col items-center justify-center text-center space-y-2 my-auto">
                   <span className="text-xs font-bold text-slate-700">
                     Customer ETA unavailable
                   </span>
@@ -680,9 +680,9 @@ export const AssignedCustomerServiceScreen: React.FC<
 
               {/* Timing / Scheduling Info if present */}
               {service.timing && (
-                <div className="flex items-center justify-between text-xs py-1 px-1 border-t border-slate-100">
+                <div className="flex items-center justify-between text-xs py-2.5 px-3 bg-slate-50/80 border border-slate-100 rounded-xl">
                   <span className="text-slate-500 font-medium">Pickup Timing</span>
-                  <span className="font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-[11px]">
+                  <span className="font-bold text-slate-900 bg-white border border-slate-200 px-2.5 py-0.5 rounded text-[11px]">
                     {service.timing}
                   </span>
                 </div>
@@ -690,12 +690,10 @@ export const AssignedCustomerServiceScreen: React.FC<
             </div>
           </div>
         )}
-
-        <PoweredByCinitecFooter className="py-2" />
       </div>
 
-      {/* 3. Sticky Action Area at Bottom (NO Bottom Navigation Bar on Screen 06) */}
-      <div className="px-3.5 py-3 bg-white border-t border-slate-200/90 shadow-lg shrink-0 z-20 space-y-2">
+      {/* 3. Sticky Action Area at Bottom (with Powered by Cinitec at TRUE footer below buttons) */}
+      <div className="px-4 pt-3 pb-3 bg-white border-t border-slate-200/90 shadow-lg shrink-0 z-20 space-y-3">
         {!isCancelled ? (
           <>
             {/* Secondary Chat CTA when not in delivery journey ready step */}
@@ -706,14 +704,14 @@ export const AssignedCustomerServiceScreen: React.FC<
                 if (onChatWithCustomer) onChatWithCustomer();
                 else console.log('Contract trigger: Target Screen AgentChatConversationScreen');
               }}
-              className="w-full py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs transition-colors flex items-center justify-center gap-1.5 active:scale-[0.99]"
+              className="w-full py-3 px-3.5 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs transition-colors flex items-center justify-center gap-2 active:scale-[0.99] shadow-2xs"
             >
-              <MessageSquare className="w-3.5 h-3.5 text-[#0052CC]" />
+              <MessageSquare className="w-4 h-4 text-[#0052CC]" />
               <span>Chat with Customer</span>
             </button>
 
             {isDelivery ? (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <button
                   type="button"
                   id="assigned-service-cancel-btn"
@@ -750,7 +748,7 @@ export const AssignedCustomerServiceScreen: React.FC<
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2.5">
                 <button
                   type="button"
                   id="assigned-service-cancel-btn"
@@ -774,11 +772,16 @@ export const AssignedCustomerServiceScreen: React.FC<
         ) : (
           <button
             onClick={onBack}
-            className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs transition-colors flex items-center justify-center gap-2"
           >
             <span>Back to Home</span>
           </button>
         )}
+
+        {/* Footer positioned below Cancel / Proceed buttons and above device safe area */}
+        <div className="pt-0.5 pb-0.5">
+          <PoweredByCinitecFooter className="py-0.5" />
+        </div>
       </div>
 
       {/* Cancel Confirmation Dialog */}

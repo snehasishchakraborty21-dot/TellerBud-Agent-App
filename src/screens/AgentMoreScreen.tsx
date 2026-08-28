@@ -32,7 +32,6 @@ import {
   AgentWalletData,
   AgentEarningsSummary,
 } from '../types';
-import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 interface AgentMoreScreenProps {
   previewState?: AgentMorePreviewState;
@@ -351,8 +350,6 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
             </div>
             <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-[#0052CC] transition-colors shrink-0" />
           </button>
-
-          <PoweredByCinitecFooter className="py-2" />
         </div>
       </div>
 

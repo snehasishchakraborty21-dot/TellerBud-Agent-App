@@ -7,18 +7,13 @@ import {
   CreditCard,
   MoreHorizontal,
   ChevronRight,
-  Truck,
   Store,
   Coins,
   Zap,
   UserCheck,
-  CheckCircle2,
   AlertTriangle,
   RefreshCw,
   Clock,
-  ArrowDownLeft,
-  ArrowUpRight,
-  ShieldCheck,
   Inbox,
   User,
 } from 'lucide-react';
@@ -29,10 +24,8 @@ import {
   RecordedTransaction,
   AgentLiquidityRequestDetail,
   WalkInTransactionRecord,
-  VendorType,
 } from '../types';
-import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
-import { getVendorType, getVendorLogo } from '../config/walkInConfig';
+import { getVendorLogo } from '../config/walkInConfig';
 
 interface AgentTransactionsScreenProps {
   previewState?: AgentTransactionsPreviewState;
@@ -44,21 +37,20 @@ interface AgentTransactionsScreenProps {
   onRetry?: () => void;
 }
 
-// Canonical mock transaction records matching prior workflows
+// Canonical mock transaction records matching Phase 1 scope (Pickup, Cash Exchange, Walk-In)
 const defaultMockTransactions: AgentTransactionItem[] = [
   {
     id: 'TXN-901',
     transactionReference: 'TRX-829104',
     requestReference: 'CR-8012',
     category: 'customer',
-    serviceType: 'delivery',
+    customerName: 'John Banda',
+    serviceType: 'pickup',
     transactionType: 'Withdrawal',
-    vendorType: 'MNO',
     vendor: 'MTN',
     amount: 'ZMW 15,000.00',
     currencySymbol: 'ZMW',
     status: 'completed',
-    hasSmsConfirmation: true,
     timestamp: 'Today, 11:30 AM',
     dateGroup: 'Today',
     serviceFee: 'ZMW 150.00',
@@ -83,14 +75,13 @@ const defaultMockTransactions: AgentTransactionItem[] = [
     transactionReference: 'TRX-798412',
     requestReference: 'CR-7984',
     category: 'customer',
+    customerName: 'Mary Phiri',
     serviceType: 'pickup',
-    transactionType: 'Cash In',
-    vendorType: 'MNO',
+    transactionType: 'Deposit',
     vendor: 'Airtel',
     amount: 'ZMW 20,000.00',
     currencySymbol: 'ZMW',
     status: 'completed',
-    hasSmsConfirmation: true,
     timestamp: 'Today, 09:15 AM',
     dateGroup: 'Today',
     serviceFee: 'ZMW 200.00',
@@ -100,7 +91,6 @@ const defaultMockTransactions: AgentTransactionItem[] = [
     transactionReference: 'WI-20418',
     category: 'walk_in',
     walkInType: 'Withdrawal',
-    vendorType: 'MNO',
     vendor: 'MTN',
     amount: 'ZMW 10,000.00',
     currencySymbol: 'ZMW',
@@ -114,7 +104,6 @@ const defaultMockTransactions: AgentTransactionItem[] = [
     requestReference: 'AL-8831',
     category: 'agent_liquidity',
     liquidityType: 'float',
-    vendorType: 'MNO',
     vendor: 'MTN',
     matchedAgentName: 'Sarah Kalu',
     matchedAgentId: 'AGT-6510',
@@ -130,14 +119,13 @@ const defaultMockTransactions: AgentTransactionItem[] = [
     transactionReference: 'TRX-661042',
     requestReference: 'CR-7450',
     category: 'customer',
-    serviceType: 'delivery',
+    customerName: 'Christopher Mwansa',
+    serviceType: 'pickup',
     transactionType: 'Deposit',
-    vendorType: 'Bank',
     vendor: 'Zanaco',
     amount: 'ZMW 35,000.00',
     currencySymbol: 'ZMW',
     status: 'completed',
-    hasSmsConfirmation: true,
     timestamp: '12 Aug, 04:10 PM',
     dateGroup: 'Earlier',
     serviceFee: 'ZMW 350.00',
@@ -147,7 +135,6 @@ const defaultMockTransactions: AgentTransactionItem[] = [
     transactionReference: 'WI-20419',
     category: 'walk_in',
     walkInType: 'Deposit',
-    vendorType: 'Bank',
     vendor: 'FNB',
     amount: 'ZMW 18,500.00',
     currencySymbol: 'ZMW',
@@ -161,7 +148,6 @@ const defaultMockTransactions: AgentTransactionItem[] = [
     requestReference: 'AL-8832',
     category: 'agent_liquidity',
     liquidityType: 'float',
-    vendorType: 'Bank',
     vendor: 'Stanbic',
     matchedAgentName: 'John Phiri',
     matchedAgentId: 'AGT-4402',
@@ -219,14 +205,13 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
             : 'TRX-LIVE',
           requestReference: completedCustomerTxn.requestReference || 'CR-8012',
           category: 'customer',
-          serviceType: completedCustomerTxn.serviceType || 'delivery',
-          transactionType: 'Withdrawal',
-          vendorType: completedCustomerTxn.vendorType || (completedCustomerTxn.vendor ? getVendorType(completedCustomerTxn.vendor) : undefined) || 'MNO',
+          customerName: completedCustomerTxn.customerName || 'John Banda',
+          serviceType: 'pickup',
+          transactionType: completedCustomerTxn.transactionType || 'Withdrawal',
           vendor: completedCustomerTxn.vendor || 'MTN',
           amount: completedCustomerTxn.amount || 'ZMW 15,000.00',
           currencySymbol: 'ZMW',
           status: 'completed',
-          hasSmsConfirmation: true,
           timestamp: completedCustomerTxn.timestamp || 'Today, Just now',
           dateGroup: 'Today',
           serviceFee: completedCustomerTxn.serviceFee,
@@ -246,7 +231,6 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
           requestReference: completedLiquidityRequest.requestReference || completedLiquidityRequest.id,
           category: 'agent_liquidity',
           liquidityType: completedLiquidityRequest.requestType || 'cash',
-          vendorType: completedLiquidityRequest.vendorType || (completedLiquidityRequest.vendor ? getVendorType(completedLiquidityRequest.vendor) : undefined),
           vendor: completedLiquidityRequest.vendor,
           matchedAgentName: completedLiquidityRequest.matchedAgent?.name || 'Michael Adeleke',
           matchedAgentId: completedLiquidityRequest.matchedAgent?.agentId || 'AGT-7721',
@@ -271,7 +255,6 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
           transactionReference: completedWalkInTxn.transactionReference,
           category: 'walk_in',
           walkInType: completedWalkInTxn.transactionType,
-          vendorType: completedWalkInTxn.vendorType || (completedWalkInTxn.vendor ? getVendorType(completedWalkInTxn.vendor) : undefined) || 'MNO',
           vendor: completedWalkInTxn.vendor,
           amount: completedWalkInTxn.amount,
           currencySymbol: completedWalkInTxn.currencySymbol || 'ZMW',
@@ -363,13 +346,6 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
   // Category Icon & Background Helper
   const renderTransactionIcon = (txn: AgentTransactionItem) => {
     if (txn.category === 'customer') {
-      if (txn.serviceType === 'delivery') {
-        return (
-          <div className="w-8 h-8 rounded-xl bg-sky-50 text-[#0052CC] border border-sky-100 flex items-center justify-center shrink-0">
-            <Truck className="w-4 h-4" />
-          </div>
-        );
-      }
       return (
         <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100 flex items-center justify-center shrink-0">
           <Store className="w-4 h-4" />
@@ -403,7 +379,7 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
   // Primary Transaction Title Helper (Line 1: Service / Category)
   const getPrimaryTitle = (txn: AgentTransactionItem) => {
     if (txn.category === 'customer') {
-      return txn.serviceType === 'delivery' ? 'Customer Delivery' : 'Customer Pickup';
+      return 'Customer Pickup';
     }
     if (txn.category === 'agent_liquidity') {
       return txn.liquidityType === 'cash' ? 'Cash Exchange' : 'Float Exchange';
@@ -417,15 +393,77 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
   // Secondary Transaction Type Helper (Line 2: Transaction Type)
   const getSecondaryType = (txn: AgentTransactionItem) => {
     if (txn.category === 'customer') {
-      return txn.transactionType || (txn.serviceType === 'delivery' ? 'Withdrawal' : 'Cash In');
+      return txn.transactionType || 'Withdrawal';
     }
     if (txn.category === 'walk_in') {
-      return txn.walkInType || 'Cash Out';
+      return txn.walkInType || 'Withdrawal';
     }
     if (txn.category === 'agent_liquidity') {
       return txn.transactionType || undefined;
     }
     return undefined;
+  };
+
+  // Vendor specific logo display configuration to enlarge actual artwork without oversized boxes
+  const getVendorDisplayConfig = (vendorName: string) => {
+    const lower = vendorName.toLowerCase().trim();
+    if (lower.includes('mtn')) {
+      return { scale: 1.8, frameClass: 'w-[42px] h-[34px] min-w-[42px]' };
+    }
+    if (lower.includes('airtel')) {
+      return { scale: 1.9, frameClass: 'w-[42px] h-[34px] min-w-[42px]' };
+    }
+    if (lower.includes('zamtel')) {
+      return { scale: 1.55, frameClass: 'w-[42px] h-[34px] min-w-[42px]' };
+    }
+    if (lower.includes('zanaco')) {
+      return { scale: 1.45, frameClass: 'w-[50px] h-[34px] min-w-[50px]' };
+    }
+    if (lower.includes('fnb')) {
+      return { scale: 1.5, frameClass: 'w-[48px] h-[34px] min-w-[48px]' };
+    }
+    if (lower.includes('indo')) {
+      return { scale: 1.45, frameClass: 'w-[50px] h-[34px] min-w-[50px]' };
+    }
+    if (lower.includes('stanbic')) {
+      return { scale: 1.45, frameClass: 'w-[50px] h-[34px] min-w-[50px]' };
+    }
+    if (lower.includes('access')) {
+      return { scale: 1.5, frameClass: 'w-[50px] h-[34px] min-w-[50px]' };
+    }
+    return { scale: 1.4, frameClass: 'w-[44px] h-[34px] min-w-[44px]' };
+  };
+
+  // Vendor Brand (Logo + Name) Helper with vendor-specific sizing/scaling to maximize logo visibility
+  const renderVendorBrand = (vendorName?: string) => {
+    if (!vendorName) return null;
+    const logoSrc = getVendorLogo(vendorName);
+    const { scale, frameClass } = getVendorDisplayConfig(vendorName);
+
+    return (
+      <div className="flex items-center gap-2.5 min-w-0">
+        {logoSrc && (
+          <div
+            className={`${frameClass} rounded-md bg-white border border-slate-200/80 flex items-center justify-center shrink-0 shadow-2xs overflow-hidden`}
+          >
+            <img
+              src={logoSrc}
+              alt={vendorName}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                objectPosition: 'center',
+                transform: `scale(${scale})`,
+                transformOrigin: 'center',
+              }}
+              referrerPolicy="no-referrer"
+            />
+          </div>
+        )}
+        <span className="text-xs font-bold text-slate-800 tracking-tight">{vendorName}</span>
+      </div>
+    );
   };
 
   return (
@@ -600,36 +638,16 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
                       </div>
 
                       {/* Middle Row: Relevant Secondary Details */}
-                      <div className="pt-1 border-t border-slate-100 flex items-center justify-between gap-2 text-[11px] text-slate-600">
+                      <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2 text-xs text-slate-600">
                         {/* Customer Secondary Info */}
                         {txn.category === 'customer' && (
-                          <div className="flex items-center gap-1.5 flex-wrap min-w-0">
-                            {txn.vendor && (
-                              <div className="flex items-center gap-1">
-                                {(txn.vendorType || getVendorType(txn.vendor)) && (
-                                  <span className="font-bold text-[#0052CC] bg-blue-50 px-1.5 py-0.5 rounded text-[9.5px] border border-blue-100">
-                                    {txn.vendorType || getVendorType(txn.vendor)}
-                                  </span>
-                                )}
-                                <span className="font-semibold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] flex items-center gap-1">
-                                  {getVendorLogo(txn.vendor) && (
-                                    <div className="w-3.5 h-3.5 rounded-xs bg-white border border-slate-200 p-[1px] flex items-center justify-center shrink-0 overflow-hidden">
-                                      <img
-                                        src={getVendorLogo(txn.vendor)}
-                                        alt={txn.vendor}
-                                        className="w-full h-full object-contain"
-                                        referrerPolicy="no-referrer"
-                                      />
-                                    </div>
-                                  )}
-                                  <span>{txn.vendor}</span>
-                                </span>
-                              </div>
-                            )}
-                            {txn.hasSmsConfirmation && (
-                              <span className="inline-flex items-center gap-1 text-[10px] text-emerald-700 font-medium bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200/60">
-                                <CheckCircle2 className="w-2.5 h-2.5" />
-                                <span>Vendor confirmation captured</span>
+                          <div className="flex items-center justify-between gap-3 w-full min-w-0">
+                            <div className="flex items-center min-w-0">
+                              {renderVendorBrand(txn.vendor)}
+                            </div>
+                            {txn.customerName && (
+                              <span className="text-xs font-semibold text-slate-800 tracking-tight truncate max-w-[170px] text-right">
+                                {txn.customerName}
                               </span>
                             )}
                           </div>
@@ -637,32 +655,15 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
 
                         {/* Agent Liquidity Secondary Info */}
                         {txn.category === 'agent_liquidity' && (
-                          <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-                            {txn.vendor && (
-                              <div className="flex items-center gap-1">
-                                {(txn.vendorType || getVendorType(txn.vendor)) && (
-                                  <span className="font-bold text-[#0052CC] bg-blue-50 px-1.5 py-0.5 rounded text-[9.5px] border border-blue-100">
-                                    {txn.vendorType || getVendorType(txn.vendor)}
-                                  </span>
-                                )}
-                                <span className="font-semibold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] flex items-center gap-1">
-                                  {getVendorLogo(txn.vendor) && (
-                                    <div className="w-3.5 h-3.5 rounded-xs bg-white border border-slate-200 p-[1px] flex items-center justify-center shrink-0 overflow-hidden">
-                                      <img
-                                        src={getVendorLogo(txn.vendor)}
-                                        alt={txn.vendor}
-                                        className="w-full h-full object-contain"
-                                        referrerPolicy="no-referrer"
-                                      />
-                                    </div>
-                                  )}
-                                  <span>{txn.vendor}</span>
-                                </span>
-                              </div>
+                          <div className="flex items-center justify-between gap-3 min-w-0 flex-1 flex-wrap">
+                            {txn.vendor ? (
+                              renderVendorBrand(txn.vendor)
+                            ) : (
+                              <div />
                             )}
-                            <div className="flex items-center gap-1 min-w-0">
-                              <User className="w-3 h-3 text-slate-400 shrink-0" />
-                              <span className="text-slate-700 font-medium truncate">
+                            <div className="flex items-center gap-1.5 min-w-0 ml-auto">
+                              <User className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                              <span className="text-xs text-slate-700 font-medium truncate">
                                 {txn.matchedAgentName || 'Matched Agent'}
                                 {txn.matchedAgentId ? ` (${txn.matchedAgentId})` : ''}
                               </span>
@@ -672,29 +673,8 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
 
                         {/* Walk-In Secondary Info */}
                         {txn.category === 'walk_in' && (
-                          <div className="flex items-center gap-2 flex-wrap">
-                            {txn.vendor && (
-                              <div className="flex items-center gap-1">
-                                {(txn.vendorType || getVendorType(txn.vendor)) && (
-                                  <span className="font-bold text-[#0052CC] bg-blue-50 px-1.5 py-0.5 rounded text-[9.5px] border border-blue-100">
-                                    {txn.vendorType || getVendorType(txn.vendor)}
-                                  </span>
-                                )}
-                                <span className="font-semibold text-slate-800 bg-slate-100 px-1.5 py-0.5 rounded text-[10px] flex items-center gap-1">
-                                  {getVendorLogo(txn.vendor) && (
-                                    <div className="w-3.5 h-3.5 rounded-xs bg-white border border-slate-200 p-[1px] flex items-center justify-center shrink-0 overflow-hidden">
-                                      <img
-                                        src={getVendorLogo(txn.vendor)}
-                                        alt={txn.vendor}
-                                        className="w-full h-full object-contain"
-                                        referrerPolicy="no-referrer"
-                                      />
-                                    </div>
-                                  )}
-                                  <span>{txn.vendor}</span>
-                                </span>
-                              </div>
-                            )}
+                          <div className="flex items-center min-w-0">
+                            {renderVendorBrand(txn.vendor)}
                           </div>
                         )}
                       </div>
@@ -720,8 +700,6 @@ export const AgentTransactionsScreen: React.FC<AgentTransactionsScreenProps> = (
             ))}
           </div>
         )}
-
-        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* 4. Fixed Operational 4-Tab Bottom Navigation (Transactions Active) */}

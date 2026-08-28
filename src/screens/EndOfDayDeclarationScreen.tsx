@@ -600,12 +600,10 @@ export const EndOfDayDeclarationScreen: React.FC<EndOfDayDeclarationScreenProps>
             </div>
           </div>
         )}
-
-        <PoweredByCinitecFooter className="py-2" />
       </div>
 
-      {/* 3. Sticky Primary Action Bar */}
-      <div className="p-3.5 bg-white border-t border-slate-200/80 shrink-0 shadow-lg z-10">
+      {/* 3. Sticky Primary Action Bar & True Footer */}
+      <div className="px-3.5 pt-3 pb-1.5 bg-white border-t border-slate-200/80 shrink-0 shadow-lg z-10 space-y-2">
         {isSuccess ? (
           <button
             onClick={() => {
@@ -613,7 +611,7 @@ export const EndOfDayDeclarationScreen: React.FC<EndOfDayDeclarationScreenProps>
                 onReturnToSignIn();
               }
             }}
-            className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#003E99] text-white font-extrabold text-xs transition-colors shadow-2xs active:scale-[0.99] flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#003E99] text-white font-extrabold text-xs transition-colors shadow-2xs active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
           >
             <span>Return to Sign In</span>
           </button>
@@ -621,7 +619,7 @@ export const EndOfDayDeclarationScreen: React.FC<EndOfDayDeclarationScreenProps>
           <button
             onClick={handlePrimaryClick}
             disabled={isSubmitting}
-            className={`w-full py-3 px-4 rounded-xl font-extrabold text-xs transition-colors shadow-2xs flex items-center justify-center gap-2 ${
+            className={`w-full py-3 px-4 rounded-xl font-extrabold text-xs transition-colors shadow-2xs flex items-center justify-center gap-2 cursor-pointer ${
               isFormValid && !isSubmitting
                 ? 'bg-[#0052CC] hover:bg-[#003E99] text-white active:scale-[0.99]'
                 : 'bg-slate-200 text-slate-400 cursor-not-allowed'
@@ -637,6 +635,11 @@ export const EndOfDayDeclarationScreen: React.FC<EndOfDayDeclarationScreenProps>
             )}
           </button>
         )}
+
+        {/* True Footer placed directly below button */}
+        <div className="pt-0.5 pb-0.5">
+          <PoweredByCinitecFooter className="py-0" />
+        </div>
       </div>
 
       {/* 4. Confirmation Bottom Sheet Modal */}

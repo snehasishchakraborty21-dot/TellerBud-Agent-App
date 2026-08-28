@@ -207,9 +207,9 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
     activeBottomSheet === 'cash' ? effectiveCashBands : effectiveFloatBands;
 
   return (
-    <div className="w-full h-full min-h-full bg-slate-50 flex flex-col justify-between p-3.5 text-slate-900 select-none overflow-y-auto font-sans relative">
+    <div className="w-full h-full min-h-full bg-slate-50 flex flex-col justify-between p-4 text-slate-900 select-none overflow-y-auto font-sans relative">
       {/* Compact Authenticated Header */}
-      <header className="w-full flex items-center justify-between pb-2.5 border-b border-slate-200/80 shrink-0">
+      <header className="w-full flex items-center justify-between pb-3 border-b border-slate-200/80 shrink-0">
         <div className="flex items-center gap-1.5">
           <TellerBudLogo size="sm" />
           <span className="text-[13px] font-bold text-slate-900 tracking-tight">TellerBud</span>
@@ -221,7 +221,7 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
       </header>
 
       {/* Main Content Body */}
-      <main className="flex-1 py-2 max-w-sm mx-auto w-full flex flex-col gap-2.5">
+      <main className="flex-1 py-3 max-w-sm mx-auto w-full flex flex-col justify-between gap-3.5">
         {/* Preview State: Configuration Unavailable */}
         {previewState === 'config_unavailable' ? (
           <div className="w-full bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs flex flex-col items-center text-center my-auto">
@@ -244,9 +244,9 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
             </button>
           </div>
         ) : (
-          <>
+          <div className="flex flex-col gap-3.5 flex-1 justify-start">
             {/* Heading */}
-            <div className="text-left">
+            <div className="text-left pt-0.5">
               <h2 className="text-[16px] font-bold text-slate-900 tracking-tight leading-tight">
                 Set your availability
               </h2>
@@ -262,41 +262,41 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
               </div>
             )}
 
-            {/* Compact Confirmed Session Context */}
-            <div className="w-full bg-slate-100/90 rounded-xl border border-slate-200/80 px-2.5 py-2 flex items-center justify-between text-left">
-              <div className="flex items-center gap-2 min-w-0 pr-2">
-                <div className="p-1 rounded-lg bg-sky-100 text-[#0052CC] shrink-0">
-                  <ShieldCheck className="w-3.5 h-3.5 stroke-[2]" />
+            {/* Confirmed Session Context (Enlarged padding and height for scanning) */}
+            <div className="w-full bg-slate-100/90 rounded-xl border border-slate-200/80 px-3.5 py-3 flex items-center justify-between text-left shadow-2xs">
+              <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                <div className="p-1.5 rounded-lg bg-sky-100 text-[#0052CC] shrink-0">
+                  <ShieldCheck className="w-4 h-4 stroke-[2]" />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-[11.5px] font-bold text-slate-900 truncate leading-tight">
+                  <p className="text-[12px] font-bold text-slate-900 truncate leading-tight">
                     {assignment.booth}
                   </p>
-                  <p className="text-[10.5px] font-medium text-slate-500 truncate leading-tight">
+                  <p className="text-[11px] font-medium text-slate-500 truncate leading-tight mt-0.5">
                     {assignment.store}
                   </p>
                 </div>
               </div>
 
               {/* Read-Only Booth Session Status (Subtle Blue, Not Confused with Online) */}
-              <div className="shrink-0 flex items-center gap-1 px-2 py-0.5 rounded-full bg-sky-100/90 text-sky-800 text-[10px] font-bold border border-sky-200/80">
+              <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-sky-100/90 text-sky-800 text-[10.5px] font-bold border border-sky-200/80">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#0052CC]" />
                 <span>Booth Session</span>
               </div>
             </div>
 
             {/* Section 1: Availability Status (Online / Offline Segmented Control) */}
-            <div className="flex flex-col gap-1 text-left">
-              <label className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider">
+            <div className="flex flex-col gap-1.5 text-left">
+              <label className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                 Availability Status
               </label>
 
-              <div className="w-full bg-slate-200/80 p-1 rounded-xl grid grid-cols-2 gap-1">
+              <div className="w-full bg-slate-200/80 p-1.5 rounded-xl grid grid-cols-2 gap-1.5">
                 <button
                   type="button"
                   id="availability-status-online"
                   onClick={handleSelectOnline}
-                  className={`py-1.5 rounded-lg text-[12.5px] font-bold transition-all text-center ${
+                  className={`py-2 rounded-lg text-[13px] font-bold transition-all text-center ${
                     status === 'online'
                       ? 'bg-[#0052CC] text-white shadow-2xs'
                       : 'text-slate-600 hover:text-slate-900 font-medium'
@@ -308,7 +308,7 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                   type="button"
                   id="availability-status-offline"
                   onClick={handleSelectOffline}
-                  className={`py-1.5 rounded-lg text-[12.5px] font-bold transition-all text-center ${
+                  className={`py-2 rounded-lg text-[13px] font-bold transition-all text-center ${
                     status === 'offline'
                       ? 'bg-slate-700 text-white shadow-2xs'
                       : 'text-slate-600 hover:text-slate-900 font-medium'
@@ -320,30 +320,30 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
             </div>
 
             {/* Section 2: Services (Pickup, Delivery - Coming Soon) */}
-            <div className="flex flex-col gap-1 text-left">
+            <div className="flex flex-col gap-1.5 text-left">
               <div className="flex items-center justify-between">
                 <label
-                  className={`text-[10.5px] font-bold uppercase tracking-wider ${
+                  className={`text-[11px] font-bold uppercase tracking-wider ${
                     status === 'offline' ? 'text-slate-400' : 'text-slate-500'
                   }`}
                 >
                   Services
                 </label>
                 {status === 'offline' && (
-                  <span className="text-[10px] font-medium text-slate-400">
+                  <span className="text-[10.5px] font-medium text-slate-400">
                     Disabled while Offline
                   </span>
                 )}
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-2.5">
                 {/* Pickup (Selectable) */}
                 <button
                   type="button"
                   id="service-pickup"
                   disabled={status === 'offline'}
                   onClick={() => handleSetService('pickup')}
-                  className={`py-2.5 px-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${
+                  className={`py-3 px-3 rounded-xl border flex items-center justify-center gap-2 transition-all ${
                     status === 'offline'
                       ? 'bg-slate-100/70 border-slate-200/80 text-slate-400 opacity-60 cursor-not-allowed'
                       : service === 'pickup'
@@ -352,7 +352,7 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                   }`}
                 >
                   <ShoppingBag className="w-4 h-4 stroke-[2]" />
-                  <span className="text-[12px] font-bold">Pickup</span>
+                  <span className="text-[12.5px] font-bold">Pickup</span>
                 </button>
 
                 {/* Delivery (Visible but Disabled / Coming Soon) */}
@@ -363,11 +363,11 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                   tabIndex={-1}
                   aria-disabled="true"
                   title="Delivery is coming soon."
-                  className="py-2.5 px-2 rounded-xl border border-slate-200/70 bg-slate-100/60 text-slate-400 cursor-not-allowed flex items-center justify-center gap-1.5 select-none"
+                  className="py-3 px-2 rounded-xl border border-slate-200/70 bg-slate-100/60 text-slate-400 cursor-not-allowed flex items-center justify-center gap-1.5 select-none"
                 >
                   <Truck className="w-4 h-4 stroke-[1.75] text-slate-400" />
-                  <span className="text-[12px] font-medium text-slate-400">Delivery</span>
-                  <span className="text-[9.5px] font-semibold text-slate-400 bg-slate-200/70 px-1 py-0.5 rounded-sm">
+                  <span className="text-[12.5px] font-medium text-slate-400">Delivery</span>
+                  <span className="text-[9.5px] font-semibold text-slate-400 bg-slate-200/70 px-1.5 py-0.5 rounded-sm">
                     Soon
                   </span>
                 </button>
@@ -376,21 +376,21 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
 
             {/* Section 3: Availability Bands */}
             <div
-              className={`rounded-xl border p-2.5 flex flex-col gap-2 text-left transition-all ${
+              className={`rounded-xl border p-3.5 flex flex-col gap-3 text-left transition-all ${
                 status === 'offline'
                   ? 'bg-slate-100/50 border-slate-200/70 opacity-70'
                   : 'bg-white border-slate-200/90 shadow-2xs'
               }`}
             >
-              <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
                 <div className="flex items-center gap-1.5">
                   <SlidersHorizontal
-                    className={`w-3.5 h-3.5 ${
+                    className={`w-4 h-4 ${
                       status === 'offline' ? 'text-slate-400' : 'text-[#0052CC]'
                     }`}
                   />
                   <span
-                    className={`text-[11.5px] font-bold ${
+                    className={`text-[12px] font-bold ${
                       status === 'offline' ? 'text-slate-500' : 'text-slate-800'
                     }`}
                   >
@@ -398,16 +398,16 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                   </span>
                 </div>
                 {status === 'offline' && (
-                  <span className="text-[10px] font-medium text-slate-400">
+                  <span className="text-[10.5px] font-medium text-slate-400">
                     Disabled while Offline
                   </span>
                 )}
               </div>
 
               {/* Cash Availability Band Field */}
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-1">
                 <label
-                  className={`text-[10.5px] font-semibold ${
+                  className={`text-[11px] font-semibold ${
                     status === 'offline' ? 'text-slate-400' : 'text-slate-600'
                   }`}
                 >
@@ -420,14 +420,14 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                   onClick={() => {
                     if (status === 'online') setActiveBottomSheet('cash');
                   }}
-                  className={`w-full h-9 px-2.5 rounded-lg border flex items-center justify-between transition-colors ${
+                  className={`w-full h-10 px-3 rounded-lg border flex items-center justify-between transition-colors ${
                     status === 'offline'
                       ? 'bg-slate-100/60 border-slate-200/60 text-slate-400 cursor-not-allowed'
                       : 'bg-slate-50/60 border-slate-200 hover:bg-slate-100/80 text-slate-800'
                   }`}
                 >
                   <span
-                    className={`text-[12px] truncate ${
+                    className={`text-[12.5px] truncate ${
                       status === 'offline'
                         ? 'text-slate-400 font-normal'
                         : selectedCashBand
@@ -441,7 +441,7 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                       ? selectedCashBand.label
                       : 'Select cash range'}
                   </span>
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
                 </button>
                 {status === 'online' && !cashBandId && (
                   <span className="text-[10px] text-amber-600 font-medium pl-0.5">
@@ -451,9 +451,9 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
               </div>
 
               {/* Float Availability Band Field */}
-              <div className="flex flex-col gap-0.5">
+              <div className="flex flex-col gap-1">
                 <label
-                  className={`text-[10.5px] font-semibold ${
+                  className={`text-[11px] font-semibold ${
                     status === 'offline' ? 'text-slate-400' : 'text-slate-600'
                   }`}
                 >
@@ -466,14 +466,14 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                   onClick={() => {
                     if (status === 'online') setActiveBottomSheet('float');
                   }}
-                  className={`w-full h-9 px-2.5 rounded-lg border flex items-center justify-between transition-colors ${
+                  className={`w-full h-10 px-3 rounded-lg border flex items-center justify-between transition-colors ${
                     status === 'offline'
                       ? 'bg-slate-100/60 border-slate-200/60 text-slate-400 cursor-not-allowed'
                       : 'bg-slate-50/60 border-slate-200 hover:bg-slate-100/80 text-slate-800'
                   }`}
                 >
                   <span
-                    className={`text-[12px] truncate ${
+                    className={`text-[12.5px] truncate ${
                       status === 'offline'
                         ? 'text-slate-400 font-normal'
                         : selectedFloatBand
@@ -487,7 +487,7 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                       ? selectedFloatBand.label
                       : 'Select float range'}
                   </span>
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                  <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
                 </button>
                 {status === 'online' && !floatBandId && (
                   <span className="text-[10px] text-amber-600 font-medium pl-0.5">
@@ -504,7 +504,7 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
               onClick={handleSave}
               disabled={!isFormValid || isSubmitting || isSaved}
               className={`
-                w-full h-12 rounded-xl font-bold text-[13.5px] flex items-center justify-center gap-2
+                w-full h-12.5 rounded-xl font-bold text-[13.5px] flex items-center justify-center gap-2
                 transition-all duration-150 shadow-xs focus:outline-none focus:ring-2 focus:ring-[#0052CC]/50 mt-1
                 ${
                   isSaved
@@ -531,10 +531,13 @@ export const AgentAvailabilitySetupScreen: React.FC<AgentAvailabilitySetupScreen
                 <span>Save Availability</span>
               )}
             </button>
-
-            <PoweredByCinitecFooter className="py-2" />
-          </>
+          </div>
         )}
+
+        {/* Persistent bottom footer */}
+        <div className="mt-auto shrink-0 pt-2">
+          <PoweredByCinitecFooter className="py-1" />
+        </div>
       </main>
 
       {/* Bottom Sheet Modal for Cash / Float Band Selection */}

@@ -8,6 +8,7 @@ import {
   User,
   Clock,
   ArrowRight,
+  Home,
 } from 'lucide-react';
 import { TellerBudLogo } from '../components/TellerBudLogo';
 import {
@@ -22,6 +23,7 @@ interface AgentLiquidityCompletionScreenProps {
   request?: AgentLiquidityRequestDetail;
   previewState?: AgentLiquidityCompletionPreviewState;
   onBackToRequests?: () => void;
+  onBackToHome?: () => void;
 }
 
 const defaultMockCompletionRequest: AgentLiquidityRequestDetail = {
@@ -61,6 +63,7 @@ export const AgentLiquidityCompletionScreen: React.FC<
   request = defaultMockCompletionRequest,
   previewState = 'cash_completed',
   onBackToRequests,
+  onBackToHome,
 }) => {
   const [activeRequest, setActiveRequest] = useState<AgentLiquidityRequestDetail>(() => {
     return applyPreviewState(request, previewState);
@@ -164,6 +167,14 @@ export const AgentLiquidityCompletionScreen: React.FC<
     }
   };
 
+  const handleExitToHome = () => {
+    if (onBackToHome) {
+      onBackToHome();
+    } else if (onBackToRequests) {
+      onBackToRequests();
+    }
+  };
+
   return (
     <div
       id="agent-liquidity-completion-screen"
@@ -195,140 +206,156 @@ export const AgentLiquidityCompletionScreen: React.FC<
         <TellerBudLogo size="sm" />
       </header>
 
-      {/* 2. Main Scrollable Content */}
-      <div className="flex-1 overflow-y-auto p-3.5 space-y-3">
-        {/* COMPLETION STATUS CARD */}
-        <div className="bg-white border border-emerald-200/90 rounded-2xl p-3.5 shadow-2xs space-y-1 relative overflow-hidden">
-          <div className="flex items-center gap-2.5">
+      {/* 2. Main Content (Evenly Distributed, Single-Screen Viewport Friendly) */}
+      <div className="flex-1 flex flex-col justify-between px-4 py-3 overflow-hidden">
+        <div className="space-y-2.5">
+          {/* COMPLETION STATUS CARD */}
+          <div className="bg-emerald-50/90 border border-emerald-200/80 rounded-2xl p-3 flex items-center gap-3 shadow-2xs">
             <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-              <CheckCircle2 className="w-5 h-5 stroke-[2.5]" />
+              <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
             </div>
             <div className="flex-1">
-              <h2 className="text-sm font-black text-[#002244]">
+              <h2 className="text-sm font-black text-[#002244] leading-tight">
                 Exchange completed
               </h2>
             </div>
           </div>
-        </div>
 
-        {/* COMPLETED EXCHANGE SUMMARY CARD */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-              Completed Exchange
-            </span>
-            <span
-              className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 ${
-                activeRequest.requestType === 'cash'
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
-                  : 'bg-blue-50 text-[#0052CC] border border-blue-200/50'
-              }`}
-            >
-              <Coins className="w-3 h-3" />
-              <span>
-                {activeRequest.requestType === 'cash' ? 'Cash Exchange' : 'Float Exchange'}
+          {/* COMPLETED EXCHANGE SUMMARY CARD */}
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-3 shadow-2xs space-y-2">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                Completed Exchange
               </span>
-            </span>
-          </div>
-
-          <div className="flex items-baseline justify-between">
-            <span className="text-xs text-slate-500 font-medium">Exchange Amount</span>
-            <span className="text-base font-black text-[#002244] font-mono">
-              {normalizeZmwAmount(activeRequest.amount)}
-            </span>
-          </div>
-
-          <div className="space-y-2 pt-1 border-t border-slate-100/70 text-xs">
-            {/* Requester */}
-            <div className="flex items-start justify-between">
-              <span className="text-slate-400 font-medium flex items-center gap-1">
-                <User className="w-3.5 h-3.5 text-slate-400" />
-                <span>Requester</span>
-              </span>
-              <span className="font-bold text-slate-800 text-right">
-                {activeRequest.requesterName || 'Marcus Vance (You)'}
+              <span
+                className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 ${
+                  activeRequest.requestType === 'cash'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
+                    : 'bg-blue-50 text-[#0052CC] border border-blue-200/50'
+                }`}
+              >
+                <Coins className="w-3 h-3" />
+                <span>
+                  {activeRequest.requestType === 'cash' ? 'Cash Exchange' : 'Float Exchange'}
+                </span>
               </span>
             </div>
 
-            {/* Matched Agent */}
-            <div className="flex items-start justify-between pt-1.5 border-t border-slate-100/70">
-              <span className="text-slate-400 font-medium flex items-center gap-1">
-                <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Matched Agent</span>
+            <div className="flex items-baseline justify-between pt-0.5">
+              <span className="text-xs text-slate-500 font-medium">Exchange Amount</span>
+              <span className="text-base font-black text-[#002244] font-mono">
+                {normalizeZmwAmount(activeRequest.amount)}
               </span>
-              <div className="text-right">
-                <span className="font-bold text-[#002244] block">
-                  {activeRequest.matchedAgent?.name || 'Michael Adeleke'}
+            </div>
+
+            <div className="space-y-1.5 pt-1 border-t border-slate-100/70 text-xs">
+              {/* Requester */}
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 font-medium flex items-center gap-1.5 shrink-0">
+                  <User className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Requester</span>
                 </span>
-                {activeRequest.matchedAgent?.agentReference && (
-                  <span className="text-[10px] text-slate-400 font-mono">
-                    #{activeRequest.matchedAgent.agentReference}
+                <span className="font-bold text-slate-800 text-right">
+                  {activeRequest.requesterName || 'Marcus Vance (You)'}
+                </span>
+              </div>
+
+              {/* Matched Agent */}
+              <div className="flex items-center justify-between pt-1.5 border-t border-slate-100/70">
+                <span className="text-slate-400 font-medium flex items-center gap-1.5 shrink-0">
+                  <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Matched Agent</span>
+                </span>
+                <div className="text-right">
+                  <span className="font-bold text-[#002244]">
+                    {activeRequest.matchedAgent?.name || 'Michael Adeleke'}
                   </span>
-                )}
+                  {activeRequest.matchedAgent?.agentReference && (
+                    <span className="text-[10px] text-slate-400 font-mono ml-1.5">
+                      #{activeRequest.matchedAgent.agentReference}
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
 
-            {/* Exchange Location (Matched Agent's Location) */}
-            <div className="pt-1.5 border-t border-slate-100/70">
-              <span className="text-slate-400 text-xs font-medium flex items-center gap-1 mb-1">
-                <MapPin className="w-3.5 h-3.5 text-[#0052CC]" />
-                <span>Exchange Location</span>
-              </span>
-              <p className="text-xs text-slate-700 font-semibold pl-4.5 leading-snug">
-                {activeRequest.matchedAgent?.boothOrLocation ||
-                  activeRequest.matchedAgent?.booth ||
-                  activeRequest.matchedAgent?.location ||
-                  activeRequest.exchangeLocation ||
-                  'Booth 01 — West Wing, Central Mall'}
-              </p>
-            </div>
-
-            {/* Completed Time */}
-            <div className="flex items-center justify-between pt-1.5 border-t border-slate-100/70 text-[11px] text-slate-400">
-              <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-slate-400" />
-                <span>Completed</span>
-              </span>
-              <span className="font-mono font-bold text-emerald-700">
-                {completedTime}
-              </span>
-            </div>
-
-            {/* Request Reference */}
-            {activeRequest.requestReference && (
-              <div className="flex items-center justify-between pt-1.5 border-t border-slate-100/70 text-[11px] text-slate-400">
-                <span>Request Reference</span>
-                <span className="font-mono font-bold text-slate-700">
-                  #{activeRequest.requestReference}
+              {/* Exchange Location (Matched Agent's Location) */}
+              <div className="flex items-start justify-between pt-1.5 border-t border-slate-100/70 gap-2.5">
+                <span className="text-slate-400 font-medium flex items-center gap-1.5 shrink-0 pt-0.5">
+                  <MapPin className="w-3.5 h-3.5 text-[#0052CC]" />
+                  <span>Exchange Location</span>
+                </span>
+                <span className="text-right text-xs text-slate-700 font-semibold leading-snug">
+                  {activeRequest.matchedAgent?.boothOrLocation ||
+                    activeRequest.matchedAgent?.booth ||
+                    activeRequest.matchedAgent?.location ||
+                    activeRequest.exchangeLocation ||
+                    'Booth 01 — West Wing, Central Mall'}
                 </span>
               </div>
-            )}
 
-            {/* Optional configured service fee row */}
-            {activeRequest.serviceFee && (
-              <div className="flex items-center justify-between pt-1.5 border-t border-slate-100/70 text-[11px] text-slate-400">
-                <span>TellerBud Service Fee</span>
-                <span className="font-mono font-bold text-slate-700">
-                  {activeRequest.serviceFee}
+              {/* Completed Time */}
+              <div className="flex items-center justify-between pt-1.5 border-t border-slate-100/70 text-xs">
+                <span className="text-slate-400 font-medium flex items-center gap-1.5 shrink-0">
+                  <Clock className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Completed</span>
+                </span>
+                <span className="font-mono font-bold text-emerald-700">
+                  {completedTime}
                 </span>
               </div>
-            )}
+
+              {/* Request Reference */}
+              {activeRequest.requestReference && (
+                <div className="flex items-center justify-between pt-1.5 border-t border-slate-100/70 text-xs">
+                  <span className="text-slate-400 font-medium shrink-0">Request Reference</span>
+                  <span className="font-mono font-bold text-slate-700">
+                    #{activeRequest.requestReference}
+                  </span>
+                </div>
+              )}
+
+              {/* Optional configured service fee row */}
+              {activeRequest.serviceFee && (
+                <div className="flex items-center justify-between pt-1.5 border-t border-slate-100/70 text-xs">
+                  <span className="text-slate-400 font-medium shrink-0">TellerBud Fee</span>
+                  <span className="font-mono font-bold text-slate-700">
+                    {activeRequest.serviceFee}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        <PoweredByCinitecFooter className="py-2" />
-      </div>
+        {/* 3. ACTIONS & TRUE FOOTER (Vertical stack with Back to Requests, Back to Home, and Powered by Cinitec) */}
+        <div className="pt-2 pb-0.5 space-y-2 shrink-0">
+          {/* Primary Action: Back to Requests */}
+          <button
+            id="back-to-requests-btn"
+            type="button"
+            onClick={handleExitToRequests}
+            className="w-full py-2.5 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all cursor-pointer"
+          >
+            <span>Back to Requests</span>
+            <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+          </button>
 
-      {/* 3. STICKY BOTTOM ACTION */}
-      <div className="bg-white border-t border-slate-200/80 p-3 shadow-lg shrink-0 z-10">
-        <button
-          id="back-to-requests-btn"
-          onClick={handleExitToRequests}
-          className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all"
-        >
-          <span>Back to Requests</span>
-          <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-        </button>
+          {/* Secondary Action: Back to Home */}
+          <button
+            id="back-to-home-btn"
+            type="button"
+            onClick={handleExitToHome}
+            className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-blue-50/50 active:bg-blue-100/50 text-[#0052CC] border border-[#0052CC]/40 text-xs font-bold flex items-center justify-center gap-2 active:scale-[0.99] transition-all cursor-pointer"
+          >
+            <Home className="w-4 h-4 text-[#0052CC]" />
+            <span>Back to Home</span>
+          </button>
+
+          {/* True Footer directly below both buttons */}
+          <div className="pt-0.5 pb-0.5">
+            <PoweredByCinitecFooter className="py-0" />
+          </div>
+        </div>
       </div>
     </div>
   );

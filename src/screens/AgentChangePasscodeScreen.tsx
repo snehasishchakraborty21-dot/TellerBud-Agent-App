@@ -230,10 +230,10 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
       </header>
 
       {/* 2. Scrollable Body Content */}
-      <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-5 flex flex-col justify-start">
+      <div className="flex-1 overflow-y-auto no-scrollbar px-4 py-4 sm:px-5 flex flex-col justify-between">
         {/* Success View State */}
         {isSuccess ? (
-          <div className="my-auto flex flex-col items-center text-center py-6 px-2 animate-fadeIn">
+          <div className="flex-1 flex flex-col items-center justify-center text-center py-6 px-2 animate-fadeIn">
             <div className="w-14 h-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 shadow-sm border border-emerald-200">
               <CheckCircle2 className="w-8 h-8" />
             </div>
@@ -247,7 +247,7 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 flex-1 justify-start">
             {/* Connection Issue Inline Banner */}
             {connectionError && (
               <div className="bg-rose-50 border border-rose-200 rounded-xl p-3 text-rose-900 flex items-start gap-2.5 shadow-sm animate-fadeIn">
@@ -275,8 +275,8 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
             )}
 
             {/* Change Passcode Form */}
-            <form onSubmit={handleSave} className="flex flex-col gap-3.5">
-              <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-col gap-3.5">
+            <form onSubmit={handleSave} className="flex flex-col gap-4">
+              <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs flex flex-col gap-4">
                 {/* Field 1: New Passcode */}
                 <TellerBudPasscodeField
                   id="new-passcode-field"
@@ -323,7 +323,7 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
                   <button
                     type="button"
                     onClick={handleSave}
-                    className="w-full py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <RefreshCw className="w-3.5 h-3.5" />
                     <span>Retry</span>
@@ -337,7 +337,7 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
                       setStatusUnknown(false);
                       setIsSuccess(true);
                     }}
-                    className="w-full py-2.5 rounded-xl border border-amber-300 bg-amber-50/60 text-xs font-bold text-amber-900 hover:bg-amber-100 transition-colors flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 rounded-xl border border-amber-300 bg-amber-50/60 text-xs font-bold text-amber-900 hover:bg-amber-100 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <span>Check Status</span>
                   </button>
@@ -347,7 +347,10 @@ export const AgentChangePasscodeScreen: React.FC<AgentChangePasscodeScreenProps>
           </div>
         )}
 
-        <PoweredByCinitecFooter className="py-2" />
+        {/* True Footer placed directly at the bottom */}
+        <div className="pt-4 pb-0.5">
+          <PoweredByCinitecFooter className="py-0" />
+        </div>
       </div>
     </div>
   );

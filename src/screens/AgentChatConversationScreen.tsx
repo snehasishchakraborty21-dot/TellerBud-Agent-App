@@ -17,7 +17,6 @@ import {
 } from '../types';
 import { getConversationForPreview, createSeedChatConversations } from '../data/chatData';
 import { useSharedClock, formatStatusBarTime } from '../utils/timeUtils';
-import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 interface AgentChatConversationScreenProps {
   conversationId?: string | null;
@@ -269,7 +268,6 @@ export const AgentChatConversationScreen: React.FC<AgentChatConversationScreenPr
             </div>
           );
         })}
-        <PoweredByCinitecFooter className="py-2" />
         <div ref={messagesEndRef} />
       </div>
 

@@ -1145,7 +1145,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
       </header>
 
       {/* 2. Main Content Body */}
-      <div className="flex-1 overflow-y-auto px-4 py-3.5 space-y-3.5">
+      <div className="flex-1 overflow-y-auto no-scrollbar px-4 py-3.5 flex flex-col justify-between">
         {/* State: No Active Work Session (Blocking) */}
         {!currentAssignment ? (
           <div className="bg-white border border-rose-200/90 rounded-2xl p-6 text-center shadow-sm flex flex-col items-center justify-center my-6 space-y-3">
@@ -1548,7 +1548,7 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
           </div>
         ) : (
           /* State: Default / Form Input State */
-          <div className="space-y-3.5">
+          <div className="space-y-3.5 flex-1 flex flex-col justify-start">
             {/* Current Booth Context Card (Read-only) */}
             <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-2">
               <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
@@ -1829,7 +1829,10 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
           </div>
         )}
 
-        <PoweredByCinitecFooter className="py-2" />
+        {/* True Footer placed directly at the bottom */}
+        <div className="pt-3 pb-0.5">
+          <PoweredByCinitecFooter className="py-0" />
+        </div>
       </div>
 
       {/* BOTTOM SHEET 1: Transaction Type Selector */}

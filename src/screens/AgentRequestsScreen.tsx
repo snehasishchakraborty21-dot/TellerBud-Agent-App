@@ -33,7 +33,6 @@ import {
   MyAgentLiquidityRequestItem,
   BusinessOwnerRequestItem,
 } from '../types';
-import { PoweredByCinitecFooter } from '../components/PoweredByCinitecFooter';
 
 interface AgentRequestsScreenProps {
   previewState?: AgentRequestsPreviewState;
@@ -568,7 +567,7 @@ export const AgentRequestsScreen: React.FC<AgentRequestsScreenProps> = ({
       </div>
 
       {/* 3. Main Vertically Scrollable Content Area */}
-      <div className="flex-1 overflow-y-auto no-scrollbar px-3.5 py-3 space-y-3 pb-16">
+      <div className="flex-1 overflow-y-auto no-scrollbar px-3.5 py-3 space-y-3 pb-3.5">
         {/* Connection Issue Banner */}
         {isConnectionIssue && (
           <div className="bg-amber-50/90 border border-amber-200/90 rounded-xl p-3 flex items-start justify-between gap-2 shadow-2xs">
@@ -938,8 +937,6 @@ export const AgentRequestsScreen: React.FC<AgentRequestsScreenProps> = ({
             )}
           </>
         )}
-
-        <PoweredByCinitecFooter className="py-2" />
       </div>
 
       {/* 4. Fixed Operational 4-Tab Bottom Navigation */}

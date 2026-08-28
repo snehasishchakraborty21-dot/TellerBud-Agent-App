@@ -472,12 +472,10 @@ export const ServiceCompletionScreen: React.FC<ServiceCompletionScreenProps> = (
             </div>
           </div>
         </div>
-
-        <PoweredByCinitecFooter className="py-1" />
       </div>
 
-      {/* 5. Sticky Action Area at Bottom */}
-      <div className="px-3.5 py-3 bg-white border-t border-slate-200/90 shadow-lg shrink-0 z-20">
+      {/* 5. Sticky Action Area at Bottom (with Powered by Cinitec at true footer below buttons) */}
+      <div className="px-3.5 pt-3 pb-2.5 bg-white border-t border-slate-200/90 shadow-lg shrink-0 z-20 space-y-2.5">
         {isCompleted || isCancelled ? (
           <button
             onClick={onBackToHome}
@@ -509,6 +507,11 @@ export const ServiceCompletionScreen: React.FC<ServiceCompletionScreenProps> = (
             <span>Check Status</span>
           </button>
         )}
+
+        {/* Footer positioned below action button and above safe area */}
+        <div className="pt-0.5 pb-0.5">
+          <PoweredByCinitecFooter className="py-0.5" />
+        </div>
       </div>
 
       {/* 6. Agent Confirmation Bottom Sheet Modal */}

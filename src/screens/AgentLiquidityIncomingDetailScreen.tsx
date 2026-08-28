@@ -533,11 +533,11 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
         </div>
       )}
 
-      {/* 4. Main Scrollable Content */}
-      <div className="flex-1 overflow-y-auto p-3.5 space-y-3">
+      {/* 4. Main Content Body */}
+      <div className="flex-1 overflow-y-auto no-scrollbar p-3.5 space-y-3.5 flex flex-col justify-start">
         {/* STATUS BANNER */}
         {isMatched ? (
-          <div className="bg-white border border-emerald-200/90 rounded-2xl p-3.5 shadow-2xs space-y-1 relative overflow-hidden">
+          <div className="bg-white border border-emerald-200/90 rounded-2xl p-4 shadow-2xs space-y-1 relative overflow-hidden">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-5 h-5 stroke-[2.5]" />
@@ -550,7 +550,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
             </div>
           </div>
         ) : isTimedOut ? (
-          <div className="bg-amber-50 border border-amber-200/90 rounded-2xl p-3.5 shadow-2xs space-y-2 relative overflow-hidden">
+          <div className="bg-amber-50 border border-amber-200/90 rounded-2xl p-4 shadow-2xs space-y-2.5 relative overflow-hidden">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
                 <AlertTriangle className="w-5 h-5 stroke-[2.5]" />
@@ -569,14 +569,14 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
             <div className="pt-1 border-t border-amber-200/60">
               <button
                 onClick={onBackToRequests || onBack}
-                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold text-center transition-colors"
+                className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold text-center transition-colors cursor-pointer"
               >
                 Back to Requests
               </button>
             </div>
           </div>
         ) : isRequestTaken ? (
-          <div className="bg-white border border-amber-200 rounded-2xl p-3.5 shadow-2xs space-y-2 relative overflow-hidden">
+          <div className="bg-white border border-amber-200 rounded-2xl p-4 shadow-2xs space-y-2.5 relative overflow-hidden">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
                 <AlertCircle className="w-5 h-5 stroke-[2.5]" />
@@ -590,14 +590,14 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
             <div className="pt-1 border-t border-amber-100">
               <button
                 onClick={onBackToRequests || onBack}
-                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold text-center transition-colors"
+                className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold text-center transition-colors cursor-pointer"
               >
                 Back to Requests
               </button>
             </div>
           </div>
         ) : isRejected ? (
-          <div className="bg-slate-100 border border-slate-300 rounded-2xl p-3.5 shadow-2xs space-y-2 relative overflow-hidden">
+          <div className="bg-slate-100 border border-slate-300 rounded-2xl p-4 shadow-2xs space-y-2.5 relative overflow-hidden">
             <div className="flex items-center gap-2.5">
               <div className="w-8 h-8 rounded-xl bg-slate-200 text-slate-600 flex items-center justify-center shrink-0">
                 <X className="w-5 h-5 stroke-[2.5]" />
@@ -616,7 +616,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
             <div className="pt-1 border-t border-slate-200">
               <button
                 onClick={onBackToRequests || onBack}
-                className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold text-center transition-colors"
+                className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold text-center transition-colors cursor-pointer"
               >
                 Back to Requests
               </button>
@@ -648,7 +648,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
         )}
 
         {/* REQUEST SUMMARY CARD */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-3">
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-2xs space-y-3">
           <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
             {/* AGENT REQUEST ORIGIN BADGE */}
             <div className="flex items-center gap-1.5">
@@ -686,7 +686,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
         </div>
 
         {/* REQUEST INFORMATION CARD */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-2.5">
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-2xs space-y-3">
           <div className="border-b border-slate-100 pb-2 flex items-center justify-between">
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               Request Information
@@ -698,7 +698,7 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
             )}
           </div>
 
-          <div className="space-y-2 text-xs">
+          <div className="space-y-2.5 text-xs">
             <div className="flex items-center justify-between">
               <span className="text-slate-500 font-medium">From</span>
               <span className="font-bold text-[#002244]">
@@ -721,30 +721,18 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
             </div>
           </div>
         </div>
-
-        <PoweredByCinitecFooter className="py-2" />
       </div>
 
-      {/* 5. STICKY BOTTOM RESPONSE AREA */}
-      {!isUnavailable && !isMatched && (
-        <div className="bg-white border-t border-slate-200/80 p-3 shadow-lg shrink-0 space-y-2">
-          <div className="grid grid-cols-2 gap-2.5">
-            {/* REJECT BUTTON */}
-            <button
-              id="reject-request-btn"
-              onClick={() => setShowRejectSheet(true)}
-              disabled={isAccepting}
-              className="py-3 px-4 rounded-xl border border-slate-300 hover:bg-slate-100 active:bg-slate-200 text-slate-700 text-xs font-extrabold flex items-center justify-center transition-all active:scale-[0.99] disabled:opacity-50"
-            >
-              <span>Reject</span>
-            </button>
-
-            {/* ACCEPT REQUEST BUTTON */}
+      {/* 5. STICKY BOTTOM RESPONSE AREA & TRUE FOOTER */}
+      <div className="bg-white border-t border-slate-200/80 px-3.5 pt-3 pb-1.5 shadow-lg shrink-0 space-y-2.5">
+        {!isUnavailable && !isMatched && (
+          <div className="flex flex-col gap-2.5">
+            {/* ACCEPT REQUEST BUTTON (PRIMARY, FULL WIDTH) */}
             <button
               id="accept-request-btn"
               onClick={handleAcceptRequest}
               disabled={isAccepting}
-              className="py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-xs transition-all active:scale-[0.99] disabled:opacity-75"
+              className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-xs transition-all active:scale-[0.99] disabled:opacity-75 cursor-pointer"
             >
               {isAccepting ? (
                 <>
@@ -758,9 +746,24 @@ export const AgentLiquidityIncomingDetailScreen: React.FC<
                 </>
               )}
             </button>
+
+            {/* REJECT BUTTON (SECONDARY / DESTRUCTIVE, FULL WIDTH) */}
+            <button
+              id="reject-request-btn"
+              onClick={() => setShowRejectSheet(true)}
+              disabled={isAccepting}
+              className="w-full py-3 px-4 rounded-xl border border-slate-300 hover:bg-slate-100 active:bg-slate-200 text-slate-700 text-xs font-extrabold flex items-center justify-center transition-all active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+            >
+              <span>Reject</span>
+            </button>
           </div>
+        )}
+
+        {/* True Footer placed directly at the bottom */}
+        <div className="pt-0.5 pb-0.5">
+          <PoweredByCinitecFooter className="py-0" />
         </div>
-      )}
+      </div>
 
       {/* 6. REJECT CONFIRMATION BOTTOM SHEET */}
       {showRejectSheet && (

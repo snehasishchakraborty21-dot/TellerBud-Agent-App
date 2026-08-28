@@ -5,7 +5,6 @@ import {
   Building2,
   Banknote,
   Smartphone,
-  MapPin,
   AlertCircle,
   Clock,
   CheckCircle2,
@@ -129,7 +128,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         setRequestType('cash');
         setVendorType('MNO');
         setVendor('MTN');
-        setAmount('50,000');
+        setAmount('');
         setAmountTouched(false);
         setIsSubmitting(true);
         setErrorMessage(null);
@@ -177,14 +176,12 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
 
   const parsedNumericAmount = parseInt(amount.replace(/[^0-9]/g, ''), 10) || 0;
   const isAmountValid = parsedNumericAmount > 0;
-  const isLocationAvailable = Boolean(assignment.booth || assignment.location);
   const isVendorValid = requestType !== 'float' || (Boolean(vendorType) && Boolean(vendor));
 
   const isFormValid =
     Boolean(requestFrom) &&
     Boolean(requestType) &&
     isAmountValid &&
-    isLocationAvailable &&
     isVendorValid;
 
   const showAmountError = amountTouched && !isAmountValid;
@@ -231,7 +228,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
       className="w-full h-full flex flex-col bg-slate-50 text-slate-800 font-sans overflow-hidden"
     >
       {/* Authenticated Detail Header */}
-      <header className="w-full bg-white border-b border-slate-200/90 px-3.5 py-2.5 flex items-center justify-between shrink-0 shadow-xs z-10">
+      <header className="w-full bg-white border-b border-slate-200/90 px-4 py-3 flex items-center justify-between shrink-0 shadow-xs z-10">
         <div className="flex items-center gap-2.5">
           <button
             id="back-button"
@@ -253,13 +250,13 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         </div>
       </header>
 
-      {/* Main Form Content Area - Natural Mobile Vertical Scrolling */}
-      <div className="flex-1 overflow-y-auto no-scrollbar px-3.5 pt-3 pb-6 space-y-3.5">
+      {/* Main Form Content Area - Natural Mobile Vertical Distribution */}
+      <div className="flex-1 overflow-y-auto no-scrollbar px-4 py-3.5 space-y-3.5 flex flex-col">
         {/* Connection Error Banner */}
         {errorMessage && (
           <div
             id="error-banner"
-            className="bg-red-50 border border-red-200 rounded-2xl p-3 flex items-start gap-2.5 text-red-800 text-xs shadow-xs animate-in fade-in"
+            className="bg-red-50 border border-red-200 rounded-2xl p-3 flex items-start gap-2.5 text-red-800 text-xs shadow-xs animate-in fade-in shrink-0"
           >
             <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
             <div className="flex-1">
@@ -283,7 +280,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         {warningMessage && (
           <div
             id="warning-banner"
-            className="bg-amber-50 border border-amber-200 rounded-2xl p-3 flex items-start gap-2.5 text-amber-900 text-xs shadow-xs animate-in fade-in"
+            className="bg-amber-50 border border-amber-200 rounded-2xl p-3 flex items-start gap-2.5 text-amber-900 text-xs shadow-xs animate-in fade-in shrink-0"
           >
             <Clock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <div className="flex-1">
@@ -301,8 +298,8 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         )}
 
         {/* Section 1: Request From (Two-way workflow selector) */}
-        <div>
-          <div className="flex items-center justify-between mb-1.5">
+        <div className="shrink-0">
+          <div className="flex items-center justify-between mb-2">
             <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Request From
             </label>
@@ -312,7 +309,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
               </span>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2.5">
             {/* Another Agent Option */}
             <button
               type="button"
@@ -321,7 +318,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
               onClick={() => {
                 if (!isOffline) setRequestFrom('agent');
               }}
-              className={`p-3 rounded-2xl border text-left transition-all relative ${
+              className={`p-3.5 rounded-2xl border text-left transition-all relative ${
                 isOffline
                   ? 'bg-slate-100/70 border-slate-200/80 text-slate-400 opacity-60 cursor-not-allowed'
                   : requestFrom === 'agent'
@@ -329,9 +326,9 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
                   : 'bg-white border-slate-200 hover:border-slate-300 text-slate-700'
               }`}
             >
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center justify-between mb-2">
                 <div
-                  className={`w-7 h-7 rounded-xl flex items-center justify-center ${
+                  className={`w-7.5 h-7.5 rounded-xl flex items-center justify-center ${
                     isOffline
                       ? 'bg-slate-200 text-slate-400'
                       : requestFrom === 'agent'
@@ -339,7 +336,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
                       : 'bg-slate-100 text-slate-600'
                   }`}
                 >
-                  <Users className="w-3.5 h-3.5" />
+                  <Users className="w-4 h-4" />
                 </div>
                 {requestFrom === 'agent' && !isOffline && (
                   <span className="w-2 h-2 rounded-full bg-[#0052CC]" />
@@ -356,21 +353,21 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
               id="request-from-owner"
               onClick={() => setRequestFrom('business_owner')}
               disabled={isSubmitting}
-              className={`p-3 rounded-2xl border text-left transition-all relative ${
+              className={`p-3.5 rounded-2xl border text-left transition-all relative ${
                 requestFrom === 'business_owner'
                   ? 'bg-blue-50/60 border-[#0052CC] ring-1 ring-[#0052CC]/30 text-[#002244]'
                   : 'bg-white border-slate-200 hover:border-slate-300 text-slate-700'
               }`}
             >
-              <div className="flex items-center justify-between mb-1.5">
+              <div className="flex items-center justify-between mb-2">
                 <div
-                  className={`w-7 h-7 rounded-xl flex items-center justify-center ${
+                  className={`w-7.5 h-7.5 rounded-xl flex items-center justify-center ${
                     requestFrom === 'business_owner'
                       ? 'bg-[#0052CC] text-white'
                       : 'bg-slate-100 text-slate-600'
                   }`}
                 >
-                  <Building2 className="w-3.5 h-3.5" />
+                  <Building2 className="w-4 h-4" />
                 </div>
                 {requestFrom === 'business_owner' && (
                   <span className="w-2 h-2 rounded-full bg-[#0052CC]" />
@@ -384,23 +381,23 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         </div>
 
         {/* Section 2: Request Type (Cash vs Float) */}
-        <div>
-          <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+        <div className="shrink-0">
+          <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-2">
             Request Type
           </label>
-          <div className="grid grid-cols-2 gap-2 bg-slate-200/60 p-1 rounded-2xl border border-slate-200">
+          <div className="grid grid-cols-2 gap-2 bg-slate-200/60 p-1.5 rounded-2xl border border-slate-200">
             <button
               type="button"
               id="request-type-cash"
               onClick={() => setRequestType('cash')}
               disabled={isSubmitting}
-              className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+              className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
                 requestType === 'cash'
                   ? 'bg-white text-[#002244] shadow-xs border border-slate-200/80'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Banknote className="w-3.5 h-3.5 text-emerald-600" />
+              <Banknote className="w-4 h-4 text-emerald-600" />
               <span>Cash</span>
             </button>
 
@@ -409,13 +406,13 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
               id="request-type-float"
               onClick={() => setRequestType('float')}
               disabled={isSubmitting}
-              className={`py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+              className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
                 requestType === 'float'
                   ? 'bg-white text-[#002244] shadow-xs border border-slate-200/80'
                   : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <Smartphone className="w-3.5 h-3.5 text-[#0052CC]" />
+              <Smartphone className="w-4 h-4 text-[#0052CC]" />
               <span>Float</span>
             </button>
           </div>
@@ -423,8 +420,8 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
 
         {/* Section 2b: Vendor Type & Vendor (Shown when Float is selected) */}
         {requestType === 'float' && (
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-xs space-y-3">
-            <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs space-y-3.5 shrink-0">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
               <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
                 Float Vendor Context
               </span>
@@ -432,7 +429,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
 
             {/* Vendor Type Selection */}
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 mb-1">
+              <label className="block text-[11px] font-bold text-slate-700 mb-1.5">
                 Vendor Type <span className="text-red-500 font-bold">*</span>
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -443,7 +440,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
                     id={`vendor-type-${vt.id.toLowerCase()}`}
                     onClick={() => handleVendorTypeChange(vt.id)}
                     disabled={isSubmitting}
-                    className={`p-2 rounded-xl text-left border transition-all ${
+                    className={`p-2.5 rounded-xl text-left border transition-all ${
                       vendorType === vt.id
                         ? 'bg-blue-50/70 border-[#0052CC] text-[#002244] font-bold ring-1 ring-[#0052CC]/20'
                         : 'bg-slate-50 border-slate-200 text-slate-700 font-medium hover:bg-slate-100'
@@ -504,8 +501,8 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
         )}
 
         {/* Section 3: Amount Input */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-xs">
-          <div className="flex items-center justify-between mb-1.5">
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs space-y-2 shrink-0">
+          <div className="flex items-center justify-between">
             <label className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
               Amount Required
             </label>
@@ -515,7 +512,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
           </div>
 
           <div className="relative flex items-center">
-            <span className="absolute left-3 text-xs font-extrabold text-slate-500 font-mono">
+            <span className="absolute left-3.5 text-xs font-extrabold text-slate-500 font-mono">
               ZMW
             </span>
             <input
@@ -526,7 +523,7 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
               onBlur={() => setAmountTouched(true)}
               disabled={isSubmitting}
               placeholder="Enter amount"
-              className={`w-full pl-14 pr-3 py-2.5 bg-slate-50 border rounded-xl text-base font-bold text-[#002244] font-mono focus:bg-white focus:outline-none transition-all ${
+              className={`w-full pl-14 pr-3.5 py-3 bg-slate-50 border rounded-xl text-base font-bold text-[#002244] font-mono focus:bg-white focus:outline-none transition-all ${
                 showAmountError
                   ? 'border-red-300 focus:border-red-500 focus:ring-1 focus:ring-red-500'
                   : 'border-slate-200 focus:border-[#0052CC] focus:ring-1 focus:ring-[#0052CC]'
@@ -535,70 +532,15 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
           </div>
 
           {showAmountError && (
-            <p className="text-[11px] text-red-600 font-medium mt-1.5">
+            <p className="text-[11px] text-red-600 font-medium mt-1">
               Please enter a valid amount.
             </p>
           )}
         </div>
-
-        {/* Section 4: Current Work Location / Business Assignment (Read-Only) */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-xs">
-          {requestFrom === 'agent' ? (
-            <div>
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-[#002244]">
-                  <MapPin className="w-3.5 h-3.5 text-[#0052CC]" />
-                  <span>Current Work Location</span>
-                </div>
-                <span className="px-2 py-0.5 rounded-full bg-blue-50 text-[#0052CC] text-[10px] font-bold border border-blue-200/50">
-                  Eligible agents
-                </span>
-              </div>
-
-              <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-100 mb-2">
-                <p className="text-xs font-bold text-slate-800">
-                  {assignment.booth}
-                </p>
-                <p className="text-[11px] text-slate-500 mt-0.5">
-                  {assignment.location}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div>
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-[#002244]">
-                  <Building2 className="w-3.5 h-3.5 text-[#0052CC]" />
-                  <span>Business Assignment</span>
-                </div>
-                <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200/50">
-                  Direct Review
-                </span>
-              </div>
-
-              <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-100 space-y-1 mb-2 text-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400 text-[10px] font-medium">Business</span>
-                  <span className="font-semibold text-slate-800">{assignment.business}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400 text-[10px] font-medium">Store</span>
-                  <span className="font-semibold text-slate-800">{assignment.store}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-400 text-[10px] font-medium">Booth</span>
-                  <span className="font-semibold text-slate-800">{assignment.booth}</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        <PoweredByCinitecFooter className="py-2" />
       </div>
 
-      {/* Primary Action Button (Fixed Bottom Footer) */}
-      <div className="p-3.5 bg-white border-t border-slate-200/90 shrink-0 shadow-lg">
+      {/* Primary Action Button & True Footer */}
+      <div className="px-4 pt-3 pb-2.5 bg-white border-t border-slate-200/90 shrink-0 shadow-lg space-y-2.5">
         <button
           type="button"
           id="submit-liquidity-request-button"
@@ -622,6 +564,11 @@ export const LiquidityRequestStartScreen: React.FC<LiquidityRequestStartScreenPr
             </>
           )}
         </button>
+
+        {/* Footer positioned below Submit Request button and above safe area */}
+        <div className="pt-0.5 pb-0.5">
+          <PoweredByCinitecFooter className="py-0.5" />
+        </div>
       </div>
     </div>
   );

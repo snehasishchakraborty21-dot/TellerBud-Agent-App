@@ -158,9 +158,10 @@ export const AgentDailySummaryReportScreen: React.FC<AgentDailySummaryReportScre
         </div>
       </header>
 
-      {/* 2. Scrollable Body Content */}
-      <main className="flex-1 overflow-y-auto no-scrollbar px-3.5 py-3 space-y-3">
-        {/* Connection Error Banner (if triggered) */}
+      {/* 2. Main Content Body */}
+      <main className="flex-1 overflow-y-auto no-scrollbar px-3.5 py-3.5 flex flex-col justify-between">
+        <div className="space-y-3.5 flex-1 flex flex-col justify-start">
+          {/* Connection Error Banner (if triggered) */}
         {hasConnectionIssue && (
           <div className="bg-rose-50 border border-rose-200 rounded-2xl p-3 shadow-2xs space-y-2">
             <div className="flex items-start gap-2.5">
@@ -457,8 +458,12 @@ export const AgentDailySummaryReportScreen: React.FC<AgentDailySummaryReportScre
             </span>
           </div>
         </section>
+        </div>
 
-        <PoweredByCinitecFooter className="py-2" />
+        {/* True Footer placed directly at the bottom */}
+        <div className="pt-3 pb-0.5">
+          <PoweredByCinitecFooter className="py-0" />
+        </div>
       </main>
     </div>
   );

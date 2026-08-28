@@ -586,6 +586,7 @@ export interface AgentTransactionItem {
   requestReference?: string;
   category: TransactionRecordCategory;
   // Customer specific
+  customerName?: string;
   serviceType?: 'pickup' | 'delivery';
   transactionType?: string; // e.g. "Withdrawal", "Deposit", "Cash In", "Cash Out"
   vendorType?: VendorType;

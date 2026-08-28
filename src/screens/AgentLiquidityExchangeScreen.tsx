@@ -28,6 +28,7 @@ interface AgentLiquidityExchangeScreenProps {
   onBack?: () => void;
   onBackToRequests?: () => void;
   onProceedToTransaction?: (exchangeData: AgentLiquidityRequestDetail) => void;
+  onCancelExchange?: () => void;
   onChatWithAgent?: () => void;
   onRetry?: () => void;
 }
@@ -62,6 +63,7 @@ export const AgentLiquidityExchangeScreen: React.FC<
   onBack,
   onBackToRequests,
   onProceedToTransaction,
+  onCancelExchange,
   onChatWithAgent,
   onRetry,
 }) => {
@@ -69,6 +71,7 @@ export const AgentLiquidityExchangeScreen: React.FC<
     return applyPreviewState(request, previewState);
   });
   const [isRetrying, setIsRetrying] = useState<boolean>(false);
+  const [showCancelModal, setShowCancelModal] = useState<boolean>(false);
 
   useEffect(() => {
     setActiveRequest(applyPreviewState(request, previewState));
@@ -176,6 +179,10 @@ export const AgentLiquidityExchangeScreen: React.FC<
   const isMatchUnavailable =
     previewState === 'match_unavailable' || activeRequest.status === 'match_unavailable';
   const isConnectionIssue = previewState === 'connection_issue';
+  const isFinalized =
+    activeRequest.status === 'completed' ||
+    activeRequest.status === 'recorded' ||
+    activeRequest.status === 'cancelled';
 
   const handleRetry = () => {
     setIsRetrying(true);
@@ -186,11 +193,24 @@ export const AgentLiquidityExchangeScreen: React.FC<
   };
 
   const handleProceed = () => {
-    if (isMatchUnavailable) return;
+    if (isMatchUnavailable || isFinalized) return;
     if (onProceedToTransaction) {
       onProceedToTransaction(activeRequest);
     } else {
       console.log('Proceed to transaction (Future Screen 14):', activeRequest);
+    }
+  };
+
+  const handleConfirmCancel = () => {
+    setActiveRequest((prev) => ({
+      ...prev,
+      status: 'cancelled',
+    }));
+    setShowCancelModal(false);
+    if (onCancelExchange) {
+      onCancelExchange();
+    } else if (onBackToRequests) {
+      onBackToRequests();
     }
   };
 
@@ -200,8 +220,8 @@ export const AgentLiquidityExchangeScreen: React.FC<
       className="flex flex-col h-full bg-slate-50 text-slate-900 select-none overflow-hidden"
     >
       {/* 1. Header (Compact Authenticated Detail Header) */}
-      <header className="bg-white border-b border-slate-200/80 px-3.5 py-2.5 flex items-center justify-between shadow-2xs shrink-0 z-10">
-        <div className="flex items-center gap-2">
+      <header className="bg-white border-b border-slate-200/80 px-4 py-3 flex items-center justify-between shadow-2xs shrink-0 z-10">
+        <div className="flex items-center gap-2.5">
           <button
             id="back-button"
             onClick={onBack || onBackToRequests}
@@ -212,10 +232,10 @@ export const AgentLiquidityExchangeScreen: React.FC<
           </button>
           <div>
             <h1 className="text-sm font-extrabold text-[#002244] tracking-tight leading-tight">
-              Liquidity Exchange
+              Agent Liquidity Exchange
             </h1>
             {activeRequest.requestReference && (
-              <p className="text-[10px] text-slate-400 font-mono font-medium leading-none">
+              <p className="text-[10px] text-slate-400 font-mono font-medium leading-none mt-0.5">
                 #{activeRequest.requestReference}
               </p>
             )}
@@ -227,7 +247,7 @@ export const AgentLiquidityExchangeScreen: React.FC<
 
       {/* 2. Connection Issue Notification (Preserves confirmed match) */}
       {isConnectionIssue && (
-        <div className="bg-amber-50 border-b border-amber-200 px-3.5 py-2 flex items-center justify-between text-xs text-amber-900 shrink-0">
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-2.5 flex items-center justify-between text-xs text-amber-900 shrink-0">
           <div className="flex items-center gap-2">
             <AlertCircle className="w-4 h-4 text-amber-700 shrink-0" />
             <span className="text-[11px] font-semibold text-amber-800">
@@ -246,53 +266,36 @@ export const AgentLiquidityExchangeScreen: React.FC<
       )}
 
       {/* 3. Main Scrollable Content */}
-      <div className="flex-1 overflow-y-auto p-3.5 space-y-3">
-        {/* TOP STATUS CARD */}
+      <div className="flex-1 overflow-y-auto no-scrollbar px-4 py-3.5 space-y-3.5">
+        {/* TOP STATUS CARD (Compact status row) */}
         {!isMatchUnavailable ? (
-          <div className="bg-white border border-emerald-200/90 rounded-2xl p-3.5 shadow-2xs space-y-1 relative overflow-hidden">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-5 h-5 stroke-[2.5]" />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-sm font-black text-[#002244]">
-                  Match confirmed
-                </h2>
-              </div>
+          <div className="bg-emerald-50/90 border border-emerald-200/80 rounded-xl px-3.5 py-2 flex items-center gap-2.5 shadow-2xs">
+            <div className="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+              <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
             </div>
+            <h2 className="text-xs font-extrabold text-[#002244]">
+              Match confirmed
+            </h2>
           </div>
         ) : (
-          <div className="bg-white border border-amber-200 rounded-2xl p-3.5 shadow-2xs space-y-2 relative overflow-hidden">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
-                <AlertCircle className="w-5 h-5 stroke-[2.5]" />
-              </div>
-              <div className="flex-1">
-                <h2 className="text-sm font-black text-slate-800">
-                  Match no longer available
-                </h2>
-              </div>
+          <div className="bg-amber-50/90 border border-amber-200/80 rounded-xl px-3.5 py-2 flex items-center gap-2.5 shadow-2xs">
+            <div className="w-6 h-6 rounded-lg bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
+              <AlertCircle className="w-4 h-4 stroke-[2.5]" />
             </div>
-
-            <div className="pt-1 border-t border-amber-100">
-              <button
-                onClick={onBackToRequests || onBack}
-                className="w-full py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold text-center transition-colors"
-              >
-                Back to Requests
-              </button>
-            </div>
+            <h2 className="text-xs font-extrabold text-slate-800">
+              Match no longer available
+            </h2>
           </div>
         )}
 
         {/* EXCHANGE SUMMARY CARD */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-3">
+        <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-2xs space-y-3.5">
           <div className="flex items-center justify-between border-b border-slate-100 pb-2">
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
               Exchange Summary
             </span>
             <span
-              className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 ${
+              className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 ${
                 activeRequest.requestType === 'cash'
                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
                   : 'bg-blue-50 text-[#0052CC] border border-blue-200/50'
@@ -313,7 +316,7 @@ export const AgentLiquidityExchangeScreen: React.FC<
           </div>
 
           {/* Submitted Date/Time */}
-          <div className="flex items-center justify-between pt-1 border-t border-slate-100 text-[11px] text-slate-400">
+          <div className="flex items-center justify-between pt-1.5 border-t border-slate-100 text-[11px] text-slate-400">
             <span>Submitted</span>
             <span className="font-medium text-slate-600 font-mono">
               {activeRequest.submittedAt || formatNaturalSubmittedTime()}
@@ -323,7 +326,7 @@ export const AgentLiquidityExchangeScreen: React.FC<
 
         {/* PARTICIPATING AGENTS SECTION (Requester & Matched Agent) */}
         {!isMatchUnavailable && (
-          <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-3">
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-2xs space-y-3.5">
             <div className="border-b border-slate-100 pb-2">
               <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                 <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
@@ -332,7 +335,7 @@ export const AgentLiquidityExchangeScreen: React.FC<
             </div>
 
             {/* Requester Row */}
-            <div className="space-y-1 pb-2 border-b border-slate-100">
+            <div className="space-y-1.5 pb-2.5 border-b border-slate-100">
               <div className="flex items-center justify-between text-xs">
                 <span className="text-slate-500 font-medium flex items-center gap-1">
                   <span>Requester</span>
@@ -363,7 +366,7 @@ export const AgentLiquidityExchangeScreen: React.FC<
 
             {/* Matched Agent Row */}
             {activeRequest.matchedAgent && (
-              <div className="space-y-1">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-slate-500 font-medium flex items-center gap-1">
                     <span>Matched Agent</span>
@@ -397,18 +400,7 @@ export const AgentLiquidityExchangeScreen: React.FC<
                   );
                   if (!proximityLabel) return null;
                   return (
-                    <div className="pt-0.5 flex items-center justify-between gap-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (onChatWithAgent) onChatWithAgent();
-                          else console.log('Contract trigger: Target Screen AgentChatConversationScreen');
-                        }}
-                        className="py-1 px-2.5 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200/80 text-[#0052CC] font-bold text-[10.5px] flex items-center gap-1.5 transition-colors"
-                      >
-                        <MessageSquare className="w-3 h-3" />
-                        <span>Chat with Agent</span>
-                      </button>
+                    <div className="pt-0.5 flex items-center justify-end">
                       <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
                         {proximityLabel}
                       </span>
@@ -419,34 +411,96 @@ export const AgentLiquidityExchangeScreen: React.FC<
             )}
           </div>
         )}
-
-        <PoweredByCinitecFooter className="py-2" />
       </div>
 
-      {/* 4. STICKY BOTTOM ACTION */}
-      {!isMatchUnavailable && (
-        <div className="bg-white border-t border-slate-200/80 p-3 shadow-lg shrink-0 space-y-2">
-          <button
-            type="button"
-            id="liquidity-chat-agent-btn"
-            onClick={() => {
-              if (onChatWithAgent) onChatWithAgent();
-              else console.log('Contract trigger: Target Screen AgentChatConversationScreen');
-            }}
-            className="w-full py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs transition-colors flex items-center justify-center gap-1.5 active:scale-[0.99]"
-          >
-            <MessageSquare className="w-3.5 h-3.5 text-[#0052CC]" />
-            <span>Chat with Matched Agent</span>
-          </button>
+      {/* 4. STICKY BOTTOM ACTION & TRUE FOOTER */}
+      <div className="bg-white border-t border-slate-200/80 px-4 pt-3 pb-2.5 shadow-lg shrink-0 space-y-2.5 z-10">
+        {!isMatchUnavailable ? (
+          <>
+            <button
+              type="button"
+              id="liquidity-chat-agent-btn"
+              onClick={() => {
+                if (onChatWithAgent) onChatWithAgent();
+                else console.log('Contract trigger: Target Screen AgentChatConversationScreen');
+              }}
+              className="w-full py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 active:bg-slate-200 text-slate-700 border border-slate-200 font-bold text-xs transition-colors flex items-center justify-center gap-1.5 active:scale-[0.99]"
+            >
+              <MessageSquare className="w-3.5 h-3.5 text-[#0052CC]" />
+              <span>Chat with Matched Agent</span>
+            </button>
 
+            {/* Cancel & Proceed Action Row */}
+            <div className="flex items-center gap-2.5">
+              <button
+                id="cancel-exchange-btn"
+                type="button"
+                onClick={() => setShowCancelModal(true)}
+                disabled={isMatchUnavailable || isFinalized}
+                className="flex-1 py-3 px-3 rounded-xl bg-white hover:bg-red-50 active:bg-red-100 text-red-600 border border-red-200 font-bold text-xs transition-colors flex items-center justify-center gap-1.5 active:scale-[0.99] disabled:opacity-50 cursor-pointer"
+              >
+                <span>Cancel</span>
+              </button>
+
+              <button
+                id="proceed-btn"
+                type="button"
+                onClick={handleProceed}
+                disabled={isMatchUnavailable || isFinalized}
+                className="flex-[1.5] py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all disabled:opacity-50 cursor-pointer"
+              >
+                <span>Proceed</span>
+                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+              </button>
+            </div>
+          </>
+        ) : (
           <button
-            id="proceed-to-transaction-btn"
-            onClick={handleProceed}
-            className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all"
+            onClick={onBackToRequests || onBack}
+            className="w-full py-3 px-4 rounded-xl bg-[#002244] hover:bg-[#001830] active:bg-[#001020] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all cursor-pointer"
           >
-            <span>Proceed to Transaction</span>
-            <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+            <span>Back to Requests</span>
           </button>
+        )}
+
+        {/* Footer positioned below action buttons and above safe area */}
+        <div className="pt-0.5 pb-0.5">
+          <PoweredByCinitecFooter className="py-0.5" />
+        </div>
+      </div>
+
+      {/* 5. CANCEL CONFIRMATION MODAL */}
+      {showCancelModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl w-full max-w-xs p-5 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="text-center space-y-1">
+              <div className="w-10 h-10 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-2">
+                <AlertCircle className="w-5 h-5 stroke-[2.2]" />
+              </div>
+              <h3 className="text-base font-extrabold text-slate-900">
+                Cancel Exchange?
+              </h3>
+            </div>
+
+            <div className="space-y-2 pt-1">
+              <button
+                id="confirm-cancel-exchange-btn"
+                type="button"
+                onClick={handleConfirmCancel}
+                className="w-full py-2.5 px-4 rounded-xl bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-extrabold text-xs transition-colors cursor-pointer"
+              >
+                Cancel Exchange
+              </button>
+              <button
+                id="keep-exchange-btn"
+                type="button"
+                onClick={() => setShowCancelModal(false)}
+                className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+              >
+                Keep Exchange
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

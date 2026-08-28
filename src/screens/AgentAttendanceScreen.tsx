@@ -313,11 +313,11 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
         </div>
       </div>
 
-      {/* 3. Main Scrollable Content */}
-      <div className="flex-1 overflow-y-auto no-scrollbar px-3.5 py-3 space-y-3">
+      {/* 3. Main Content Body */}
+      <div className="flex-1 overflow-y-auto no-scrollbar px-3.5 py-3.5 flex flex-col justify-between">
         {/* Connection Issue Banner */}
         {showConnectionError && (
-          <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex items-start gap-2.5 shadow-2xs animate-in fade-in duration-150">
+          <div className="p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs flex items-start gap-2.5 shadow-2xs mb-3 animate-in fade-in duration-150">
             <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
             <div className="flex-1 space-y-1">
               <div className="font-bold">Attendance couldn't be refreshed.</div>
@@ -338,7 +338,7 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
 
         {/* TAB 1: CURRENT SESSION VIEW */}
         {activeTab === 'current' && (
-          <div className="space-y-3">
+          <div className="space-y-3.5 flex-1 flex flex-col justify-start">
             {isSessionActive ? (
               <>
                 {/* Status Card: Session Active */}
@@ -355,8 +355,8 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
                 </div>
 
                 {/* Main Read-Only Details Card */}
-                <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-3">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-2xs space-y-3.5">
+                  <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
                     <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                       Current Session
                     </span>
@@ -366,7 +366,7 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
                   </div>
 
                   {/* Details Grid */}
-                  <div className="space-y-2.5 text-xs">
+                  <div className="space-y-3 text-xs">
                     {/* Agent Name */}
                     <div className="flex items-start justify-between gap-2">
                       <span className="text-slate-500 font-medium flex items-center gap-1.5 shrink-0">
@@ -379,7 +379,7 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
                     </div>
 
                     {/* Current Booth */}
-                    <div className="flex items-start justify-between gap-2 pt-2 border-t border-slate-100">
+                    <div className="flex items-start justify-between gap-2 pt-2.5 border-t border-slate-100">
                       <span className="text-slate-500 font-medium flex items-center gap-1.5 shrink-0">
                         <Store className="w-3.5 h-3.5 text-slate-400 mt-0.5" />
                         Current Booth
@@ -402,7 +402,7 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
                     )}
 
                     {/* Login Time */}
-                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                    <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-slate-100">
                       <span className="text-slate-500 font-medium flex items-center gap-1.5">
                         <Clock className="w-3.5 h-3.5 text-slate-400" />
                         Login Time
@@ -435,7 +435,7 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
                     </div>
 
                     {/* Working Duration */}
-                    <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                    <div className="flex items-center justify-between gap-2 pt-2.5 border-t border-slate-100">
                       <span className="text-slate-500 font-medium flex items-center gap-1.5">
                         <ShieldCheck className="w-3.5 h-3.5 text-[#0052CC]" />
                         Working Duration
@@ -449,7 +449,7 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
               </>
             ) : (
               /* EMPTY ACTIVE SESSION STATE */
-              <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-2xs text-center space-y-2.5">
+              <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-2xs text-center space-y-2.5 my-auto">
                 <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto border border-slate-200/60">
                   <Clock className="w-6 h-6" />
                 </div>
@@ -468,10 +468,10 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
 
         {/* TAB 2: ATTENDANCE HISTORY VIEW */}
         {activeTab === 'history' && (
-          <div className="space-y-3.5">
+          <div className="space-y-3.5 flex-1">
             {displayedHistoryRecords.length === 0 ? (
               /* EMPTY HISTORY STATE */
-              <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-2xs text-center space-y-2.5">
+              <div className="bg-white border border-slate-200/90 rounded-2xl p-6 shadow-2xs text-center space-y-2.5 my-auto">
                 <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto border border-slate-200/60">
                   <Calendar className="w-6 h-6" />
                 </div>
@@ -520,7 +520,10 @@ export const AgentAttendanceScreen: React.FC<AgentAttendanceScreenProps> = ({
           </div>
         )}
 
-        <PoweredByCinitecFooter className="py-2" />
+        {/* True Footer placed directly at the bottom */}
+        <div className="pt-3 pb-0.5">
+          <PoweredByCinitecFooter className="py-0" />
+        </div>
       </div>
     </div>
   );

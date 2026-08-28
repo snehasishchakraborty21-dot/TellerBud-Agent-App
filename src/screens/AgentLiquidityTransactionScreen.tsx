@@ -406,134 +406,123 @@ export const AgentLiquidityTransactionScreen: React.FC<
         </div>
       )}
 
-      {/* 3. Main Scrollable Content */}
-      <div className="flex-1 overflow-y-auto p-3.5 space-y-3">
-        {/* TOP STATUS CARD */}
-        {!isRecorded ? (
-          <div className="bg-white border border-blue-100 rounded-2xl p-3.5 shadow-2xs space-y-1 relative overflow-hidden">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0052CC] flex items-center justify-center shrink-0">
-                <FileText className="w-5 h-5 stroke-[2.2]" />
+      {/* 3. Main Content (Evenly Distributed, Single-Screen Viewport Friendly) */}
+      <div className="flex-1 flex flex-col justify-between px-4 py-3.5 overflow-hidden">
+        <div className="space-y-3">
+          {/* Status Indicator (Comfortable breathing room, +8-12px padding) */}
+          {!isRecorded ? (
+            <div className="bg-blue-50/90 border border-blue-200/80 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs">
+              <div className="w-8 h-8 rounded-xl bg-blue-100 text-[#0052CC] flex items-center justify-center shrink-0">
+                <FileText className="w-4 h-4 stroke-[2.2]" />
               </div>
               <div className="flex-1">
-                <h2 className="text-sm font-black text-[#002244]">
+                <h2 className="text-sm font-black text-[#002244] leading-tight">
                   Ready to record exchange
                 </h2>
               </div>
             </div>
-          </div>
-        ) : (
-          <div className="bg-white border border-emerald-200/90 rounded-2xl p-3.5 shadow-2xs space-y-1 relative overflow-hidden">
-            <div className="flex items-center gap-2.5">
+          ) : (
+            <div className="bg-emerald-50/90 border border-emerald-200/80 rounded-2xl p-3.5 flex items-center gap-3 shadow-2xs">
               <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                <CheckCircle2 className="w-5 h-5 stroke-[2.5]" />
+                <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
               </div>
               <div className="flex-1">
-                <h2 className="text-sm font-black text-[#002244]">
+                <h2 className="text-sm font-black text-[#002244] leading-tight">
                   Exchange recorded
                 </h2>
               </div>
             </div>
-          </div>
-        )}
-
-        {/* LIQUIDITY EXCHANGE SUMMARY CARD */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-3">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-              {isRecorded ? 'Recorded Exchange Summary' : 'Liquidity Exchange'}
-            </span>
-            <span
-              className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 ${
-                activeRequest.requestType === 'cash'
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
-                  : 'bg-blue-50 text-[#0052CC] border border-blue-200/50'
-              }`}
-            >
-              <Coins className="w-3 h-3" />
-              <span>
-                {activeRequest.requestType === 'cash' ? 'Cash Exchange' : 'Float Exchange'}
-              </span>
-            </span>
-          </div>
-
-          <div className="flex items-baseline justify-between">
-            <span className="text-xs text-slate-500 font-medium">Exchange Amount</span>
-            <span className="text-base font-black text-[#002244] font-mono">
-              {normalizeZmwAmount(activeRequest.amount)}
-            </span>
-          </div>
-
-          {activeRequest.requestReference && (
-            <div className="flex items-center justify-between pt-1 border-t border-slate-100 text-[11px] text-slate-400">
-              <span>Request Reference</span>
-              <span className="font-mono font-bold text-slate-700">
-                #{activeRequest.requestReference}
-              </span>
-            </div>
           )}
 
-          {isRecorded && (
-            <div className="flex items-center justify-between pt-1 border-t border-slate-100 text-[11px] text-slate-400">
-              <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-slate-400" />
-                <span>Recorded Time</span>
+          {/* LIQUIDITY EXCHANGE SUMMARY CARD (Expanded moderately with balanced spacing) */}
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-2.5">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                {isRecorded ? 'Recorded Exchange Summary' : 'Liquidity Exchange'}
               </span>
-              <span className="font-mono font-bold text-emerald-700">
-                {recordedTime}
-              </span>
-            </div>
-          )}
-        </div>
-
-        {/* EXCHANGE DETAILS CARD */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-3">
-          <div className="border-b border-slate-100 pb-2">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-              Exchange Details
-            </span>
-          </div>
-
-          {/* Requester & Matched Agent */}
-          <div className="space-y-2.5">
-            <div className="flex items-start justify-between text-xs">
-              <span className="text-slate-400 font-medium flex items-center gap-1">
-                <User className="w-3.5 h-3.5 text-slate-400" />
-                <span>Requester</span>
-              </span>
-              <span className="font-bold text-slate-800 text-right">
-                {activeRequest.requesterName || 'Marcus Vance (You)'}
-              </span>
-            </div>
-
-            <div className="flex items-start justify-between text-xs pt-1.5 border-t border-slate-100/70">
-              <span className="text-slate-400 font-medium flex items-center gap-1">
-                <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Matched Agent</span>
-              </span>
-              <div className="text-right">
-                <span className="font-bold text-[#002244] block">
-                  {activeRequest.matchedAgent?.name || 'Michael Adeleke'}
+              <span
+                className={`px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider flex items-center gap-1 ${
+                  activeRequest.requestType === 'cash'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
+                    : 'bg-blue-50 text-[#0052CC] border border-blue-200/50'
+                }`}
+              >
+                <Coins className="w-3 h-3" />
+                <span>
+                  {activeRequest.requestType === 'cash' ? 'Cash' : 'Float'}
                 </span>
-                {activeRequest.matchedAgent?.agentReference && (
-                  <span className="text-[10px] text-slate-400 font-mono">
-                    #{activeRequest.matchedAgent.agentReference}
-                  </span>
-                )}
-              </div>
+              </span>
             </div>
 
-            {/* Vendor Type & Vendor (Shown for Float or when vendor info exists) */}
-            {(activeRequest.vendor || activeRequest.vendorType || activeRequest.requestType === 'float') && (
-              <>
-                <div className="flex items-start justify-between text-xs pt-1.5 border-t border-slate-100/70">
-                  <span className="text-slate-400 font-medium">Vendor Type</span>
-                  <span className="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded text-[11px]">
-                    {activeRequest.vendorType || (activeRequest.vendor ? getVendorType(activeRequest.vendor) : undefined) || 'MNO'}
+            <div className="flex items-baseline justify-between pt-0.5">
+              <span className="text-xs text-slate-500 font-medium">Exchange Amount</span>
+              <span className="text-base font-black text-[#002244] font-mono">
+                {normalizeZmwAmount(activeRequest.amount)}
+              </span>
+            </div>
+
+            {activeRequest.requestReference && (
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-400">
+                <span>Request Reference</span>
+                <span className="font-mono font-bold text-slate-700">
+                  #{activeRequest.requestReference}
+                </span>
+              </div>
+            )}
+
+            {isRecorded && (
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-400">
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Recorded Time</span>
+                </span>
+                <span className="font-mono font-bold text-emerald-700">
+                  {recordedTime}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* EXCHANGE & COUNTERPARTY DETAILS CARD (Expanded spacing & fully readable location) */}
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-2xs space-y-2.5">
+            <div className="border-b border-slate-100 pb-2">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                Exchange Details
+              </span>
+            </div>
+
+            <div className="space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-slate-400 font-medium flex items-center gap-1.5 shrink-0">
+                  <User className="w-3.5 h-3.5 text-slate-400" />
+                  <span>Requester</span>
+                </span>
+                <span className="font-bold text-slate-800 text-right">
+                  {activeRequest.requesterName || 'Marcus Vance (You)'}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100/70">
+                <span className="text-slate-400 font-medium flex items-center gap-1.5 shrink-0">
+                  <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>Matched Agent</span>
+                </span>
+                <div className="text-right">
+                  <span className="font-bold text-[#002244]">
+                    {activeRequest.matchedAgent?.name || 'Michael Adeleke'}
                   </span>
+                  {activeRequest.matchedAgent?.agentReference && (
+                    <span className="text-[10px] text-slate-400 font-mono ml-1.5">
+                      #{activeRequest.matchedAgent.agentReference}
+                    </span>
+                  )}
                 </div>
-                <div className="flex items-start justify-between text-xs pt-1.5 border-t border-slate-100/70">
-                  <span className="text-slate-400 font-medium">Vendor</span>
+              </div>
+
+              {/* Vendor Info for Float */}
+              {(activeRequest.vendor || activeRequest.vendorType || activeRequest.requestType === 'float') && (
+                <div className="flex items-center justify-between pt-2 border-t border-slate-100/70">
+                  <span className="text-slate-400 font-medium shrink-0">Vendor</span>
                   <span className="font-bold text-slate-900 flex items-center gap-1.5">
                     {getVendorLogo(activeRequest.vendor || 'MTN') && (
                       <div className="w-4 h-4 rounded bg-white border border-slate-200 p-0.5 flex items-center justify-center shrink-0 overflow-hidden">
@@ -545,75 +534,76 @@ export const AgentLiquidityTransactionScreen: React.FC<
                         />
                       </div>
                     )}
-                    <span>{activeRequest.vendor || 'MTN'}</span>
+                    <span>{activeRequest.vendor || 'MTN'} ({activeRequest.vendorType || 'MNO'})</span>
                   </span>
                 </div>
-              </>
-            )}
+              )}
 
-            {/* Exchange Location (Matched Agent's Location) */}
-            <div className="pt-1.5 border-t border-slate-100/70">
-              <span className="text-slate-400 text-xs font-medium flex items-center gap-1 mb-1">
-                <MapPin className="w-3.5 h-3.5 text-[#0052CC]" />
-                <span>Exchange Location</span>
-              </span>
-              <p className="text-xs text-slate-700 font-semibold pl-4.5 leading-snug">
-                {activeRequest.matchedAgent?.boothOrLocation ||
-                  activeRequest.matchedAgent?.booth ||
-                  activeRequest.matchedAgent?.location ||
-                  activeRequest.exchangeLocation ||
-                  'Booth 01 — West Wing, Central Mall'}
-              </p>
+              {/* Exchange Location (Full, Non-truncated, fully readable) */}
+              <div className="flex items-start justify-between pt-2 border-t border-slate-100/70 gap-2.5">
+                <span className="text-slate-400 font-medium flex items-center gap-1.5 shrink-0 pt-0.5">
+                  <MapPin className="w-3.5 h-3.5 text-[#0052CC]" />
+                  <span>Exchange Location</span>
+                </span>
+                <span className="text-right text-xs text-slate-700 font-semibold leading-snug">
+                  {activeRequest.matchedAgent?.boothOrLocation ||
+                    activeRequest.matchedAgent?.booth ||
+                    activeRequest.matchedAgent?.location ||
+                    activeRequest.exchangeLocation ||
+                    'Booth 01 — West Wing, Central Mall'}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* SERVICE FEE INFO (AFTER RECORDING) */}
-        {isRecorded && (
-          <div className="bg-slate-100/80 border border-slate-200/80 rounded-2xl p-3 shadow-2xs space-y-1.5">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-500 font-medium">TellerBud Service Fee</span>
-              <span className="font-bold text-slate-700 font-mono">
+          {/* Service Fee Info (Recorded state only) */}
+          {isRecorded && (
+            <div className="bg-slate-100/80 border border-slate-200/80 rounded-xl px-3.5 py-2 shadow-2xs flex items-center justify-between text-xs">
+              <span className="text-slate-500 font-medium text-xs">TellerBud Fee</span>
+              <span className="font-bold text-slate-700 font-mono text-xs">
                 {activeRequest.serviceFee || 'Standard Rules'}
               </span>
             </div>
+          )}
+        </div>
+
+        {/* 4. ACTIONS & TRUE FOOTER (Controlled moderate spacing, no giant white void) */}
+        <div className="pt-4 pb-1 space-y-2.5 shrink-0">
+          {!isRecorded ? (
+            <button
+              id="record-exchange-btn"
+              onClick={handleOpenConfirm}
+              disabled={isRecording || isStatusNotConfirmed}
+              className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all disabled:opacity-50 cursor-pointer"
+            >
+              {isRecording ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Recording Exchange...</span>
+                </>
+              ) : (
+                <>
+                  <span>Record Exchange</span>
+                  <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+                </>
+              )}
+            </button>
+          ) : (
+            <button
+              id="continue-to-completion-btn"
+              onClick={handleContinue}
+              className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all cursor-pointer"
+            >
+              <span>Continue</span>
+              <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+            </button>
+          )}
+
+          {/* True Footer directly below Record Exchange / Continue */}
+          <div className="pt-0.5 pb-1">
+            <PoweredByCinitecFooter className="py-0" />
           </div>
-        )}
-
-        <PoweredByCinitecFooter className="py-2" />
-      </div>
-
-      {/* 4. STICKY BOTTOM ACTIONS */}
-      <div className="bg-white border-t border-slate-200/80 p-3 shadow-lg shrink-0 space-y-1.5 z-10">
-        {!isRecorded ? (
-          <button
-            id="record-exchange-btn"
-            onClick={handleOpenConfirm}
-            disabled={isRecording || isStatusNotConfirmed}
-            className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all disabled:opacity-50"
-          >
-            {isRecording ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Recording Exchange...</span>
-              </>
-            ) : (
-              <>
-                <span>Record Exchange</span>
-                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-              </>
-            )}
-          </button>
-        ) : (
-          <button
-            id="continue-to-completion-btn"
-            onClick={handleContinue}
-            className="w-full py-3 px-4 rounded-xl bg-[#0052CC] hover:bg-[#0043A8] active:bg-[#00388F] text-white text-xs font-extrabold flex items-center justify-center gap-2 shadow-xs active:scale-[0.99] transition-all"
-          >
-            <span>Continue</span>
-            <ArrowRight className="w-4 h-4 stroke-[2.5]" />
-          </button>
-        )}
+        </div>
       </div>
 
       {/* 5. CONFIRMATION BOTTOM SHEET */}

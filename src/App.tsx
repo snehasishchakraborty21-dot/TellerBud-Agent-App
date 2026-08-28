@@ -1005,6 +1005,15 @@ export default function App() {
             setAgentChatConversationPreview('agent_chat_active');
             setCurrentRoute('agent_chat_conversation');
           }}
+          onCancelExchange={() => {
+            if (activeLiquidityRequest) {
+              setActiveLiquidityRequest({
+                ...activeLiquidityRequest,
+                status: 'cancelled',
+              });
+            }
+            setCurrentRoute('agent_home');
+          }}
           onProceedToTransaction={(exchangeData) => {
             setActiveLiquidityRequest(exchangeData);
             setAgentLiquidityTransactionPreview(
@@ -1058,6 +1067,9 @@ export default function App() {
           request={activeLiquidityRequest || undefined}
           onBackToRequests={() => {
             setCurrentRoute('requests');
+          }}
+          onBackToHome={() => {
+            setCurrentRoute('agent_home');
           }}
         />
       ) : currentRoute === 'requests' ? (
