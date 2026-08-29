@@ -15,6 +15,7 @@ import {
   FileCheck2,
 } from 'lucide-react';
 import { TellerBudLogo } from '../components/TellerBudLogo';
+import { VendorLogoBadge } from '../components/VendorLogoBadge';
 import {
   WorkAssignment,
   WalkInTransactionPreviewState,
@@ -1676,24 +1677,10 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
                     >
                       <div className="flex items-center gap-2 truncate">
                         {activeVendorConfig && (
-                          <div className="w-5 h-5 rounded-md bg-white border border-slate-200/80 p-0.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
-                            {getVendorLogo(activeVendorConfig.name) ? (
-                              <img
-                                src={getVendorLogo(activeVendorConfig.name)}
-                                alt={activeVendorConfig.name}
-                                className="w-full h-full object-contain pointer-events-none"
-                                referrerPolicy="no-referrer"
-                              />
-                            ) : (
-                              <span
-                                className="w-2.5 h-2.5 rounded-full shrink-0"
-                                style={{
-                                  backgroundColor:
-                                    activeVendorConfig.accentColor || '#0052CC',
-                                }}
-                              />
-                            )}
-                          </div>
+                          <VendorLogoBadge
+                            vendorName={activeVendorConfig.name}
+                            size="dropdown-trigger"
+                          />
                         )}
                         <span className="truncate">
                           {activeVendorConfig
@@ -1973,7 +1960,6 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
             <div className="space-y-2 overflow-y-auto max-h-[300px] pr-0.5 pb-2">
               {availableVendors.map((vendorOption) => {
                 const isSelected = selectedVendorId === vendorOption.id;
-                const logoSrc = vendorOption.logoUrl || getVendorLogo(vendorOption.name);
                 return (
                   <button
                     key={vendorOption.id}
@@ -1992,24 +1978,10 @@ export const WalkInTransactionScreen: React.FC<WalkInTransactionScreenProps> = (
                     }`}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-white border border-slate-200/90 p-1.5 flex items-center justify-center shrink-0 overflow-hidden shadow-2xs">
-                        {logoSrc ? (
-                          <img
-                            src={logoSrc}
-                            alt={vendorOption.name}
-                            className="w-full h-full object-contain pointer-events-none"
-                            referrerPolicy="no-referrer"
-                          />
-                        ) : (
-                          <span
-                            className="w-3 h-3 rounded-full shrink-0"
-                            style={{
-                              backgroundColor:
-                                vendorOption.accentColor || '#0052CC',
-                            }}
-                          />
-                        )}
-                      </div>
+                      <VendorLogoBadge
+                        vendorName={vendorOption.name}
+                        size="option-row"
+                      />
                       <span className="text-xs font-bold text-slate-900 whitespace-nowrap">
                         {vendorOption.name}
                       </span>

@@ -65,6 +65,71 @@ export const getVendorLogo = (vendorNameOrId?: string): string | undefined => {
   return undefined;
 };
 
+export interface VendorLogoDisplayConfig {
+  scale: number;
+  bgColor?: string;
+  isBank?: boolean;
+}
+
+export const VENDOR_LOGO_DISPLAY: Record<string, VendorLogoDisplayConfig> = {
+  MTN: {
+    scale: 2.05,
+    bgColor: '#fdb913',
+    isBank: false,
+  },
+  Airtel: {
+    scale: 1.95,
+    bgColor: '#ed1b24',
+    isBank: false,
+  },
+  Zamtel: {
+    scale: 1.75,
+    bgColor: '#ffffff',
+    isBank: false,
+  },
+  Zanaco: {
+    scale: 1.65,
+    bgColor: '#ffffff',
+    isBank: true,
+  },
+  FNB: {
+    scale: 1.55,
+    bgColor: '#ffffff',
+    isBank: true,
+  },
+  INDO: {
+    scale: 1.6,
+    bgColor: '#ffffff',
+    isBank: true,
+  },
+  Stanbic: {
+    scale: 1.6,
+    bgColor: '#ffffff',
+    isBank: true,
+  },
+  Access: {
+    scale: 1.6,
+    bgColor: '#ffffff',
+    isBank: true,
+  },
+};
+
+export const getVendorLogoDisplayConfig = (
+  vendorNameOrId?: string
+): VendorLogoDisplayConfig => {
+  if (!vendorNameOrId) return { scale: 1.5, bgColor: '#ffffff' };
+  const lower = vendorNameOrId.toLowerCase().trim();
+  if (lower === 'mtn' || lower.includes('mtn')) return VENDOR_LOGO_DISPLAY.MTN;
+  if (lower === 'airtel' || lower.includes('airtel')) return VENDOR_LOGO_DISPLAY.Airtel;
+  if (lower === 'zamtel' || lower.includes('zamtel')) return VENDOR_LOGO_DISPLAY.Zamtel;
+  if (lower === 'zanaco' || lower.includes('zanaco')) return VENDOR_LOGO_DISPLAY.Zanaco;
+  if (lower === 'fnb' || lower.includes('fnb')) return VENDOR_LOGO_DISPLAY.FNB;
+  if (lower === 'indo' || lower.includes('indo')) return VENDOR_LOGO_DISPLAY.INDO;
+  if (lower === 'stanbic' || lower.includes('stanbic')) return VENDOR_LOGO_DISPLAY.Stanbic;
+  if (lower === 'access' || lower.includes('access')) return VENDOR_LOGO_DISPLAY.Access;
+  return { scale: 1.5, bgColor: '#ffffff' };
+};
+
 export const CONFIGURED_VENDORS: WalkInVendorOption[] = [
   // MNO Vendors (3 Approved Options)
   {
