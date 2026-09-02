@@ -74,6 +74,7 @@ export interface AgentHomeScreenProps {
   onStartWalkIn?: () => void;
   onRequestLiquidity?: () => void;
   onCheckMnoBalance?: () => void;
+  onBalanceEnquiry?: () => void;
   onViewWalletActivity?: () => void;
   onEndWorkdayContinue?: () => void;
   onViewActiveService?: () => void;
@@ -158,6 +159,7 @@ export const AgentHomeScreen: React.FC<AgentHomeScreenProps> = ({
   onStartWalkIn,
   onRequestLiquidity,
   onCheckMnoBalance,
+  onBalanceEnquiry,
   onViewWalletActivity,
   onEndWorkdayContinue,
   onViewActiveService,
@@ -647,9 +649,9 @@ export const AgentHomeScreen: React.FC<AgentHomeScreenProps> = ({
             type="button"
             id="home-action-balance-enquiry"
             onClick={() => {
-              setDialledVendor('');
-              setShowDialler(true);
-              if (onCheckMnoBalance) {
+              if (onBalanceEnquiry) {
+                onBalanceEnquiry();
+              } else if (onCheckMnoBalance) {
                 onCheckMnoBalance();
               }
             }}

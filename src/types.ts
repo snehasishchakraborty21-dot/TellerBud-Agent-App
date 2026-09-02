@@ -835,4 +835,37 @@ export interface ChatConversation {
 export type AboutTellerBudPreviewState =
   | 'default';
 
+export type BalanceEnquiryPreviewState =
+  | 'default'
+  | 'mno_mtn'
+  | 'mno_airtel'
+  | 'mno_zamtel'
+  | 'bank_fnb'
+  | 'bank_zanaco'
+  | 'bank_indo'
+  | 'connection_issue';
+
+export type BalanceEnquiryVendorType = 'MNO' | 'Bank';
+export type BalanceEnquiryStatus = 'Initiated' | 'Dialler Opened' | 'Completed' | 'Failed';
+
+export interface AgentBalanceEnquiry {
+  id: string;
+  activityType: 'BALANCE_ENQUIRY';
+  agentId: string;
+  agentName: string;
+  phoneNumber: string;
+  rawPhoneNumber?: string;
+  vendorType: BalanceEnquiryVendorType;
+  vendor: string;
+  vendorId?: string;
+  initiatedAt: string;
+  timestamp: string;
+  source: 'Balance Enquiry';
+  status: BalanceEnquiryStatus;
+  ussdCode?: string;
+  booth?: string;
+  store?: string;
+  business?: string;
+}
+
 

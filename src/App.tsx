@@ -28,6 +28,7 @@ import { AgentChangePasscodeScreen } from './screens/AgentChangePasscodeScreen';
 import { AgentChatsScreen } from './screens/AgentChatsScreen';
 import { AgentChatConversationScreen } from './screens/AgentChatConversationScreen';
 import { AboutTellerBudScreen } from './screens/AboutTellerBudScreen';
+import { BalanceEnquiryScreen } from './screens/BalanceEnquiryScreen';
 import { resetPasscodeStore } from './utils/authConfig';
 import { MobileContainer } from './components/MobileContainer';
 import {
@@ -60,6 +61,7 @@ import {
   AgentChatsPreviewState,
   AgentChatConversationPreviewState,
   AboutTellerBudPreviewState,
+  BalanceEnquiryPreviewState,
   AttendanceRecord,
   WalletActivityItem,
   AgentLiquidityRequestDetail,
@@ -136,6 +138,10 @@ export default function App() {
     useState<AgentChatConversationPreviewState>('customer_chat_active');
   const [aboutTellerBudPreview, setAboutTellerBudPreview] =
     useState<AboutTellerBudPreviewState>('default');
+  const [balanceEnquiryPreview, setBalanceEnquiryPreview] =
+    useState<BalanceEnquiryPreviewState>('default');
+  const [balanceEnquiryOriginRoute, setBalanceEnquiryOriginRoute] =
+    useState<'agent_home' | 'agent_more'>('agent_home');
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [businessOwnerRequests, setBusinessOwnerRequests] = useState<BusinessOwnerRequestItem[]>([
     {
@@ -234,6 +240,7 @@ export default function App() {
     | 'agent_chats'
     | 'agent_chat_conversation'
     | 'about_tellerbud'
+    | 'balance_enquiry'
   >('home_screen');
   const [authenticatedAgentId, setAuthenticatedAgentId] = useState<string>('');
   const [confirmedAssignment, setConfirmedAssignment] = useState<WorkAssignment | null>(null);
@@ -524,6 +531,13 @@ export default function App() {
           setCurrentRoute('about_tellerbud');
         }
       }}
+      balanceEnquiryPreviewState={balanceEnquiryPreview}
+      onSelectBalanceEnquiryPreviewState={(state) => {
+        setBalanceEnquiryPreview(state);
+        if (currentRoute !== 'balance_enquiry') {
+          setCurrentRoute('balance_enquiry');
+        }
+      }}
       onResetApp={handleResetApp}
       currentRoute={currentRoute}
       onSelectRoute={(route) => {
@@ -605,6 +619,12 @@ export default function App() {
         }
         if (route !== 'agent_chat_conversation') {
           setAgentChatConversationPreview('customer_chat_active');
+        }
+        if (route !== 'about_tellerbud') {
+          setAboutTellerBudPreview('default');
+        }
+        if (route !== 'balance_enquiry') {
+          setBalanceEnquiryPreview('default');
         }
       }}
     >
@@ -692,6 +712,11 @@ export default function App() {
           onRequestLiquidity={() => {
             setLiquidityRequestPreview('another_agent_cash');
             setCurrentRoute('liquidity_request');
+          }}
+          onBalanceEnquiry={() => {
+            setBalanceEnquiryOriginRoute('agent_home');
+            setBalanceEnquiryPreview('default');
+            setCurrentRoute('balance_enquiry');
           }}
           onStartWalkIn={() => {
             setWalkInPreview('ready');
@@ -1380,6 +1405,11 @@ export default function App() {
             setCurrentRoute('agent_change_passcode');
             setAgentChangePasscodePreview('default');
           }}
+          onOpenBalanceEnquiry={() => {
+            setBalanceEnquiryOriginRoute('agent_more');
+            setBalanceEnquiryPreview('default');
+            setCurrentRoute('balance_enquiry');
+          }}
           onViewAbout={() => {
             setCurrentRoute('about_tellerbud');
             setAboutTellerBudPreview('default');
@@ -1701,6 +1731,27 @@ export default function App() {
           previewState={aboutTellerBudPreview}
           onBack={() => {
             setCurrentRoute('agent_more');
+          }}
+        />
+      ) : currentRoute === 'balance_enquiry' ? (
+        <BalanceEnquiryScreen
+          key={balanceEnquiryPreview}
+          previewState={balanceEnquiryPreview}
+          assignment={
+            confirmedAssignment || {
+              business: 'Apex Retail Group',
+              store: 'Central Mall Branch #104',
+              booth: 'Booth 03 — Main Atrium',
+              location: 'Ground Floor, Sector B',
+              agentName: 'Marcus Vance',
+              agentId: authenticatedAgentId || 'AG-88421',
+            }
+          }
+          onBack={() => {
+            setCurrentRoute(balanceEnquiryOriginRoute || 'agent_home');
+          }}
+          onEnquiryRecorded={(record) => {
+            console.log('[TellerBud App] Balance Enquiry recorded:', record);
           }}
         />
       ) : (

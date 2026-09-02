@@ -30,6 +30,7 @@ import {
   AgentChatsPreviewState,
   AgentChatConversationPreviewState,
   AboutTellerBudPreviewState,
+  BalanceEnquiryPreviewState,
 } from '../types';
 import { useSharedClock, formatStatusBarTime } from '../utils/timeUtils';
 
@@ -145,6 +146,10 @@ interface MobileContainerProps {
   onSelectAboutTellerBudPreviewState?: (
     state: AboutTellerBudPreviewState
   ) => void;
+  balanceEnquiryPreviewState?: BalanceEnquiryPreviewState;
+  onSelectBalanceEnquiryPreviewState?: (
+    state: BalanceEnquiryPreviewState
+  ) => void;
   onResetApp?: () => void;
   currentRoute?:
     | 'home_screen'
@@ -177,7 +182,8 @@ interface MobileContainerProps {
     | 'agent_change_passcode'
     | 'agent_chats'
     | 'agent_chat_conversation'
-    | 'about_tellerbud';
+    | 'about_tellerbud'
+    | 'balance_enquiry';
   onSelectRoute?: (
     route:
       | 'home_screen'
@@ -211,6 +217,7 @@ interface MobileContainerProps {
       | 'agent_chats'
       | 'agent_chat_conversation'
       | 'about_tellerbud'
+      | 'balance_enquiry'
   ) => void;
 }
 
@@ -274,6 +281,8 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
   onSelectAgentChatConversationPreviewState,
   aboutTellerBudPreviewState = 'default',
   onSelectAboutTellerBudPreviewState,
+  balanceEnquiryPreviewState = 'default',
+  onSelectBalanceEnquiryPreviewState,
   onResetApp,
   currentRoute = 'home_screen',
   onSelectRoute,
@@ -344,6 +353,8 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
         return 'Chat Conversation';
       case 'about_tellerbud':
         return 'About TellerBud';
+      case 'balance_enquiry':
+        return 'Balance Enquiry';
       default:
         return 'Managed Device Home';
     }
@@ -409,6 +420,8 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
         return '27';
       case 'about_tellerbud':
         return '28';
+      case 'balance_enquiry':
+        return '29';
       default:
         return '00';
     }
@@ -1060,6 +1073,27 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
                   28
                 </span>
                 <span className="text-xs font-semibold">About TellerBud</span>
+              </button>
+
+              {/* 29 — Balance Enquiry */}
+              <button
+                onClick={() => onSelectRoute?.('balance_enquiry')}
+                className={`w-full text-left p-3 rounded-xl border transition-all flex items-center gap-3 ${
+                  currentRoute === 'balance_enquiry'
+                    ? 'bg-[#0052CC]/20 border-[#0052CC]/60 text-white shadow-sm ring-1 ring-[#0052CC]/30'
+                    : 'bg-slate-800/40 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800/80'
+                }`}
+              >
+                <span
+                  className={`px-2 py-0.5 rounded-md font-mono text-xs font-bold ${
+                    currentRoute === 'balance_enquiry'
+                      ? 'bg-[#0052CC] text-white'
+                      : 'bg-slate-800 text-slate-400'
+                  }`}
+                >
+                  29
+                </span>
+                <span className="text-xs font-semibold">Balance Enquiry</span>
               </button>
             </nav>
           </div>
@@ -3472,6 +3506,109 @@ export const MobileContainer: React.FC<MobileContainerProps> = ({
                   }`}
                 >
                   Default
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Preview State Controls (For Screen 29 — Balance Enquiry) */}
+          {currentRoute === 'balance_enquiry' && onSelectBalanceEnquiryPreviewState && (
+            <div className="mt-6 pt-4 border-t border-slate-800/80 flex flex-col gap-2">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                  Preview State
+                </span>
+                {onResetApp && (
+                  <button
+                    onClick={onResetApp}
+                    title="Reset Screen"
+                    className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-1 gap-1.5">
+                <button
+                  onClick={() => onSelectBalanceEnquiryPreviewState('default')}
+                  className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                    balanceEnquiryPreviewState === 'default'
+                      ? 'bg-blue-600/20 border-blue-500/60 text-blue-200 font-semibold'
+                      : 'bg-slate-800/30 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  }`}
+                >
+                  Default (Empty)
+                </button>
+                <button
+                  onClick={() => onSelectBalanceEnquiryPreviewState('mno_mtn')}
+                  className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                    balanceEnquiryPreviewState === 'mno_mtn'
+                      ? 'bg-blue-600/20 border-blue-500/60 text-blue-200 font-semibold'
+                      : 'bg-slate-800/30 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  }`}
+                >
+                  MNO: MTN
+                </button>
+                <button
+                  onClick={() => onSelectBalanceEnquiryPreviewState('mno_airtel')}
+                  className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                    balanceEnquiryPreviewState === 'mno_airtel'
+                      ? 'bg-blue-600/20 border-blue-500/60 text-blue-200 font-semibold'
+                      : 'bg-slate-800/30 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  }`}
+                >
+                  MNO: Airtel
+                </button>
+                <button
+                  onClick={() => onSelectBalanceEnquiryPreviewState('mno_zamtel')}
+                  className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                    balanceEnquiryPreviewState === 'mno_zamtel'
+                      ? 'bg-blue-600/20 border-blue-500/60 text-blue-200 font-semibold'
+                      : 'bg-slate-800/30 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  }`}
+                >
+                  MNO: Zamtel
+                </button>
+                <button
+                  onClick={() => onSelectBalanceEnquiryPreviewState('bank_fnb')}
+                  className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                    balanceEnquiryPreviewState === 'bank_fnb'
+                      ? 'bg-blue-600/20 border-blue-500/60 text-blue-200 font-semibold'
+                      : 'bg-slate-800/30 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  }`}
+                >
+                  Bank: FNB
+                </button>
+                <button
+                  onClick={() => onSelectBalanceEnquiryPreviewState('bank_zanaco')}
+                  className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                    balanceEnquiryPreviewState === 'bank_zanaco'
+                      ? 'bg-blue-600/20 border-blue-500/60 text-blue-200 font-semibold'
+                      : 'bg-slate-800/30 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  }`}
+                >
+                  Bank: Zanaco
+                </button>
+                <button
+                  onClick={() => onSelectBalanceEnquiryPreviewState('bank_indo')}
+                  className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                    balanceEnquiryPreviewState === 'bank_indo'
+                      ? 'bg-blue-600/20 border-blue-500/60 text-blue-200 font-semibold'
+                      : 'bg-slate-800/30 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  }`}
+                >
+                  Bank: INDO
+                </button>
+                <button
+                  onClick={() => onSelectBalanceEnquiryPreviewState('connection_issue')}
+                  className={`text-left px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
+                    balanceEnquiryPreviewState === 'connection_issue'
+                      ? 'bg-blue-600/20 border-blue-500/60 text-blue-200 font-semibold'
+                      : 'bg-slate-800/30 border-slate-800 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                  }`}
+                >
+                  Connection Issue
                 </button>
               </div>
             </div>

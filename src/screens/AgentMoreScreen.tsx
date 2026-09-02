@@ -50,6 +50,7 @@ interface AgentMoreScreenProps {
   onViewSmsInbox?: () => void;
   onViewDailySummary?: () => void;
   onViewChangePasscode?: () => void;
+  onOpenBalanceEnquiry?: () => void;
   onViewAbout?: () => void;
 }
 
@@ -85,6 +86,7 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
   onViewSmsInbox,
   onViewDailySummary,
   onViewChangePasscode,
+  onOpenBalanceEnquiry,
   onViewAbout,
 }) => {
   // Modal and Sheet States
@@ -243,8 +245,12 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
             type="button"
             id="more-action-balance-enquiry"
             onClick={() => {
-              setDialledVendor('');
-              setShowDialler(true);
+              if (onOpenBalanceEnquiry) {
+                onOpenBalanceEnquiry();
+              } else {
+                setDialledVendor('');
+                setShowDialler(true);
+              }
             }}
             className="w-full bg-white border border-slate-200/90 hover:border-emerald-500/50 rounded-2xl p-3.5 text-left transition-all hover:shadow-xs group flex items-center justify-between min-h-[64px] shadow-2xs"
           >
@@ -257,7 +263,7 @@ export const AgentMoreScreen: React.FC<AgentMoreScreenProps> = ({
                   Balance Enquiry
                 </div>
                 <div className="text-[11px] text-slate-500 font-medium leading-tight mt-0.5">
-                  Check your MNO mobile-money balance
+                  Check your MNO or Bank account balance
                 </div>
               </div>
             </div>
