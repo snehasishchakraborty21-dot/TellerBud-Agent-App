@@ -99,6 +99,14 @@ export const ServiceCompletionScreen: React.FC<ServiceCompletionScreenProps> = (
   const effectiveAmount = normalizeZmwAmount(
     recordedTransaction?.amount || service.amount || '15,000.00'
   );
+  const effectiveReservationFee = normalizeZmwAmount(
+    recordedTransaction?.reservationFee ||
+      service.reservationFee ||
+      (service.serviceType === 'pickup' ? service.deliveryFee : undefined) ||
+      recordedTransaction?.serviceFee ||
+      service.agentEarnings ||
+      '30.00'
+  );
   const effectiveTxnRef =
     recordedTransaction?.vendorReference ||
     recordedTransaction?.id ||
@@ -291,6 +299,14 @@ export const ServiceCompletionScreen: React.FC<ServiceCompletionScreenProps> = (
               <span className="text-slate-500 font-medium">Amount</span>
               <span className="font-extrabold text-[#002244] font-mono text-[13px]">
                 {effectiveAmount}
+              </span>
+            </div>
+
+            {/* Reservation Fee */}
+            <div className="py-2 flex items-center justify-between" id="service-completion-reservation-fee">
+              <span className="text-slate-500 font-medium">Reservation Fee</span>
+              <span className="font-bold text-slate-900 font-mono text-xs">
+                {effectiveReservationFee}
               </span>
             </div>
 
@@ -557,6 +573,12 @@ export const ServiceCompletionScreen: React.FC<ServiceCompletionScreenProps> = (
                 <span className="text-slate-500 font-medium">Amount</span>
                 <span className="font-extrabold text-[#002244] font-mono">
                   {effectiveAmount}
+                </span>
+              </div>
+              <div className="flex justify-between" id="confirm-popup-reservation-fee">
+                <span className="text-slate-500 font-medium">Reservation Fee</span>
+                <span className="font-bold text-slate-900 font-mono">
+                  {effectiveReservationFee}
                 </span>
               </div>
             </div>

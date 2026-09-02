@@ -294,6 +294,7 @@ export const AssignedCustomerServiceScreen: React.FC<
       recordedAt: currentTimestamp,
       vendorReference: finalVendorRef,
       serviceFee: normalizeZmwAmount(service.reservationFee || service.deliveryFee || '30.00'),
+      reservationFee: service.reservationFee ? normalizeZmwAmount(service.reservationFee) : undefined,
     };
   };
 

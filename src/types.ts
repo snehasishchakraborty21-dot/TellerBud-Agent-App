@@ -236,6 +236,7 @@ export interface RecordedTransaction {
   recordedAt?: string;
   vendorReference?: string;
   serviceFee?: string;
+  reservationFee?: string;
   agentName?: string;
   agentId?: string;
   status?: string;
